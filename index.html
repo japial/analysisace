@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>analysisACE | Coming Soon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Imported Inter for body text, Montserrat for the Logo -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        logo: ['Montserrat', 'sans-serif'], // Added custom logo font
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f172a',
+                            primary: '#2563eb',
+                            accent: '#007078' /* Logo Teal */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased selection:bg-brand-primary selection:text-white">
+
+    <!-- Hero Section -->
+    <header class="bg-brand-dark text-white pt-24 pb-32 px-4 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-primary via-brand-dark to-brand-dark"></div>
+        <div class="max-w-5xl mx-auto text-center relative z-10">
+            <h2 class="text-teal-400 font-bold tracking-widest uppercase text-sm mb-6">Coming Soon</h2>
+            
+            <!-- CSS-Based Logo Container -->
+            <div class="flex justify-center mb-8">
+                <div class="bg-white/95 px-8 py-4 rounded-2xl shadow-lg backdrop-blur-sm flex items-center justify-center select-none hover:scale-105 transition-transform duration-300">
+                    <div class="font-logo text-brand-accent text-4xl md:text-5xl tracking-tighter">
+                        <span class="font-semibold">analysis</span><span class="font-extrabold ml-[1px]">ACE</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-xl md:text-2xl font-light text-gray-300 mb-8 tracking-wide">
+                Assets <span class="text-teal-400 mx-2">|</span> Capital <span class="text-teal-400 mx-2">|</span> Earnings
+            </p>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section class="py-20 px-4 -mt-16 relative z-20">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
+                
+                <!-- Card 1: Core Finance -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 border-b pb-2">Expense & Tax Management</h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-lg text-gray-900"><i class="fa-solid fa-receipt text-gray-400 mr-2"></i>Daily Cost Records</h4>
+                        <p class="text-gray-600 text-sm mt-1">Track daily expenses and auto-calculate monthly & yearly cost of living.</p>
+                        <div class="mt-2 bg-gray-50 p-3 rounded text-sm text-gray-500 border-l-2 border-brand-primary">
+                            <span class="font-semibold text-gray-700">Use case:</span> Log daily food, rent, and transport costs to instantly see your annual living expenses.
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-lg text-gray-900"><i class="fa-solid fa-scale-balanced text-gray-400 mr-2"></i>Tax & Zakat Snapshot</h4>
+                        <p class="text-gray-600 text-sm mt-1">Generate a full financial record snapshot to calculate tax obligations and Zakat contributions.</p>
+                        <div class="mt-2 bg-gray-50 p-3 rounded text-sm text-gray-500 border-l-2 border-brand-primary">
+                            <span class="font-semibold text-gray-700">Use case:</span> Calculate annual Zakat due on wealth while seamlessly preparing tax filings.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Investment & Portfolio -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 border-b pb-2">📊 Investment & Portfolio</h3>
+                    
+                    <div class="space-y-5">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Portfolio Aggregation</h4>
+                            <p class="text-gray-600 text-sm mt-1 mb-2">Connect multiple brokerages, crypto wallets, retirement accounts, and real estate into one dashboard.</p>
+                            <p class="text-xs bg-indigo-50 text-indigo-800 p-2 rounded"><em>Use case: View Robinhood stocks, Binance crypto, and pension funds all in one place.</em></p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Performance Tracking</h4>
+                            <p class="text-gray-600 text-sm mt-1 mb-2">Track returns, volatility, diversification, and compare against benchmarks (S&P 500, NASDAQ).</p>
+                            <p class="text-xs bg-indigo-50 text-indigo-800 p-2 rounded"><em>Use case: Spot underperformance compared to the S&P 500 and execute a rebalance.</em></p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Asset Allocation Insights</h4>
+                            <p class="text-gray-600 text-sm mt-1 mb-2">Visualize allocation across stocks, bonds, crypto, real estate, and get rebalancing suggestions.</p>
+                            <p class="text-xs bg-indigo-50 text-indigo-800 p-2 rounded"><em>Use case: Discover 70% of your portfolio is in tech and get actionable diversification advice.</em></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: FIRE Planning -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+                    <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 border-b pb-2">🔮 FIRE Planning</h3>
+                    
+                    <div class="space-y-5">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">FIRE Calculator</h4>
+                            <p class="text-gray-600 text-sm mt-1 mb-2">Personalized retirement projections based on savings rate, withdrawal rate, and lifestyle choices.</p>
+                            <p class="text-xs bg-orange-50 text-orange-800 p-2 rounded"><em>Use case: Input monthly savings and expenses to map out how to retire by 45.</em></p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">❄️ Scenario Planning</h4>
+                            <p class="text-gray-600 text-sm mt-1 mb-2">Run "what-if" simulations for market downturns, early retirement, or higher expenses.</p>
+                            <p class="text-xs bg-orange-50 text-orange-800 p-2 rounded"><em>Use case: Test exactly how a 20% market crash would impact your FIRE timeline.</em></p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Goal Tracking</h4>
+                            <p class="text-gray-600 text-sm mt-1 mb-2">Track major milestones like "$500k net worth" or "retire at 45."</p>
+                            <p class="text-xs bg-orange-50 text-orange-800 p-2 rounded"><em>Use case: Get a celebratory notification when you hit your first $100k invested.</em></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Analytics & Insights -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+                    <div class="w-12 h-12 bg-teal-100 text-teal-600 rounded-xl flex items-center justify-center text-2xl mb-6">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 border-b pb-2">📈 Analytics & Insights</h3>
+                    
+                    <div class="space-y-5">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Alerts & Reports</h4>
+                            <p class="text-gray-600 text-sm mt-1 mb-2">Smart notifications for rebalancing, risk exposure, or FIRE progress.</p>
+                            <p class="text-xs bg-teal-50 text-teal-800 p-2 rounded"><em>Use case: Receive an alert when your portfolio risk unexpectedly exceeds your tolerance.</em></p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Community-Driven Insights</h4>
+                            <p class="text-gray-600 text-sm mt-1 mb-2">Anonymous benchmarking against peers on the FIRE journey.</p>
+                            <p class="text-xs bg-teal-50 text-teal-800 p-2 rounded"><em>Use case: Compare your current savings rate privately with others in your age group.</em></p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Sentiment & Market Signals</h4>
+                            <p class="text-gray-600 text-sm mt-1 mb-2">Analyze market news and social sentiment for investment decisions (Optional).</p>
+                            <p class="text-xs bg-teal-50 text-teal-800 p-2 rounded"><em>Use case: Notice rising negative sentiment around a stock you own and reduce exposure.</em></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark text-gray-400 py-10 text-center border-t border-gray-800 mt-10">
+        <div class="max-w-4xl mx-auto px-4">
+            
+            <!-- CSS-Based Footer Logo -->
+            <div class="flex justify-center mb-4">
+                <div class="bg-white/95 px-4 py-2 rounded-lg inline-block select-none">
+                    <div class="font-logo text-brand-accent text-xl tracking-tighter">
+                        <span class="font-semibold">analysis</span><span class="font-extrabold ml-[1px]">ACE</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-sm mb-6">Assets | Capital | Earnings</p>
+            <p class="text-sm">&copy; 2026 analysisACE. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
