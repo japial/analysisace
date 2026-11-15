@@ -1,0 +1,22 @@
+# Ingestion schedules (PRD section 8). Times are Asia/Dhaka.
+version: "0.1.0"
+timezone: Asia/Dhaka
+
+jobs:
+  eod_prices:
+    days: trading
+    at: "16:30"
+    retry_until: "18:00"
+    retry_every_minutes: 15
+  corporate_actions: { days: daily, at: "19:00" }
+  company_master: { days: weekly, weekday: FRI, at: "09:00" }
+  financial_statements: { days: weekly, weekday: FRI, at: "10:00" }
+  tbill_auctions: { days: daily, at: "20:00" }
+  macro_bangladesh_bank: { days: daily, at: "20:30" }
+  cpi: { days: monthly, day: 10, at: "10:00" }
+  commodities: { days: daily, at: "08:00" }
+  sukuk: { days: weekly, weekday: SAT, at: "09:00" }
+
+quality:
+  max_unexplained_move_pct: 10.0
+  stale_after_trading_days: 3

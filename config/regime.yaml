@@ -1,0 +1,15 @@
+# Macro regime rules (FR8.1). Built in M4; values here so nothing is hard-coded later.
+version: "0.1.0"
+
+rate_trend:
+  series: TBILL_91D
+  lookback_months: 3
+  easing_max_change_pts: -0.5
+  tightening_min_change_pts: 0.5
+oil_shock:
+  series: BRENT
+  lookback_months: 1
+  min_change_pct: 15.0
+# Inflation bands and the liquidity rule are not defined in the PRD yet.
+inflation_bands: []
+liquidity_trend: null

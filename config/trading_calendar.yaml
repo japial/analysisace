@@ -1,0 +1,13 @@
+# DSE trading calendar. Weekdays use Python numbering: Monday = 0 ... Sunday = 6.
+version: "0.1.0"
+timezone: Asia/Dhaka
+
+# Sunday to Thursday.
+trading_weekdays: [6, 0, 1, 2, 3]
+
+# Market holidays that fall on a trading weekday. Admin-maintained; fill from DSE holiday notices.
+# Dates that depend on moon sighting must be confirmed each year.
+holidays: []
+
+# Days the market opened on a normal weekend day.
+special_trading_days: []

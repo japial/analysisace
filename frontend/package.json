@@ -1,0 +1,29 @@
+{
+  "name": "analysisace-frontend",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "npm run dev -w @analysisace/web",
+    "build": "npm run build -w @analysisace/web",
+    "start": "npm run start -w @analysisace/web",
+    "lint": "eslint .",
+    "typecheck": "tsc -p packages/core --noEmit && tsc -p packages/i18n --noEmit && tsc -p apps/web --noEmit",
+    "test": "node scripts/run-vitest.mjs run",
+    "test:e2e": "playwright test",
+    "brand:assets": "node scripts/build-brand-assets.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.6",
+    "eslint": "^10.15.0",
+    "eslint-config-next": "16.4.6",
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.0"
+  }
+}

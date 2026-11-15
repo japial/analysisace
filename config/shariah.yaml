@@ -1,0 +1,37 @@
+# Shariah screening methodologies (PRD 7.1).
+# PROVISIONAL: every value here needs sign-off from the Shariah advisor (Q1).
+# Bump `version` on any change; the loader stores each version in `config_version`.
+version: "0.1.0"
+approved_by: null
+
+# TODO(owner): Q1 - which method sets the overall status.
+default_method: aaoifi
+review_margin_pts: 2.0
+
+stage1_excluded_activities:
+  - conventional_banking
+  - conventional_insurance
+  - interest_based_lending
+  - alcohol
+  - tobacco
+  - pork
+  - gambling
+  - adult_entertainment
+  - weapons
+
+methods:
+  aaoifi:
+    label: AAOIFI-style
+    market_cap_average_months: 12
+    ratios:
+      debt_to_market_cap: { max_pct: 30.0 }
+      cash_and_interest_securities_to_market_cap: { max_pct: 30.0 }
+      non_permissible_income_to_revenue: { max_pct: 5.0 }
+  sp:
+    label: S&P-style
+    market_cap_average_months: 24
+    ratios:
+      debt_to_market_cap: { max_pct: 33.0 }
+      cash_and_interest_securities_to_market_cap: { max_pct: 33.0 }
+      non_permissible_income_to_revenue: { max_pct: 5.0 }
+      receivables_to_market_cap: { max_pct: 49.0 }

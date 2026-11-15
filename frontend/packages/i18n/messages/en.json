@@ -1,0 +1,209 @@
+{
+  "common": {
+    "appName": "analysisACE",
+    "disclaimer": "Historical analysis for education only. Not investment advice.",
+    "skipToContent": "Skip to content",
+    "language": "Language",
+    "theme": "Switch between light and dark",
+    "breadcrumb": "Breadcrumb",
+    "openMenu": "Open menu",
+    "asOf": "Data as of {date}",
+    "sources": "Sources",
+    "inDevelopment": "In development",
+    "loadError": "The data could not be loaded right now. Please try again in a few minutes.",
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The page you asked for does not exist or has moved.",
+    "backHome": "Back to home",
+    "notAvailable": "Not available",
+    "save": "Save changes",
+    "saved": "Saved.",
+    "cancel": "Cancel",
+    "previous": "Previous",
+    "next": "Next",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "nav": {
+    "label": "Main navigation",
+    "home": "Home",
+    "companies": "Companies",
+    "adminUsers": "Users",
+    "adminRoles": "Roles",
+    "signIn": "Sign in",
+    "signUp": "Create account",
+    "account": "My account",
+    "signOut": "Sign out",
+    "userMenu": "Account menu",
+    "searchPlaceholder": "Search companies"
+  },
+  "home": {
+    "metaTitle": "analysisACE: Shariah screening and macro analytics for the DSE",
+    "title": "See why a DSE stock passes or fails a Shariah screen",
+    "subtitle": "analysisACE is building open, explained Shariah screening and macro analytics for the Dhaka Stock Exchange, with household finance tools for Bangladesh.",
+    "browseCompanies": "Browse companies",
+    "featuresTitle": "What we are building",
+    "features": {
+      "shariah": {
+        "title": "Shariah screen with reasons",
+        "body": "Every listed company tested against published rules, shown with the company's own figures and the report they came from."
+      },
+      "macro": {
+        "title": "Rates and shocks",
+        "body": "How each stock has historically moved when treasury bill yields changed, and how it behaved in past crises."
+      },
+      "household": {
+        "title": "Household finance",
+        "body": "Daily costs, Zakat, tax figures, net worth across shares, sukuk, deposits, gold and land, and FIRE planning."
+      }
+    }
+  },
+  "companies": {
+    "metaTitle": "Companies",
+    "title": "Companies",
+    "intro": "Companies listed on the Dhaka Stock Exchange.",
+    "searchLabel": "Search by ticker or name",
+    "search": "Search",
+    "clear": "Clear search",
+    "ticker": "Ticker",
+    "name": "Name",
+    "sector": "Sector",
+    "count": "{count, plural, =0 {No companies} one {# company} other {# companies}}",
+    "showing": "Showing the first {shown} of {total}. Search to narrow the list.",
+    "empty": "No company data has been loaded yet.",
+    "noMatch": "No company matches \"{query}\".",
+    "sectorUnknown": "Not classified"
+  },
+  "company": {
+    "back": "All companies",
+    "inactive": "No longer listed",
+    "latestClose": "Latest close",
+    "tradingDay": "Trading day",
+    "volume": "Shares traded",
+    "sector": "Sector",
+    "listed": "Listed on",
+    "noPrice": "No price data has been loaded for this company yet.",
+    "shariahTitle": "Shariah screen",
+    "shariahPending": "The Shariah screen for this company has not been published yet."
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full name",
+    "passwordHint": "At least 8 characters.",
+    "signInTitle": "Sign in",
+    "signInIntro": "Welcome back. Sign in to your analysisACE account.",
+    "signInSubmit": "Sign in",
+    "forgotLink": "Forgot password?",
+    "noAccount": "New to analysisACE?",
+    "signUpTitle": "Create your account",
+    "signUpIntro": "Free to join. You can delete your account at any time.",
+    "signUpSubmit": "Create account",
+    "preferredLanguage": "Preferred language",
+    "acceptTerms": "I agree that analysisACE may store my account details to provide this service.",
+    "haveAccount": "Already have an account?",
+    "forgotTitle": "Reset your password",
+    "forgotIntro": "Enter your email and we will send you a link to choose a new password.",
+    "forgotSubmit": "Send reset link",
+    "forgotSent": "If an account exists for that email, a reset link is on its way. The link works for about an hour.",
+    "backToSignIn": "Back to sign in",
+    "resetTitle": "Choose a new password",
+    "resetIntro": "You will be signed out on all devices.",
+    "newPassword": "New password",
+    "resetSubmit": "Set new password",
+    "resetDone": "Your password has been changed. Sign in with the new password.",
+    "requestNewLink": "Ask for a new link"
+  },
+  "account": {
+    "metaTitle": "My account",
+    "title": "My account",
+    "profileTitle": "Profile",
+    "role": "Role",
+    "memberSince": "Member since",
+    "lastSignIn": "Last sign-in",
+    "passwordTitle": "Password",
+    "passwordIntro": "Changing your password signs you out on your other devices.",
+    "currentPassword": "Current password",
+    "changePassword": "Change password",
+    "passwordChanged": "Password changed.",
+    "consentsTitle": "Privacy choices",
+    "consentsIntro": "You can change these at any time. Each change is recorded with its date.",
+    "consents": {
+      "MARKETING": {
+        "title": "Product news by email",
+        "body": "Occasional emails about new features. No third-party marketing."
+      },
+      "RELIGIOUS_PREFERENCES": {
+        "title": "Zakat and Shariah preferences",
+        "body": "Lets analysisACE store religious preferences, such as your Zakat method and nisab basis. This is sensitive data and is used only for those features."
+      },
+      "COMMUNITY_BENCHMARKING": {
+        "title": "Anonymous community comparisons",
+        "body": "Includes your figures in anonymised group averages. Nothing that identifies you is shown."
+      }
+    },
+    "dataTitle": "Your data",
+    "dataIntro": "Download a copy of everything analysisACE holds about you.",
+    "export": "Download my data",
+    "deleteTitle": "Delete account",
+    "deleteIntro": "Deletes your account and all data tied to it straight away. This cannot be undone.",
+    "deleteButton": "Delete my account",
+    "deleteConfirmTitle": "Delete your account?",
+    "deleteConfirmBody": "Enter your password to confirm. Your account and data will be removed permanently.",
+    "deleteConfirm": "Delete permanently"
+  },
+  "admin": {
+    "usersMetaTitle": "Users",
+    "usersTitle": "Users",
+    "usersIntro": "Change a person's role or turn their access off. Every change is written to the audit log.",
+    "searchLabel": "Search by email or name",
+    "allRoles": "All roles",
+    "filter": "Filter",
+    "user": "User",
+    "role": "Role",
+    "active": "Active",
+    "joined": "Joined",
+    "lastSignIn": "Last sign-in",
+    "never": "Never",
+    "you": "You",
+    "inactive": "Access off",
+    "count": "{count, plural, =0 {No users} one {# user} other {# users}}",
+    "pageOf": "Showing {from} to {to} of {total}",
+    "noUsers": "No users match these filters.",
+    "roleFor": "Role for {name}",
+    "activeFor": "Access for {name}",
+    "rolesMetaTitle": "Roles",
+    "rolesTitle": "Roles and permissions",
+    "rolesIntro": "Roles are fixed. This table shows what each role may do.",
+    "permission": "Permission"
+  },
+  "roles": {
+    "USER": { "name": "User", "description": "Every registered person. Uses the public and personal features." },
+    "ANALYST": { "name": "Analyst", "description": "Staff who review data and publish content." },
+    "ADMIN": { "name": "Administrator", "description": "Full control, including users and rule files." }
+  },
+  "permissions": {
+    "DATA_REVIEW": { "name": "Review data", "description": "Work the data review queue and correct extracted financial figures." },
+    "CONTENT_PUBLISH": { "name": "Publish content", "description": "Publish weekly macro notes and shock events." },
+    "SHARIAH_OVERRIDE": { "name": "Override Shariah status", "description": "Add Shariah board notes and manual overrides with a reason." },
+    "CONFIG_MANAGE": { "name": "Manage rules", "description": "Approve rule file versions and bank flags." },
+    "USERS_MANAGE": { "name": "Manage users", "description": "See all users, change roles and turn access on or off." },
+    "AUDIT_VIEW": { "name": "View audit log", "description": "Read the record of admin actions." }
+  },
+  "errors": {
+    "INVALID_CREDENTIALS": "The email or password is not correct.",
+    "ACCOUNT_LOCKED": "Too many wrong attempts. Try again in a few minutes.",
+    "ACCOUNT_DISABLED": "This account has been turned off. Contact support.",
+    "EMAIL_TAKEN": "An account with this email already exists. Sign in instead.",
+    "TERMS_REQUIRED": "Tick the box to agree before creating an account.",
+    "INVALID_TOKEN": "This reset link has expired or was already used. Ask for a new one.",
+    "WRONG_PASSWORD": "The current password is not correct.",
+    "NOT_AUTHENTICATED": "Your session has ended. Sign in again.",
+    "FORBIDDEN": "You do not have permission to do that.",
+    "LAST_ADMIN": "This is the only active administrator. Make another person an administrator first.",
+    "CANNOT_CHANGE_SELF": "You cannot change your own role or access.",
+    "USER_NOT_FOUND": "That user no longer exists.",
+    "CONSENT_NOT_CHANGEABLE": "That consent cannot be changed here.",
+    "VALIDATION": "Check the form: the email must be valid and the password at least 8 characters.",
+    "UNAVAILABLE": "The service could not be reached. Please try again in a few minutes."
+  }
+}
