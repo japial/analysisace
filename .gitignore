@@ -32,4 +32,6 @@ Thumbs.db
 
 # Local data
 .pgdata/
+.documents/
+.dev-encryption-key
 *.sqlite3

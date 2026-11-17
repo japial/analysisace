@@ -20,6 +20,7 @@ DOMAINS = (
     "schedules",
     "excluded_periods",
     "trading_calendar",
+    "personal",
 )
 
 

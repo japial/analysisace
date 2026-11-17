@@ -8,6 +8,7 @@ dependencies = [
     "uvicorn[standard]>=0.32",
     "pydantic[email]>=2.9",
     "argon2-cffi>=23.1",
+    "cryptography>=43",
     "pydantic-settings>=2.6",
     "sqlalchemy>=2.0.36",
     "alembic>=1.14",
@@ -52,6 +53,8 @@ select = ["E", "F", "I", "UP", "B", "SIM", "DTZ", "RUF"]
 [tool.ruff.lint.per-file-ignores]
 # Seed files are data tables; long literal lines read better unwrapped.
 "app/seed/*" = ["E501", "RUF001"]
+# Email texts in two languages: one sentence per line reads better than wrapped strings.
+"app/services/alert_texts.py" = ["E501", "RUF001"]
 
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]

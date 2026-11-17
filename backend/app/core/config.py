@@ -25,6 +25,12 @@ class Settings(BaseSettings):
     login_max_failures: int = 5
     login_lock_minutes: int = 15
 
+    # Fernet key for account numbers and documents (FR23.3). Required outside development;
+    # in development a key is created in `backend/.dev-encryption-key` on first use.
+    data_encryption_key: str | None = None
+    # Where encrypted documents are kept until object storage is chosen (FR25.4).
+    document_storage_dir: Path = REPO_ROOT / "backend" / ".documents"
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]

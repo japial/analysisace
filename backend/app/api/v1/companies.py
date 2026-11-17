@@ -1,33 +1,21 @@
 """Public company endpoints (PRD section 10). Reads only; nothing is computed on request."""
 
-import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import ColumnElement, func, or_, select
 from sqlalchemy.orm import Session
 
+from app.api.envelopes import envelope as _envelope
+from app.api.envelopes import source_refs as _source_refs
 from app.core.db import get_db
-from app.models import Company, PriceDaily, Source
-from app.schemas.common import Envelope, Page, SourceRef
+from app.models import Company, PriceDaily
+from app.schemas.common import Envelope, Page
 from app.schemas.company import CompanyDetailOut, CompanyOut, LatestPriceOut
 
 router = APIRouter(prefix="/companies", tags=["companies"])
 
 Db = Annotated[Session, Depends(get_db)]
-
-
-def _source_refs(db: Session, source_ids: set[uuid.UUID | None]) -> list[SourceRef]:
-    ids = {i for i in source_ids if i is not None}
-    if not ids:
-        return []
-    rows = db.scalars(select(Source).where(Source.id.in_(ids)).order_by(Source.fetched_at.desc()))
-    return [SourceRef.model_validate(row) for row in rows]
-
-
-def _envelope[T](data: T, sources: list[SourceRef]) -> Envelope[T]:
-    as_of = max((s.fetched_at for s in sources), default=None)
-    return Envelope(data=data, as_of=as_of, sources=sources)
 
 
 @router.get("")

@@ -1,6 +1,6 @@
 # Roadmap and status
 
-Milestones are defined in [PRD.md](PRD.md) section 14 and are built in order. Update this file when an item is finished. Last updated: 2026-11-14.
+Milestones are defined in [PRD.md](PRD.md) section 14 and are built in order. Update this file when an item is finished. Last updated: 2026-11-17.
 
 ## M0 Project setup
 
@@ -47,7 +47,7 @@ Next, in this order:
 ## Build phases (owner's plan, 2026-11-15)
 
 1. **Database and seed data for every feature: done.** 57 tables, three migrations, demo seed, export and deletion cover the new personal tables.
-2. **API for every feature: next.** Analytics code first (screening, rate sensitivity, event metrics, regime, XIRR and returns, Zakat, FIRE), then the routes.
+2. **API for every feature: personal finance done (2026-11-17), market layer next.** Analytics and routes for F12 to F21 and F24 to F26 are built and tested. Screening, rate sensitivity, event metrics and regime are still to do.
 3. **Frontend for those APIs: after phase 2.**
 
 In the table below, "Not built" now means: tables and demo data exist, but there is no calculation, API or screen yet.
@@ -69,21 +69,21 @@ Last updated 2026-11-14. "Blocked" means a decision or input from the owner is n
 | F9 | Firm features (white-label, CSV, API, seats) | R3 | Not built | Firm accounts, PDF reports, API keys; legal check (Q4) |
 | F10 | Ownership change layer | Later | Not built | Data source |
 | F11 | Native mobile app | Later | Not built | Web releases first |
-| F12 | Daily cost records | R2 | Not built | None. Can start now |
-| F13 | Tax and Zakat snapshot | R2 | Not built | Needs F14, F25, F26 inputs; advisor review of rules (Q2). Ramadan 2027 deadline |
-| F14 | Portfolio aggregation | R2 | Not built | Sample broker statements for CSV import; prices for valuation |
-| F15 | Performance tracking | R3 | Not built | F14, prices |
-| F16 | Asset allocation and drift | R3 | Not built | F14 |
-| F17 | FIRE calculator | R3 | Not built | F12, F14. The calculation itself needs no outside data |
-| F18 | Scenario planning | R3+ | Not built | F17, F5 |
-| F19 | Goal tracking | R3 | Not built | None |
-| F20 | Personal alerts and monthly report | R3 | Not built | Email provider |
-| F21 | Community benchmarking | Later | Not built | 50-user minimum, consent already exists |
+| F12 | Daily cost records | R2 | API done | Screens |
+| F13 | Tax and Zakat snapshot | R2 | API done | Screens; PDF export (CSV done); advisor review of rules (Q2) |
+| F14 | Portfolio aggregation | R2 | API done | Screens; check broker CSV aliases against real statements from two brokers |
+| F15 | Performance tracking | R3 | API done | Screens |
+| F16 | Asset allocation and drift | R3 | API done | Screens |
+| F17 | FIRE calculator | R3 | API done | Screens |
+| F18 | Scenario planning | R3+ | API done | Screens |
+| F19 | Goal tracking | R3 | API done | Screens |
+| F20 | Personal alerts and monthly report | R3 | API done | Screens; email provider; web push (alerts show in the app and log emails until then) |
+| F21 | Community benchmarking | Later | API done | Screens; needs 50 opted-in users per age band |
 | F22 | News sentiment | Later | Not built | Data source |
 | F23 | Data privacy controls | Every release | Partly built | Done: consents, export, deletion, encryption of passwords and tokens. Missing: field-level encryption of account numbers and documents (needs those tables), breach-notification and retention notices (legal text), confirmation of the Personal Data Protection Ordinance status (Q3) |
-| F24 | Multi-owner household records | R3+ | Not built | None. Household tables are also needed by F12 to F14 |
-| F25 | Alternative investments | R2 basic, R3 full | Not built | Object storage for documents |
-| F26 | Sukuk and Islamic bank investments | R2 / R3 | Not built | Product catalogue content, bank flag content |
+| F24 | Multi-owner household records | R3+ | API done | Screens |
+| F25 | Alternative investments | R2 basic, R3 full | API done | Screens; S3 storage (documents are encrypted on local disk for now) |
+| F26 | Sukuk and Islamic bank investments | R2 / R3 | API done | Screens; real product catalogue and bank flag content |
 
 Also built, not a numbered feature: accounts, roles and user management (see below), the data foundation tables, the trading calendar, price adjustment and quality checks.
 

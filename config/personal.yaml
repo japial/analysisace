@@ -1,0 +1,113 @@
+# Personal finance defaults (F12 to F26). Nothing here is advice: these are the starting
+# values of forms and the labels used to group what a household enters.
+# PROVISIONAL items are marked; change a value and bump `version`.
+version: "0.1.0"
+
+costs:
+  # Monthly year-on-year CPI from BBS, used for the inflation-adjusted view (FR12.3).
+  cpi_series: CPI_YOY
+  import_max_rows: 5000
+
+portfolio:
+  # Instrument type -> asset class (FR16.1).
+  asset_classes:
+    DSE_SHARE: EQUITY
+    MUTUAL_FUND_UNIT: EQUITY
+    FOREIGN_SECURITY: EQUITY
+    SUKUK: ISLAMIC_FIXED_INCOME
+    ISLAMIC_DEPOSIT: ISLAMIC_FIXED_INCOME
+    SAVINGS_CERTIFICATE: CONVENTIONAL_FIXED_INCOME
+    FDR: CONVENTIONAL_FIXED_INCOME
+    DPS: CONVENTIONAL_FIXED_INCOME
+    PROVIDENT_FUND: CONVENTIONAL_FIXED_INCOME
+    CASH: CASH
+    BANK_BALANCE: CASH
+    OTHER: OTHER
+  # Alternative asset type -> asset class.
+  alt_asset_classes:
+    LAND: PROPERTY
+    FLAT: PROPERTY
+    PLOT: PROPERTY
+    RENTAL_PROPERTY: PROPERTY
+    FAMILY_HOME: PROPERTY
+    GOLD: GOLD
+    SILVER: GOLD
+    BUSINESS_STAKE: BUSINESS
+    PARTNERSHIP: BUSINESS
+    AGRICULTURE: BUSINESS
+    PRIVATE_EQUITY: BUSINESS
+    PRIVATE_LOAN: OTHER
+    COLLECTIBLE: OTHER
+    PERSONAL_CAR: OTHER
+    OTHER: OTHER
+  # Instruments valued from the DSE close (FR14.3). Everything else uses the entered value.
+  market_priced: [DSE_SHARE, MUTUAL_FUND_UNIT]
+  # Instruments that count as money placed with a bank, for the safety panel (FR26.5).
+  bank_deposit_types: [ISLAMIC_DEPOSIT, FDR, DPS, BANK_BALANCE]
+  # Instruments that count as "invested" for an invested-amount goal (FR19.1).
+  invested_types: [DSE_SHARE, MUTUAL_FUND_UNIT, FOREIGN_SECURITY, SUKUK, ISLAMIC_DEPOSIT, SAVINGS_CERTIFICATE, FDR, DPS]
+  # Gold and silver price per gram (Q9: entered by an admin each day).
+  metal_price_series:
+    GOLD: GOLD_22K_BDT_PER_GRAM
+    SILVER: SILVER_BDT_PER_GRAM
+  gold_series_karat: 22
+  # Broker statement layouts (FR14.2). Each lists the header names a column may carry,
+  # compared without case or punctuation. PROVISIONAL: confirm against real statements
+  # from the first two brokers before M3 is called done.
+  broker_csv:
+    ticker: [ticker, instrument, scrip, "trading code", "company", "security", "symbol"]
+    quantity: [quantity, qty, "total qty", "total quantity", "saleable qty", "shares", "balance"]
+    average_cost: ["avg cost", "average cost", "avg price", "avg rate", "cost price", "buy rate"]
+    total_cost: ["total cost", "cost value", "cost amount", "buy value"]
+
+performance:
+  benchmarks: [DSEX, DSES, DS30]
+  # Shown only when their levels have been loaded (FR15.2).
+  optional_benchmarks: [SP500, NASDAQ]
+  risk_free_series: TBILL_91D
+  top_n: 5
+
+fire:
+  withdrawal_rate_pct: 4.0
+  inflation_series: CPI_YOY
+  inflation_lookback_months: 12
+  # Used as the starting return when the household holds no sukuk or deposits (FR17.5).
+  fallback_return_series: TBILL_91D
+  max_age: 100
+  # Alternative assets with this liquidity stay out of the investable base (FR17.4).
+  illiquid: [">1Y"]
+
+scenarios:
+  crash_pct: 20.0
+  expenses_up_pct: 10.0
+  retire_earlier_years: 5
+  inflation_shock_pts: 3.0
+  # Index and window used to replay a past event (FR18.1, FR5.2).
+  replay_index: DSEX
+  replay_sessions: 60
+
+tax:
+  # The income year runs 1 July to 30 June.
+  year_start_month: 7
+  # Instruments whose purchases in the year are listed as rebate-eligible (FR13.6).
+  # PROVISIONAL: confirm against the current Income Tax Act schedule before launch.
+  rebate_eligible: [SAVINGS_CERTIFICATE, DPS, PROVIDENT_FUND, DSE_SHARE, MUTUAL_FUND_UNIT, SUKUK]
+
+alerts:
+  hawl_reminder_days: 30
+  maturity_reminder_days: 30
+  auction_notice_days: 14
+  default_max_volatility_pct: 25.0
+
+community:
+  # A peer group is shown only when it has at least this many people (FR21.1).
+  min_group_size: 50
+  age_bands: [[18, 29], [30, 39], [40, 49], [50, 59], [60, 120]]
+
+documents:
+  max_bytes: 5242880
+  types: [DEED, AGREEMENT, RECEIPT, OTHER]
+
+# FR25.9: questions asked about a new private deal. Answers are stored, never scored.
+due_diligence:
+  checklist: [registered_business, written_agreement, counterparty_known, exit_terms_written]

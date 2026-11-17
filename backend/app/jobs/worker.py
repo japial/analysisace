@@ -19,15 +19,45 @@ from app.core.config import get_settings
 from app.core.db import get_sessionmaker
 from app.models import JobRun
 from app.seed.reference import seed_reference
+from app.services import alerts, costs, portfolio
 from app.services.config_registry import sync_config_versions
+from app.services.email import get_email_sender
+from app.services.valuation import today_dhaka
 
 logger = logging.getLogger("analysisace.worker")
 
 JobFn = Callable[[Session], dict[str, Any]]
 
+
+def _recurring_expenses(session: Session) -> dict[str, Any]:
+    """FR12.2: write the cost entries that recurring rules have fallen due for."""
+    return {"added": costs.generate_recurring(session, today_dhaka())}
+
+
+def _net_worth_snapshots(session: Session) -> dict[str, Any]:
+    """FR14.4: store today's net worth for every household."""
+    return {"households": portfolio.store_all_net_worth(session)}
+
+
+def _personal_alerts(session: Session) -> dict[str, Any]:
+    """FR20.1: drift, volatility, goals, maturities, revaluations and Zakat dates."""
+    return {"created": alerts.run_personal_alerts(session, get_email_sender())}
+
+
+def _monthly_report(session: Session) -> dict[str, Any]:
+    """FR20.2: last month's spending, net worth, Zakat estimate and FIRE progress."""
+    sent = alerts.send_monthly_reports(session, get_email_sender(), get_settings().web_base_url)
+    return {"sent": sent}
+
+
 # name in schedules.yaml -> implementation. Ingestion jobs are added in M1 as each source
 # adapter is written.
-JOBS: dict[str, JobFn] = {}
+JOBS: dict[str, JobFn] = {
+    "recurring_expenses": _recurring_expenses,
+    "net_worth_snapshots": _net_worth_snapshots,
+    "personal_alerts": _personal_alerts,
+    "monthly_report": _monthly_report,
+}
 
 
 def run_job(name: str, fn: JobFn) -> None:
