@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { formatBDT, formatCompactBDT, formatDate, formatNumber, formatPercent } from "./format";
+import {
+  formatBDT,
+  formatCompactBDT,
+  formatDate,
+  formatMonth,
+  formatNumber,
+  formatPercent,
+} from "./format";
 
 describe("formatNumber", () => {
   it("groups in lakh and crore", () => {
@@ -88,5 +95,15 @@ describe("formatDate", () => {
 
   it("rejects an invalid date", () => {
     expect(() => formatDate("not a date")).toThrow(RangeError);
+  });
+});
+
+describe("formatMonth", () => {
+  it("shows month and year from a month start date", () => {
+    expect(formatMonth("2026-11-01")).toBe("Nov 2026");
+  });
+
+  it("uses Bangla digits when asked", () => {
+    expect(formatMonth("2026-11-01", { language: "bn", digits: "bn" })).toContain("২০২৬");
   });
 });

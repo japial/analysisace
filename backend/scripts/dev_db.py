@@ -12,6 +12,7 @@ Install once with: python -m pip install -e ".[dev,localdb]"
 
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
@@ -26,6 +27,25 @@ def _write_database_url(url: str) -> None:
     ENV_FILE.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def _wait_until_ready(timeout_s: float = 120) -> bool:
+    """Wait for postmaster.pid to report 'ready'.
+
+    After an unclean shutdown (window closed, PC restarted without --stop), Postgres runs
+    crash recovery on start. On Windows that can take 30+ seconds, longer than pgserver's
+    fixed 10 second pg_ctl timeout, so the start "fails" while the server is still coming up.
+    """
+    pid_file = DATA_DIR / "postmaster.pid"
+    deadline = time.monotonic() + timeout_s
+    while time.monotonic() < deadline:
+        try:
+            if "ready" in pid_file.read_text(encoding="utf-8", errors="ignore"):
+                return True
+        except OSError:
+            pass
+        time.sleep(1)
+    return False
+
+
 def main() -> int:
     try:
         import pgserver
@@ -34,7 +54,14 @@ def main() -> int:
         return 1
 
     # cleanup_mode=None keeps the server running after this script exits.
-    server = pgserver.get_server(DATA_DIR, cleanup_mode=None)
+    try:
+        server = pgserver.get_server(DATA_DIR, cleanup_mode=None)
+    except subprocess.TimeoutExpired:
+        print("Database is recovering from an unclean shutdown; waiting for it to be ready...")
+        if not _wait_until_ready():
+            print(f"Database did not become ready. See {DATA_DIR / 'log'}")
+            return 1
+        server = pgserver.get_server(DATA_DIR, cleanup_mode=None)
     if "--stop" in sys.argv:
         server.cleanup()
         print("Local database stopped.")

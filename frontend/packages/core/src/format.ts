@@ -130,3 +130,14 @@ export function formatDate(value: string | Date, options: DateOptions = {}): str
     ...(withTime ? { hour: "2-digit", minute: "2-digit", hourCycle: "h23" } : {}),
   }).format(parseDate(value));
 }
+
+/** Month and year in Asia/Dhaka from "2026-11-01": "Nov 2026" or "নভে ২০২৬". */
+export function formatMonth(value: string, options: Omit<DateOptions, "withTime"> = {}): string {
+  const { language = "en", digits = "latn" } = options;
+  return new Intl.DateTimeFormat(language === "bn" ? "bn-BD" : "en-GB", {
+    timeZone: DHAKA_TIME_ZONE,
+    numberingSystem: digits === "bn" ? "beng" : "latn",
+    month: "short",
+    year: "numeric",
+  }).format(parseDate(value.slice(0, 10)));
+}

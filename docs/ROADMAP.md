@@ -48,13 +48,13 @@ Next, in this order:
 
 1. **Database and seed data for every feature: done.** 57 tables, three migrations, demo seed, export and deletion cover the new personal tables.
 2. **API for every feature: personal finance done (2026-11-17), market layer next.** Analytics and routes for F12 to F21 and F24 to F26 are built and tested. Screening, rate sensitivity, event metrics and regime are still to do.
-3. **Frontend for those APIs: after phase 2.**
+3. **Frontend for those APIs: personal finance done (2026-11-17).** "My money" (`/personal`, menu entry for signed-in users) has a page for each of F12 to F21 and F24 to F26, in Bangla and English, with browser tests at desktop and 360 px (`e2e/personal.spec.ts`).
 
-In the table below, "Not built" now means: tables and demo data exist, but there is no calculation, API or screen yet.
+In the table below, "Not built" now means: tables and demo data exist, but there is no calculation, API or screen yet. "Built" means API and screens exist; what is listed is still open.
 
 ## Status of every PRD feature
 
-Last updated 2026-11-14. "Blocked" means a decision or input from the owner is needed, not just work. Release names are from PRD section 4.
+Last updated 2026-11-17. "Blocked" means a decision or input from the owner is needed, not just work. Release names are from PRD section 4.
 
 | ID | Feature | Release | Status | What is missing |
 |-|-|-|-|-|
@@ -69,21 +69,21 @@ Last updated 2026-11-14. "Blocked" means a decision or input from the owner is n
 | F9 | Firm features (white-label, CSV, API, seats) | R3 | Not built | Firm accounts, PDF reports, API keys; legal check (Q4) |
 | F10 | Ownership change layer | Later | Not built | Data source |
 | F11 | Native mobile app | Later | Not built | Web releases first |
-| F12 | Daily cost records | R2 | API done | Screens |
-| F13 | Tax and Zakat snapshot | R2 | API done | Screens; PDF export (CSV done); advisor review of rules (Q2) |
-| F14 | Portfolio aggregation | R2 | API done | Screens; check broker CSV aliases against real statements from two brokers |
-| F15 | Performance tracking | R3 | API done | Screens |
-| F16 | Asset allocation and drift | R3 | API done | Screens |
-| F17 | FIRE calculator | R3 | API done | Screens |
-| F18 | Scenario planning | R3+ | API done | Screens |
-| F19 | Goal tracking | R3 | API done | Screens |
-| F20 | Personal alerts and monthly report | R3 | API done | Screens; email provider; web push (alerts show in the app and log emails until then) |
-| F21 | Community benchmarking | Later | API done | Screens; needs 50 opted-in users per age band |
+| F12 | Daily cost records | R2 | Built | — |
+| F13 | Tax and Zakat snapshot | R2 | Built | Server-generated PDF (statements print to PDF from the browser for now); advisor review of rules (Q2) |
+| F14 | Portfolio aggregation | R2 | Built | Check broker CSV aliases against real statements from two brokers |
+| F15 | Performance tracking | R3 | Built | — |
+| F16 | Asset allocation and drift | R3 | Built | — |
+| F17 | FIRE calculator | R3 | Built | — |
+| F18 | Scenario planning | R3+ | Built | — |
+| F19 | Goal tracking | R3 | Built | — |
+| F20 | Personal alerts and monthly report | R3 | Built | Email provider; web push (alerts show in the app and log emails until then) |
+| F21 | Community benchmarking | Later | Built | Needs 50 opted-in users per age band before a group shows |
 | F22 | News sentiment | Later | Not built | Data source |
 | F23 | Data privacy controls | Every release | Partly built | Done: consents, export, deletion, encryption of passwords and tokens. Missing: field-level encryption of account numbers and documents (needs those tables), breach-notification and retention notices (legal text), confirmation of the Personal Data Protection Ordinance status (Q3) |
-| F24 | Multi-owner household records | R3+ | API done | Screens |
-| F25 | Alternative investments | R2 basic, R3 full | API done | Screens; S3 storage (documents are encrypted on local disk for now) |
-| F26 | Sukuk and Islamic bank investments | R2 / R3 | API done | Screens; real product catalogue and bank flag content |
+| F24 | Multi-owner household records | R3+ | Built | — |
+| F25 | Alternative investments | R2 basic, R3 full | Built | S3 storage (documents are encrypted on local disk for now) |
+| F26 | Sukuk and Islamic bank investments | R2 / R3 | Built | Real product catalogue and bank flag content; admin screen for bank flags (API exists) |
 
 Also built, not a numbered feature: accounts, roles and user management (see below), the data foundation tables, the trading calendar, price adjustment and quality checks.
 

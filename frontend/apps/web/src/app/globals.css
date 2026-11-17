@@ -39,6 +39,12 @@
   --chart-3: var(--color-amber-500);
   --chart-4: var(--color-red-500);
   --chart-5: var(--color-violet-500);
+  /* Line-chart series, in fixed order. Validated for colour-blind separation on white and
+     on the dark card; light-mode charts also carry a legend and a table view. */
+  --viz-1: #2a78d6;
+  --viz-2: #eb6834;
+  --viz-3: #1baf7a;
+  --viz-4: #eda100;
   --border: #e2e8f0;
   --input: #cbd5e1;
   --ring: var(--brand-teal-deep);
@@ -65,6 +71,10 @@
   --destructive-foreground: #ffffff;
   --mono: #ffffff;
   --mono-foreground: var(--brand-navy);
+  --viz-1: #3987e5;
+  --viz-2: #d95926;
+  --viz-3: #199e70;
+  --viz-4: #c98500;
   --border: #1e3a5f;
   --input: #2a4a74;
   --ring: var(--brand-teal);
@@ -135,5 +145,18 @@
 
   @media (width >= --theme(--breakpoint-xl)) {
     @apply max-w-(--breakpoint-xl);
+  }
+}
+
+/* Printing a Zakat or tax statement ("Save as PDF" in the browser's print dialog). */
+@media print {
+  header,
+  nav,
+  footer,
+  [data-print="hide"] {
+    display: none !important;
+  }
+  body {
+    background: #ffffff;
   }
 }

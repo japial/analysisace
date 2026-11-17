@@ -38,7 +38,7 @@ FastAPI API, analytics, ingestion and scheduled jobs. Root rules in [../CLAUDE.m
 - A new personal data table must be added to `_HOUSEHOLD_TABLES` or `_CHILD_TABLES` in `services/household_data.py` (or to `export_user_data` and `delete_account` in `services/auth.py` if it belongs to the user, not a household), so export and deletion cover it (FR23.4).
 - Rows that reference another table need that row flushed first: models define no ORM relationships, so SQLAlchemy does not order inserts for you. Call `session.flush()` after adding parents.
 - Demo data lives in `app/seed/`. Keep it fictional and labelled (docs/DECISIONS.md, D15). Add demo rows there whenever a feature gets a new table.
-- The first start of the local database after an unclean stop can take 30 seconds while PostgreSQL recovers; run `scripts/dev_db.py` again if it times out.
+- The first start of the local database after an unclean stop can take 30+ seconds while PostgreSQL recovers. `scripts/dev_db.py` waits up to 2 minutes for it; stop the database with `--stop` (or `.\dev -Stop`) to avoid the delay.
 
 ## Tests
 

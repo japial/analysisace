@@ -2,7 +2,7 @@
 
 import { CircleAlert, CircleCheck, LoaderCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { ComponentProps, ReactNode } from "react";
+import { type ComponentProps, type ReactNode, useId } from "react";
 import { useFormStatus } from "react-dom";
 
 import { Alert, AlertDescription, AlertIcon } from "@/components/ui/alert";
@@ -19,8 +19,14 @@ interface FieldProps extends ComponentProps<typeof Input> {
   aside?: ReactNode;
 }
 
-/** A labelled input. The hint is tied to the input for screen readers. */
-export function Field({ label, name, hint, aside, id = name, ...props }: FieldProps) {
+/**
+ * A labelled input. The hint is tied to the input for screen readers. Without an explicit
+ * `id`, each field gets a unique one, so two forms on a page with the same field name
+ * never share an id (and a label never points at the other form's input).
+ */
+export function Field({ label, name, hint, aside, id: givenId, ...props }: FieldProps) {
+  const autoId = useId();
+  const id = givenId ?? autoId;
   const hintId = hint ? `${id}-hint` : undefined;
   return (
     <div className="flex flex-col gap-1.5">

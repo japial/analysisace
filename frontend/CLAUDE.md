@@ -38,6 +38,16 @@ npm workspaces. Root rules in [../CLAUDE.md](../CLAUDE.md) apply here; commands 
 - Hiding a menu item is for convenience only. The API enforces every permission.
 - Menu entries are defined in `src/lib/nav.ts`.
 
+## Personal finance pages ("My money", F12 to F26)
+
+- Pages live under `app/[locale]/(site)/personal/`. The paths match the links the API stores in notifications (`/personal/allocation`, `/personal/assets/{id}` and so on), so do not rename them.
+- Start a page with `setup(locale, returnTo)` from `src/lib/personal-page.ts` and wrap it in `<PersonalShell>`, which adds the toolbar, the household switcher, the "create a household" card and the disclaimer.
+- Read API data with `hh(ctx, path)` (household routes) or `get(ctx, path)`, wrapped in `load(...)` so one failing block shows an error in place instead of breaking the page.
+- Writes go through `src/app/actions/personal.ts`. Pass them bound (`action.bind(null, householdId, ...)`) to `ActionForm`, `DeleteButton`, `ActionButton` or `ToggleSwitch` from `components/personal/forms.tsx`.
+- Label API values with `enumLabel(t, group, value)`; the labels live under `personal.enum.<group>` in both message files.
+- Format with `formatterFor(locale)` from `src/lib/fmt.ts` (`f.bdt`, `f.compact`, `f.pct`, `f.date`). Charts use `components/personal/line-chart.tsx` with the `--viz-1..4` colour tokens.
+- Files (CSV exports, documents) download through `/personal/download?path=...`; add a new file route to its allow-list.
+
 ## Next.js 16 notes
 
 - `params` and `searchParams` are promises: `await` them (or `use()` in non-async components).

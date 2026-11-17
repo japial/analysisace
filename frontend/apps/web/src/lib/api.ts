@@ -36,14 +36,14 @@ export class ApiError extends Error {
 }
 
 interface RequestOptions {
-  method?: "GET" | "POST" | "PATCH" | "DELETE";
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
   /** Session token. Requests with a token are never cached. */
   token?: string;
   userAgent?: string | null;
 }
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = "GET", body, token, userAgent } = options;
   const headers: Record<string, string> = { Accept: "application/json" };
   if (body !== undefined) headers["Content-Type"] = "application/json";
@@ -70,6 +70,17 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   }
   if (response.status === 204 || response.status === 202) return undefined as T;
   return (await response.json()) as T;
+}
+
+/**
+ * The raw API response, for file downloads (CSV exports, stored documents) that a route
+ * handler passes on to the browser unchanged.
+ */
+export async function requestRaw(path: string, token: string): Promise<Response> {
+  return fetch(`${API_BASE}/api/v1${path}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
 }
 
 // --- Public market data ---------------------------------------------------------------
