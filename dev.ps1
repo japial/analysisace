@@ -2,7 +2,7 @@
 #
 #   .\dev.ps1            database + API + web app
 #   .\dev.ps1 -Worker    also start the background worker
-#   .\dev.ps1 -Stop      stop the local database
+#   .\dev.ps1 -Stop      stop everything: API, web app, worker and the local database
 #
 # The API, worker and web app each open in their own window; close a window to stop it.
 
@@ -25,6 +25,23 @@ if (-not (Test-Path $python)) {
 Push-Location $backend
 try {
     if ($Stop) {
+        # The API (port 8000) and the web app (port 3000), whichever window started them.
+        foreach ($port in 8000, 3000) {
+            $owners = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue |
+                Select-Object -ExpandProperty OwningProcess -Unique
+            foreach ($id in $owners) {
+                # /T also ends the child processes (uvicorn's reloader, next's server).
+                taskkill /PID $id /T /F | Out-Null
+                Write-Host "Stopped the process on port $port." -ForegroundColor Cyan
+            }
+        }
+        # The worker has no port; find it by its command line.
+        Get-CimInstance Win32_Process -Filter "Name = 'python.exe'" |
+            Where-Object { $_.CommandLine -like '*app.jobs.worker*' } |
+            ForEach-Object {
+                taskkill /PID $_.ProcessId /T /F | Out-Null
+                Write-Host 'Stopped the worker.' -ForegroundColor Cyan
+            }
         & $python scripts\dev_db.py --stop
         exit $LASTEXITCODE
     }

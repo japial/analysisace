@@ -43,7 +43,7 @@ Frontend (run from `frontend/`):
 - Build: `npm run build`
 - Browser tests: `npm run test:e2e` (the database, API and web app must be running; set `E2E_ADMIN_EMAIL` and `E2E_ADMIN_PASSWORD` to include the admin test)
 
-Everything together on the Windows dev machine: `.\dev` from the repo root starts the local database, then opens the API and the web app in their own windows. Add `-Worker` to also start the worker, or use `-Stop` to stop the database.
+Everything together on the Windows dev machine: `.\dev` from the repo root starts the local database, then opens the API and the web app in their own windows. Add `-Worker` to also start the worker. `.\dev -Stop` stops everything (API, web app, worker and database).
 
 Everything together (where Docker exists): `docker compose up` from the repo root.
 
