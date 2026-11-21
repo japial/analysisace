@@ -1,188 +1,1569 @@
-<!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>analysisACE | Coming Soon</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Imported Inter for body text, Montserrat for the Logo -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        logo: ['Montserrat', 'sans-serif'], // Added custom logo font
-                    },
-                    colors: {
-                        brand: {
-                            dark: '#0f172a',
-                            primary: '#2563eb',
-                            accent: '#007078' /* Logo Teal */
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>analysisACE | Coming soon: Shariah screening, market history and household money for Bangladesh</title>
+  <meta name="description" content="Clear Shariah screening and market history for DSE stocks, and every part of your household's money in one place: costs, holdings, Zakat, tax and plans. In Bangla and English. Coming soon.">
+  <meta name="theme-color" content="#0b1f3a">
+  <meta property="og:title" content="analysisACE: invest with clarity, manage money by your values">
+  <meta property="og:description" content="Shariah screening with reasons, market history for DSE stocks, and household money with Zakat and tax. Coming soon.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+/*
+ * analysisACE coming-soon page. Plain CSS, no build step, no framework.
+ * Brand: navy, teal and deep teal (same tokens as the web app, docs/DECISIONS.md D14).
+ */
+
+:root {
+  --navy: #0b1f3a;
+  --teal: #2dd4bf;
+  --teal-deep: #0f766e;
+  --bg: #ffffff;
+  --muted: #f5f7fa;
+  --card: #ffffff;
+  --border: #e3e8ef;
+  --text: #0b1f3a;
+  --text-2: #475569;
+  --text-3: #64748b;
+  --primary: var(--teal-deep);
+  --primary-soft: rgba(15, 118, 110, 0.1);
+  --note: #fef9e7;
+  --note-border: #f5e3a3;
+  --note-text: #6b4e00;
+  --radius: 16px;
+  --font: "Inter", "Noto Sans Bengali", system-ui, sans-serif;
+  --display: "Space Grotesk", "Inter", "Noto Sans Bengali", system-ui, sans-serif;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b1f3a;
+    --muted: #0e2645;
+    --card: #11294b;
+    --border: #1f3a5f;
+    --text: #f1f5f9;
+    --text-2: #cbd5e1;
+    --text-3: #94a3b8;
+    --primary: var(--teal);
+    --primary-soft: rgba(45, 212, 191, 0.12);
+    --note: #2a2410;
+    --note-border: #4d4119;
+    --note-text: #f5e3a3;
+    color-scheme: dark;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.icon-sm {
+  width: 16px;
+  height: 16px;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 50;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--teal);
+  color: var(--navy);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip:focus {
+  top: 16px;
+}
+
+/* --- header -------------------------------------------------------------------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(11, 31, 58, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 68px;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.logo svg {
+  width: 36px;
+  height: 36px;
+}
+
+.wordmark {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.wordmark b {
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lang-switch {
+  display: inline-flex;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 3px;
+}
+
+.lang-switch button {
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.lang-switch button[aria-pressed="true"] {
+  background: var(--teal);
+  color: var(--navy);
+}
+
+/* --- buttons ------------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.btn-teal {
+  background: var(--teal);
+  color: var(--navy);
+}
+
+.btn-teal:hover {
+  background: #5ce1d0;
+}
+
+.btn-ghost {
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-sm {
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* On narrow phones the hero's own button is enough; keep the header uncluttered. */
+@media (max-width: 479px) {
+  .header-actions .btn {
+    display: none;
+  }
+}
+
+/* --- hero ---------------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--navy);
+  color: #fff;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.07;
+  background-image: linear-gradient(#fff 1px, transparent 1px),
+    linear-gradient(90deg, #fff 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 35%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, #000 35%, transparent 75%);
+}
+
+.glow {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+.glow-1 {
+  width: 28rem;
+  height: 28rem;
+  top: -8rem;
+  right: -6rem;
+  background: rgba(45, 212, 191, 0.25);
+}
+
+.glow-2 {
+  width: 24rem;
+  height: 24rem;
+  bottom: -10rem;
+  left: -6rem;
+  background: rgba(15, 118, 110, 0.4);
+}
+
+.hero-grid {
+  display: grid;
+  gap: 56px;
+  align-items: center;
+  padding-top: 64px;
+  padding-bottom: 80px;
+}
+
+@media (min-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: 1.1fr 1fr;
+    gap: 64px;
+    padding-top: 96px;
+    padding-bottom: 112px;
+  }
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.pill .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.2);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    box-shadow: 0 0 0 7px rgba(45, 212, 191, 0.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill .dot {
+    animation: none;
+  }
+}
+
+.hero h1 {
+  margin: 22px 0 0;
+  font-family: var(--display);
+  font-size: clamp(2.25rem, 6vw, 3.75rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.hero .lead {
+  max-width: 36rem;
+  margin: 22px 0 0;
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.75);
+  text-wrap: pretty;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.ticks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ticks li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ticks .icon {
+  color: var(--teal);
+}
+
+/* product illustration */
+.preview {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.preview-card {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #fff;
+  color: var(--navy);
+  padding: 24px;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5);
+}
+
+.preview-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.preview-head strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.preview-head span {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.1);
+  color: var(--teal-deep);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rules {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 16px;
+}
+
+.rule-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+.rule-top b {
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+
+.rule-top em {
+  font-style: normal;
+  color: #64748b;
+}
+
+.bar {
+  height: 6px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: #eef2f6;
+  overflow: hidden;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--teal-deep);
+}
+
+.preview-source {
+  margin: 20px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid #e3e8ef;
+  font-size: 0.6875rem;
+  color: #64748b;
+  text-align: right;
+}
+
+.float {
+  position: absolute;
+  display: none;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #e3e8ef;
+  background: #fff;
+  color: var(--navy);
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.45);
+}
+
+@media (min-width: 640px) {
+  .float {
+    display: block;
+  }
+}
+
+.float small {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.6875rem;
+  color: #64748b;
+}
+
+.float small .icon {
+  color: var(--teal-deep);
+}
+
+.float b {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.9rem;
+}
+
+.float-rate {
+  top: -64px;
+  right: 16px;
+  max-width: 16rem;
+}
+
+.float-zakat {
+  bottom: 24px;
+  left: -12px;
+}
+
+.float-zakat b {
+  font-size: 1.1rem;
+}
+
+.preview figcaption {
+  margin-top: 36px;
+  text-align: center;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- sections ------------------------------------------------------------------ */
+
+section.band {
+  padding: 72px 0;
+}
+
+@media (min-width: 1024px) {
+  section.band {
+    padding: 104px 0;
+  }
+}
+
+.band-muted {
+  background: var(--muted);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.section-head {
+  max-width: 44rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.section-head h2 {
+  margin: 14px 0 0;
+  font-family: var(--display);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.section-head p {
+  margin: 14px 0 0;
+  font-size: 1.125rem;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.grid {
+  display: grid;
+  gap: 18px;
+  margin: 48px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .span-2 {
+    grid-column: span 2;
+  }
+  .row-2 {
+    grid-row: span 2;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .grid-4 .row-2 {
+    grid-column: span 2;
+  }
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  padding: 24px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--card);
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.tile:hover {
+  transform: translateY(-2px);
+  border-color: rgba(15, 118, 110, 0.4);
+  box-shadow: 0 16px 32px -20px rgba(15, 118, 110, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile:hover {
+    transform: none;
+  }
+}
+
+.tile h3 {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+.tile p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+.tile .q {
+  font-family: var(--display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.tile-wide {
+  background: linear-gradient(135deg, var(--primary-soft), var(--card) 55%);
+}
+
+.tile-dashed {
+  border-style: dashed;
+  background: transparent;
+  justify-content: center;
+}
+
+.badge-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.soon {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+/* Zakat feature tile */
+.tile-zakat {
+  overflow: hidden;
+  justify-content: space-between;
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+.tile-zakat::after {
+  content: "";
+  position: absolute;
+  top: -4rem;
+  right: -4rem;
+  width: 14rem;
+  height: 14rem;
+  border-radius: 50%;
+  background: rgba(45, 212, 191, 0.25);
+  filter: blur(60px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .tile-zakat {
+    border-color: rgba(45, 212, 191, 0.3);
+    background: linear-gradient(160deg, #123a5c, var(--navy) 70%);
+  }
+}
+
+.tile-zakat > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tile-zakat h3 {
+  font-family: var(--display);
+  font-size: 1.5rem;
+}
+
+.tile-zakat p {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.tile-zakat .badge-icon {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--teal);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.chips .icon {
+  width: 14px;
+  height: 14px;
+  color: var(--teal);
+}
+
+/* steps */
+.steps {
+  position: relative;
+  display: grid;
+  gap: 32px;
+  margin: 48px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+@media (min-width: 768px) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .steps::before {
+    content: "";
+    position: absolute;
+    top: 24px;
+    left: 16%;
+    right: 16%;
+    height: 1px;
+    background: var(--border);
+  }
+}
+
+.steps li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.steps .num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--bg);
+  font-family: var(--display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  box-shadow: 0 0 0 8px var(--muted);
+}
+
+.steps h3 {
+  margin: 6px 0 0;
+  font-size: 1.0625rem;
+}
+
+.steps p {
+  max-width: 18rem;
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+/* principles */
+.principles {
+  display: grid;
+  gap: 36px 32px;
+  margin: 48px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .principles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .principles {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.principles li {
+  display: flex;
+  gap: 16px;
+}
+
+.principles h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+}
+
+.principles p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+/* questions and answers */
+.faq {
+  max-width: 48rem;
+  margin: 40px auto 0;
+  display: grid;
+  gap: 12px;
+}
+
+.faq details {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+}
+
+.faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq summary .icon {
+  color: var(--text-3);
+  transition: transform 0.2s;
+}
+
+.faq details[open] summary .icon {
+  transform: rotate(180deg);
+}
+
+.faq details p {
+  margin: 0;
+  padding: 0 20px 18px;
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+
+/* notify me */
+.notify {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--navy);
+  color: #fff;
+  padding: 56px 24px;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .notify {
+    padding: 64px 48px;
+  }
+}
+
+.notify .glow {
+  width: 24rem;
+  height: 24rem;
+  top: -6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(45, 212, 191, 0.25);
+}
+
+.notify h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.notify > p {
+  max-width: 34rem;
+  margin: 12px auto 0;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.notify-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 30rem;
+  margin: 28px auto 0;
+}
+
+.notify-form input[type="email"] {
+  flex: 1 1 16rem;
+  min-height: 46px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font: inherit;
+}
+
+.notify-form input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.notify .fineprint {
+  margin: 14px auto 0;
+  max-width: 30rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.notify .thanks {
+  margin: 20px 0 0;
+  font-weight: 600;
+  color: var(--teal);
+}
+
+.hidden-field {
+  display: none;
+}
+
+/* disclaimer and footer */
+.disclaimer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 32px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--note-border);
+  background: var(--note);
+  color: var(--note-text);
+  font-size: 0.9rem;
+}
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 0;
+  font-size: 0.85rem;
+  color: var(--text-3);
+}
+
+.site-footer .container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.site-footer .wordmark {
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.site-footer .wordmark b {
+  color: var(--primary);
+}
+
+/* Bangla text needs a little more line height. */
+html[lang="bn"] body {
+  line-height: 1.75;
+}
+
+html[lang="bn"] .hero h1,
+html[lang="bn"] .section-head h2 {
+  line-height: 1.3;
+}
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased selection:bg-brand-primary selection:text-white">
+<body>
+  <!-- Icons (Lucide, ISC licence), used with <svg><use href="#i-name"/></svg>. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+    <symbol id="i-badge" viewBox="0 0 24 24"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-percent" viewBox="0 0 24 24"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16"/><path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"/><path d="m2 15 6 6"/><path d="M19.5 8.5c.7-.7 1.5-1.6 1.5-2.7A2.73 2.73 0 0 0 16 4a2.78 2.78 0 0 0-5 1.8c0 1.2.8 2 1.5 2.8L16 12Z"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8M16 13H8M16 17H8"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9M13 17V5M8 17v-3"/></symbol>
+    <symbol id="i-news" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6Z"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.8 5.4a2 2 0 0 1-1.28 1.28l-5.4 1.8 1.8-5.4a2 2 0 0 1 1.28-1.28z"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 17.5v-11"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10.27 21a2 2 0 0 0 3.46 0"/><path d="M3.26 15.33A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.67C19.41 13.96 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.41 5.96-2.74 7.33"/></symbol>
+    <symbol id="i-scroll" viewBox="0 0 24 24"><path d="M15 12h-5M15 8h-5M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 4.99-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-bank" viewBox="0 0 24 24"><path d="M10 18v-7M14 18v-7M18 18v-7M6 18v-7M3 22h18"/><path d="M11.47 2.12a1.2 1.2 0 0 1 1.06 0L21 6.6V9H3V6.6Z"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
+  </svg>
 
-    <!-- Hero Section -->
-    <header class="bg-brand-dark text-white pt-24 pb-32 px-4 relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-primary via-brand-dark to-brand-dark"></div>
-        <div class="max-w-5xl mx-auto text-center relative z-10">
-            <h2 class="text-teal-400 font-bold tracking-widest uppercase text-sm mb-6">Coming Soon</h2>
-            
-            <!-- CSS-Based Logo Container -->
-            <div class="flex justify-center mb-8">
-                <div class="bg-white/95 px-8 py-4 rounded-2xl shadow-lg backdrop-blur-sm flex items-center justify-center select-none hover:scale-105 transition-transform duration-300">
-                    <div class="font-logo text-brand-accent text-4xl md:text-5xl tracking-tighter">
-                        <span class="font-semibold">analysis</span><span class="font-extrabold ml-[1px]">ACE</span>
-                    </div>
-                </div>
-            </div>
+  <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
 
-            <p class="text-xl md:text-2xl font-light text-gray-300 mb-8 tracking-wide">
-                Assets <span class="text-teal-400 mx-2">|</span> Capital <span class="text-teal-400 mx-2">|</span> Earnings
-            </p>
+  <header class="site-header">
+    <div class="container">
+      <a class="logo" href="#top" aria-label="analysisACE">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6L60 58H4Z" fill="#fff"/><rect x="17" y="42" width="7" height="10" rx="1.5" fill="#0b1f3a"/><rect x="40" y="42" width="7" height="10" rx="1.5" fill="#0b1f3a"/><rect x="28.5" y="30" width="7" height="22" rx="1.5" fill="#2dd4bf"/></svg>
+        <span class="wordmark" lang="en">analysis<b>ACE</b></span>
+      </a>
+      <div class="header-actions">
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button type="button" data-lang="en" aria-pressed="true">EN</button>
+          <button type="button" data-lang="bn" aria-pressed="false" lang="bn">বাংলা</button>
         </div>
-    </header>
+        <a class="btn btn-teal btn-sm" href="#notify" data-i18n="nav.notify">Notify me</a>
+      </div>
+    </div>
+  </header>
 
-    <!-- Features Section -->
-    <section class="py-20 px-4 -mt-16 relative z-20">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-                
-                <!-- Card 1: Core Finance -->
-                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
-                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl mb-6">
-                        <i class="fa-solid fa-wallet"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 border-b pb-2">Expense & Tax Management</h3>
-                    
-                    <div class="mb-6">
-                        <h4 class="font-semibold text-lg text-gray-900"><i class="fa-solid fa-receipt text-gray-400 mr-2"></i>Daily Cost Records</h4>
-                        <p class="text-gray-600 text-sm mt-1">Track daily expenses and auto-calculate monthly & yearly cost of living.</p>
-                        <div class="mt-2 bg-gray-50 p-3 rounded text-sm text-gray-500 border-l-2 border-brand-primary">
-                            <span class="font-semibold text-gray-700">Use case:</span> Log daily food, rent, and transport costs to instantly see your annual living expenses.
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4 class="font-semibold text-lg text-gray-900"><i class="fa-solid fa-scale-balanced text-gray-400 mr-2"></i>Tax & Zakat Snapshot</h4>
-                        <p class="text-gray-600 text-sm mt-1">Generate a full financial record snapshot to calculate tax obligations and Zakat contributions.</p>
-                        <div class="mt-2 bg-gray-50 p-3 rounded text-sm text-gray-500 border-l-2 border-brand-primary">
-                            <span class="font-semibold text-gray-700">Use case:</span> Calculate annual Zakat due on wealth while seamlessly preparing tax filings.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 2: Investment & Portfolio -->
-                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
-                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center text-2xl mb-6">
-                        <i class="fa-solid fa-chart-pie"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 border-b pb-2">📊 Investment & Portfolio</h3>
-                    
-                    <div class="space-y-5">
-                        <div>
-                            <h4 class="font-semibold text-gray-900">Portfolio Aggregation</h4>
-                            <p class="text-gray-600 text-sm mt-1 mb-2">Connect multiple brokerages, crypto wallets, retirement accounts, and real estate into one dashboard.</p>
-                            <p class="text-xs bg-indigo-50 text-indigo-800 p-2 rounded"><em>Use case: View Robinhood stocks, Binance crypto, and pension funds all in one place.</em></p>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-900">Performance Tracking</h4>
-                            <p class="text-gray-600 text-sm mt-1 mb-2">Track returns, volatility, diversification, and compare against benchmarks (S&P 500, NASDAQ).</p>
-                            <p class="text-xs bg-indigo-50 text-indigo-800 p-2 rounded"><em>Use case: Spot underperformance compared to the S&P 500 and execute a rebalance.</em></p>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-900">Asset Allocation Insights</h4>
-                            <p class="text-gray-600 text-sm mt-1 mb-2">Visualize allocation across stocks, bonds, crypto, real estate, and get rebalancing suggestions.</p>
-                            <p class="text-xs bg-indigo-50 text-indigo-800 p-2 rounded"><em>Use case: Discover 70% of your portfolio is in tech and get actionable diversification advice.</em></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 3: FIRE Planning -->
-                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
-                    <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center text-2xl mb-6">
-                        <i class="fa-solid fa-fire"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 border-b pb-2">🔮 FIRE Planning</h3>
-                    
-                    <div class="space-y-5">
-                        <div>
-                            <h4 class="font-semibold text-gray-900">FIRE Calculator</h4>
-                            <p class="text-gray-600 text-sm mt-1 mb-2">Personalized retirement projections based on savings rate, withdrawal rate, and lifestyle choices.</p>
-                            <p class="text-xs bg-orange-50 text-orange-800 p-2 rounded"><em>Use case: Input monthly savings and expenses to map out how to retire by 45.</em></p>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-900">❄️ Scenario Planning</h4>
-                            <p class="text-gray-600 text-sm mt-1 mb-2">Run "what-if" simulations for market downturns, early retirement, or higher expenses.</p>
-                            <p class="text-xs bg-orange-50 text-orange-800 p-2 rounded"><em>Use case: Test exactly how a 20% market crash would impact your FIRE timeline.</em></p>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-900">Goal Tracking</h4>
-                            <p class="text-gray-600 text-sm mt-1 mb-2">Track major milestones like "$500k net worth" or "retire at 45."</p>
-                            <p class="text-xs bg-orange-50 text-orange-800 p-2 rounded"><em>Use case: Get a celebratory notification when you hit your first $100k invested.</em></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 4: Analytics & Insights -->
-                <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
-                    <div class="w-12 h-12 bg-teal-100 text-teal-600 rounded-xl flex items-center justify-center text-2xl mb-6">
-                        <i class="fa-solid fa-chart-line"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 border-b pb-2">📈 Analytics & Insights</h3>
-                    
-                    <div class="space-y-5">
-                        <div>
-                            <h4 class="font-semibold text-gray-900">Alerts & Reports</h4>
-                            <p class="text-gray-600 text-sm mt-1 mb-2">Smart notifications for rebalancing, risk exposure, or FIRE progress.</p>
-                            <p class="text-xs bg-teal-50 text-teal-800 p-2 rounded"><em>Use case: Receive an alert when your portfolio risk unexpectedly exceeds your tolerance.</em></p>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-900">Community-Driven Insights</h4>
-                            <p class="text-gray-600 text-sm mt-1 mb-2">Anonymous benchmarking against peers on the FIRE journey.</p>
-                            <p class="text-xs bg-teal-50 text-teal-800 p-2 rounded"><em>Use case: Compare your current savings rate privately with others in your age group.</em></p>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-900">Sentiment & Market Signals</h4>
-                            <p class="text-gray-600 text-sm mt-1 mb-2">Analyze market news and social sentiment for investment decisions (Optional).</p>
-                            <p class="text-xs bg-teal-50 text-teal-800 p-2 rounded"><em>Use case: Notice rising negative sentiment around a stock you own and reduce exposure.</em></p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero" id="top">
+      <span class="glow glow-1" aria-hidden="true"></span>
+      <span class="glow glow-2" aria-hidden="true"></span>
+      <div class="container hero-grid">
+        <div>
+          <span class="pill"><span class="dot" aria-hidden="true"></span><span data-i18n="hero.eyebrow">Coming soon · Made for investors and families in Bangladesh</span></span>
+          <h1 data-i18n="hero.title">Invest with clarity. Manage money by your values.</h1>
+          <p class="lead" data-i18n="hero.lead">See why a DSE stock passes or fails a Shariah screen, how it moved when rates rose or a crisis hit, and where your household stands on Zakat, tax and long-term plans. Every number shows where it came from.</p>
+          <div class="hero-actions">
+            <a class="btn btn-teal" href="#notify"><span data-i18n="hero.ctaNotify">Notify me at launch</span><svg class="icon icon-sm"><use href="#i-arrow"/></svg></a>
+            <a class="btn btn-ghost" href="#markets" data-i18n="hero.ctaExplore">See what's coming</a>
+          </div>
+          <ul class="ticks">
+            <li><svg class="icon icon-sm"><use href="#i-check"/></svg><span data-i18n="hero.trust.sources">Every number shows its source</span></li>
+            <li><svg class="icon icon-sm"><use href="#i-check"/></svg><span data-i18n="hero.trust.bilingual">Bangla and English</span></li>
+            <li><svg class="icon icon-sm"><use href="#i-check"/></svg><span data-i18n="hero.trust.noTips">No tips, no hype</span></li>
+          </ul>
         </div>
+
+        <figure class="preview">
+          <div class="preview-card">
+            <div class="preview-head">
+              <div><strong lang="en">DMPHARMA</strong><span lang="en">Demo Pharma Ltd.</span></div>
+              <span class="status"><svg class="icon icon-sm"><use href="#i-badge"/></svg><span data-i18n="preview.status">Shariah compliant</span></span>
+            </div>
+            <ul class="rules">
+              <li>
+                <div class="rule-top"><span data-i18n="preview.debt">Interest-bearing debt</span><span><b data-num>13.27%</b> <em><span data-i18n="preview.limit">limit</span> <span data-num>30%</span></em></span></div>
+                <div class="bar"><i style="width:44%"></i></div>
+              </li>
+              <li>
+                <div class="rule-top"><span data-i18n="preview.cash">Cash and interest securities</span><span><b data-num>8.84%</b> <em><span data-i18n="preview.limit">limit</span> <span data-num>30%</span></em></span></div>
+                <div class="bar"><i style="width:29%"></i></div>
+              </li>
+              <li>
+                <div class="rule-top"><span data-i18n="preview.income">Non-permissible income</span><span><b data-num>1.20%</b> <em><span data-i18n="preview.limit">limit</span> <span data-num>5%</span></em></span></div>
+                <div class="bar"><i style="width:24%"></i></div>
+              </li>
+            </ul>
+            <p class="preview-source" data-i18n="preview.source">Source: annual report, page 64</p>
+          </div>
+          <div class="float float-rate" aria-hidden="true">
+            <small><svg class="icon icon-sm"><use href="#i-percent"/></svg><span data-i18n="preview.rate">Rate sensitivity</span></small>
+            <b data-i18n="preview.rateValue">−1.0% per 1-point yield rise</b>
+          </div>
+          <div class="float float-zakat" aria-hidden="true">
+            <small><svg class="icon icon-sm"><use href="#i-heart"/></svg><span data-i18n="preview.zakat">Zakat due</span></small>
+            <b data-num>৳99,264.75</b>
+          </div>
+          <figcaption data-i18n="preview.label">Illustration with a fictional company</figcaption>
+        </figure>
+      </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-brand-dark text-gray-400 py-10 text-center border-t border-gray-800 mt-10">
-        <div class="max-w-4xl mx-auto px-4">
-            
-            <!-- CSS-Based Footer Logo -->
-            <div class="flex justify-center mb-4">
-                <div class="bg-white/95 px-4 py-2 rounded-lg inline-block select-none">
-                    <div class="font-logo text-brand-accent text-xl tracking-tighter">
-                        <span class="font-semibold">analysis</span><span class="font-extrabold ml-[1px]">ACE</span>
-                    </div>
-                </div>
-            </div>
-
-            <p class="text-sm mb-6">Assets | Capital | Earnings</p>
-            <p class="text-sm">&copy; 2026 analysisACE. All rights reserved.</p>
+    <!-- The questions people ask -->
+    <section class="band" aria-labelledby="questions-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="questions-title" data-i18n="questions.title">Answers to the questions you actually ask</h2>
+          <p data-i18n="questions.lead">analysisACE starts from the decisions people in Bangladesh make about their money, not from a list of charts.</p>
         </div>
-    </footer>
+        <ul class="grid grid-3">
+          <li class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-badge"/></svg></span><p class="q" data-i18n="questions.halal.q">“Is this stock Shariah compliant, and why?”</p><p data-i18n="questions.halal.a">Every rule, the company's own figure, the limit and the report page it came from.</p></li>
+          <li class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-percent"/></svg></span><p class="q" data-i18n="questions.rates.q">“What happened to stocks like mine when rates rose?”</p><p data-i18n="questions.rates.a">A sensitivity score for each stock and sector, from five years of weekly data.</p></li>
+          <li class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-zap"/></svg></span><p class="q" data-i18n="questions.shock.q">“How did the market behave in past crises?”</p><p data-i18n="questions.shock.a">Moves after wars, energy shocks and policy changes, and how long recovery took.</p></li>
+          <li class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-heart"/></svg></span><p class="q" data-i18n="questions.zakat.q">“How much Zakat do I owe this year?”</p><p data-i18n="questions.zakat.a">A line-by-line calculation from your records, with a PDF in Bangla or English.</p></li>
+          <li class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-file"/></svg></span><p class="q" data-i18n="questions.tax.q">“What goes in my wealth statement?”</p><p data-i18n="questions.tax.a">Assets, debts, income and tax already deducted, ready for your return.</p></li>
+          <li class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-flame"/></svg></span><p class="q" data-i18n="questions.fire.q">“When could our savings cover our costs?”</p><p data-i18n="questions.fire.a">A FIRE plan with what-ifs for a market fall, higher costs or higher inflation.</p></li>
+        </ul>
+      </div>
+    </section>
 
+    <!-- Markets -->
+    <section class="band band-muted" id="markets" aria-labelledby="markets-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow" data-i18n="markets.eyebrow">Markets, explained</span>
+          <h2 id="markets-title" data-i18n="markets.title">Understand DSE stocks before you decide</h2>
+          <p data-i18n="markets.lead">Open methods, published rules and history you can check. analysisACE describes what happened; the decision stays yours.</p>
+        </div>
+        <ul class="grid grid-3">
+          <li class="span-2"><div class="tile tile-wide"><span class="badge-icon"><svg class="icon"><use href="#i-badge"/></svg></span><h3 data-i18n="markets.shariah.title">Shariah screen with reasons</h3><p data-i18n="markets.shariah.body">Two methods, AAOIFI-style and S&amp;P-style, side by side. See which ratio decided a status and open the report behind it.</p></div></li>
+          <li><div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-chart"/></svg></span><h3 data-i18n="markets.basket.title">Shariah list and basket</h3><p data-i18n="markets.basket.body">Filter every screened company, and compare a basket of compliant stocks with the DSES and DSEX over one, three or five years.</p></div></li>
+          <li><div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-percent"/></svg></span><h3 data-i18n="markets.rates.title">Rate sensitivity</h3><p data-i18n="markets.rates.body">How far each stock and sector has typically moved when the 91-day T-bill yield rose one point, with the confidence of the estimate.</p></div></li>
+          <li><div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-zap"/></svg></span><h3 data-i18n="markets.shocks.title">Shock playbook</h3><p data-i18n="markets.shocks.body">How the market, sectors and single stocks moved after past wars, energy events and policy changes.</p></div></li>
+          <li><div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-news"/></svg></span><h3 data-i18n="markets.macro.title">Weekly macro note</h3><p data-i18n="markets.macro.body">Yields, inflation, the taka, remittance, oil and the DSE each week, in plain Bangla and English, every figure sourced.</p></div></li>
+          <li class="span-2"><div class="tile tile-wide"><span class="badge-icon"><svg class="icon"><use href="#i-compass"/></svg></span><h3 data-i18n="markets.regime.title">Macro regime</h3><p data-i18n="markets.regime.body">A monthly label from rates, inflation and oil, and how each sector did in past months like this one.</p></div></li>
+          <li><div class="tile tile-dashed"><span class="badge-icon"><svg class="icon"><use href="#i-eye"/></svg></span><p><strong data-i18n="markets.watch">Watch any company and get a notice if its Shariah status changes.</strong></p></div></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- My money -->
+    <section class="band" aria-labelledby="money-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow" data-i18n="money.eyebrow">My money</span>
+          <h2 id="money-title" data-i18n="money.title">Your whole household's money, organised</h2>
+          <p data-i18n="money.lead">Everything a Bangladeshi family owns and owes, from BO accounts to gold, land and sanchayapatra, with Zakat and tax worked out for you.</p>
+        </div>
+        <div class="grid grid-4">
+          <div class="span-2 row-2">
+            <div class="tile tile-zakat">
+              <div>
+                <span class="badge-icon"><svg class="icon"><use href="#i-heart"/></svg></span>
+                <h3 data-i18n="money.zakat.title">Zakat, line by line</h3>
+                <p data-i18n="money.zakat.body">Choose gold or silver nisab and the date. Every asset is counted at each member's share, with interest-bearing items flagged. Download a PDF statement in Bangla or English.</p>
+              </div>
+              <ul class="chips">
+                <li><svg class="icon"><use href="#i-check"/></svg><span data-i18n="money.zakat.cash">Cash and bank</span></li>
+                <li><svg class="icon"><use href="#i-check"/></svg><span data-i18n="money.zakat.gold">Gold and silver</span></li>
+                <li><svg class="icon"><use href="#i-check"/></svg><span data-i18n="money.zakat.shares">Listed shares and funds</span></li>
+                <li><svg class="icon"><use href="#i-check"/></svg><span data-i18n="money.zakat.sukuk">Sukuk and Islamic deposits</span></li>
+                <li><svg class="icon"><use href="#i-check"/></svg><span data-i18n="money.zakat.business">Business</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-wallet"/></svg></span><h3 data-i18n="money.wealth.title">Everything you own</h3><p data-i18n="money.wealth.body">Bank, BO and fund accounts, sukuk and Islamic deposits, land, flats, gold and business stakes. Import your broker statement in one step.</p></div>
+          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-shield"/></svg></span><h3 data-i18n="money.check.title">Shariah check of your portfolio</h3><p data-i18n="money.check.body">Your compliant share by value, rate and shock exposure, and an estimate of dividends to purify.</p></div>
+          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-file"/></svg></span><h3 data-i18n="money.tax.title">Tax statement</h3><p data-i18n="money.tax.body">Wealth statement, income by kind, tax deducted at source and rebate-eligible purchases for the tax year, as PDF or CSV.</p></div>
+          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-flame"/></svg></span><h3 data-i18n="money.plans.title">FIRE plan and goals</h3><p data-i18n="money.plans.body">See when savings could cover your costs, test what-ifs, and track goals for net worth or a target age.</p></div>
+          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-receipt"/></svg></span><h3 data-i18n="money.costs.title">Costs and performance</h3><p data-i18n="money.costs.body">Monthly spending in today's taka, recurring bills added for you, and returns beside the DSE indices.</p></div>
+          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-users"/></svg></span><h3 data-i18n="money.family.title">Built for families</h3><p data-i18n="money.family.body">Add members with their own roles and Zakat dates, split shared assets by owner, and keep parents' money in a separate household.</p></div>
+          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-bell"/></svg></span><h3 data-i18n="money.alerts.title">Gentle reminders</h3><p data-i18n="money.alerts.body">Notices for maturities, sukuk auctions, Zakat dates, drift from your target mix and goals reached.</p></div>
+          <div class="tile tile-dashed"><a class="btn btn-teal" href="#notify"><span data-i18n="hero.ctaNotify">Notify me at launch</span><svg class="icon icon-sm"><use href="#i-arrow"/></svg></a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Steps -->
+    <section class="band band-muted" aria-labelledby="steps-title">
+      <div class="container">
+        <div class="section-head"><h2 id="steps-title" data-i18n="steps.title">Up and running in three steps</h2></div>
+        <ol class="steps">
+          <li><span class="num" data-num>1</span><h3 data-i18n="steps.one.title">Create your account</h3><p data-i18n="steps.one.body">Sign up in a minute and choose Bangla or English.</p></li>
+          <li><span class="num" data-num>2</span><h3 data-i18n="steps.two.title">Add your household</h3><p data-i18n="steps.two.body">Record accounts, holdings, gold and land, or import a broker CSV.</p></li>
+          <li><span class="num" data-num>3</span><h3 data-i18n="steps.three.title">See the full picture</h3><p data-i18n="steps.three.body">Net worth, Shariah share, Zakat due and your plans, kept up to date.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Principles -->
+    <section class="band" aria-labelledby="trust-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="trust-title" data-i18n="trust.title">Built on trust, not tips</h2>
+          <p data-i18n="trust.lead">Money decisions deserve evidence you can check. These principles are part of how analysisACE is built.</p>
+        </div>
+        <ul class="principles">
+          <li><span class="badge-icon"><svg class="icon"><use href="#i-eye"/></svg></span><div><h3 data-i18n="trust.traceable.title">Every number is traceable</h3><p data-i18n="trust.traceable.body">Each figure shows its source and the time it was worked out.</p></div></li>
+          <li><span class="badge-icon"><svg class="icon"><use href="#i-scroll"/></svg></span><div><h3 data-i18n="trust.rules.title">Rules are published</h3><p data-i18n="trust.rules.body">Screening and Zakat rules are versioned, shown on every result and sent to a Shariah advisor for approval.</p></div></li>
+          <li><span class="badge-icon"><svg class="icon"><use href="#i-help"/></svg></span><div><h3 data-i18n="trust.advice.title">History, never tips</h3><p data-i18n="trust.advice.body">We describe how markets moved in the past. We never tell you to buy, sell or hold.</p></div></li>
+          <li><span class="badge-icon"><svg class="icon"><use href="#i-lock"/></svg></span><div><h3 data-i18n="trust.privacy.title">Your data, your control</h3><p data-i18n="trust.privacy.body">Consent for every optional use, encrypted account numbers and documents, export or delete at any time.</p></div></li>
+          <li><span class="badge-icon"><svg class="icon"><use href="#i-pin"/></svg></span><div><h3 data-i18n="trust.local.title">Made for Bangladesh</h3><p data-i18n="trust.local.body">DSE trading days, lakh and crore, Bangla digits, sanchayapatra, Mudaraba deposits and the July-to-June tax year.</p></div></li>
+          <li><span class="badge-icon"><svg class="icon"><use href="#i-bank"/></svg></span><div><h3 data-i18n="trust.own.title">Our own screen</h3><p data-i18n="trust.own.body">analysisACE runs its own screening from company reports. It never republishes the DSE's licensed constituent list.</p></div></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Questions and answers -->
+    <section class="band band-muted" aria-labelledby="faq-title">
+      <div class="container">
+        <div class="section-head"><h2 id="faq-title" data-i18n="faq.title">Common questions</h2></div>
+        <div class="faq">
+          <details><summary><span data-i18n="faq.launch.q">When will analysisACE open?</span><svg class="icon icon-sm"><use href="#i-down"/></svg></summary><p data-i18n="faq.launch.a">The features on this page are built and being tested with demo data. Leave your email below and we will tell you the day it opens.</p></details>
+          <details><summary><span data-i18n="faq.advice.q">Is this investment advice?</span><svg class="icon icon-sm"><use href="#i-down"/></svg></summary><p data-i18n="faq.advice.a">No. analysisACE shows historical analysis for education. It never recommends buying, selling or holding anything, and the decision is always yours.</p></details>
+          <details><summary><span data-i18n="faq.method.q">Which Shariah method do you use?</span><svg class="icon icon-sm"><use href="#i-down"/></svg></summary><p data-i18n="faq.method.a">Two: an AAOIFI-style and an S&amp;P-style method, shown side by side. The thresholds are published and versioned, and they stay provisional until a Shariah advisor approves them.</p></details>
+          <details><summary><span data-i18n="faq.data.q">Where does the data come from?</span><svg class="icon icon-sm"><use href="#i-down"/></svg></summary><p data-i18n="faq.data.a">Prices and indices from the stock exchange, rates and macro figures from Bangladesh Bank and other public sources, and company figures from annual and quarterly reports. Every figure names its source.</p></details>
+          <details><summary><span data-i18n="faq.privacy.q">Is my household's data private?</span><svg class="icon icon-sm"><use href="#i-down"/></svg></summary><p data-i18n="faq.privacy.a">Yes. Only members of your household can see it. Account numbers and documents are encrypted, optional uses need your consent, and you can export or delete your data at any time.</p></details>
+          <details><summary><span data-i18n="faq.language.q">Can I use it in Bangla?</span><svg class="icon icon-sm"><use href="#i-down"/></svg></summary><p data-i18n="faq.language.a">Yes. Every page, notice and PDF statement is available in Bangla and English, with Bangla digits.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Notify me at launch (Netlify Forms) -->
+    <section class="band" id="notify" aria-labelledby="notify-title">
+      <div class="container">
+        <div class="notify">
+          <span class="glow" aria-hidden="true"></span>
+          <h2 id="notify-title" data-i18n="notify.title">Be the first to know</h2>
+          <p data-i18n="notify.lead">Leave your email and we will tell you the day analysisACE opens. Nothing else.</p>
+          <form class="notify-form" name="launch-notify" method="POST" data-netlify="true" netlify-honeypot="company">
+            <input type="hidden" name="form-name" value="launch-notify">
+            <input type="hidden" name="language" value="en">
+            <p class="hidden-field"><label>Leave this empty <input name="company"></label></p>
+            <label class="sr-only" for="notify-email" data-i18n="notify.label">Email address</label>
+            <input id="notify-email" type="email" name="email" required autocomplete="email" placeholder="you@example.com">
+            <button class="btn btn-teal" type="submit"><svg class="icon icon-sm"><use href="#i-mail"/></svg><span data-i18n="notify.submit">Notify me</span></button>
+          </form>
+          <p class="fineprint" data-i18n="notify.fineprint">We use your email only to tell you when analysisACE opens. No marketing, no sharing.</p>
+          <p class="thanks" role="status" hidden data-i18n="notify.thanks">Thank you. We will email you when analysisACE opens.</p>
+        </div>
+        <p class="disclaimer" role="note"><svg class="icon"><use href="#i-info"/></svg><span data-i18n="disclaimer">Historical analysis for education only. Not investment advice.</span></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span class="wordmark" lang="en">analysis<b>ACE</b></span>
+      <span>&copy; 2026 analysisACE · <span data-i18n="disclaimer">Historical analysis for education only. Not investment advice.</span></span>
+    </div>
+  </footer>
+
+  <script>
+/*
+ * analysisACE coming-soon page: English/Bangla switch and the launch notice form.
+ * The page works without this script (English, form posts normally).
+ */
+(function () {
+  "use strict";
+
+  var BN = {
+    skip: "মূল লেখায় যান",
+    "nav.notify": "জানিয়ে দিন",
+    "hero.eyebrow": "শিগগিরই আসছে · বাংলাদেশের বিনিয়োগকারী ও পরিবারের জন্য তৈরি",
+    "hero.title": "স্পষ্টভাবে বিনিয়োগ করুন। মূল্যবোধ মেনে অর্থ সামলান।",
+    "hero.lead": "দেখুন ডিএসইর একটি শেয়ার কেন শরিয়াহ যাচাইয়ে উত্তীর্ণ বা অনুত্তীর্ণ, সুদহার বাড়লে বা সংকট এলে সেটি কেমন নড়েছে, আর যাকাত, কর ও দীর্ঘমেয়াদি পরিকল্পনায় আপনার পরিবার কোথায় আছে। প্রতিটি সংখ্যার উৎস দেওয়া থাকে।",
+    "hero.ctaNotify": "চালু হলে জানিয়ে দিন",
+    "hero.ctaExplore": "কী আসছে দেখুন",
+    "hero.trust.sources": "প্রতিটি সংখ্যার উৎস দেখা যায়",
+    "hero.trust.bilingual": "বাংলা ও ইংরেজি",
+    "hero.trust.noTips": "কোনো টিপস নয়, কোনো হুজুগ নয়",
+    "preview.status": "শরিয়াহসম্মত",
+    "preview.debt": "সুদভিত্তিক ঋণ",
+    "preview.cash": "নগদ ও সুদভিত্তিক সিকিউরিটিজ",
+    "preview.income": "অননুমোদিত আয়",
+    "preview.limit": "সীমা",
+    "preview.source": "উৎস: বার্ষিক প্রতিবেদন, পৃষ্ঠা ৬৪",
+    "preview.rate": "সুদহারের প্রতি সংবেদনশীলতা",
+    "preview.rateValue": "সুদহার ১ পয়েন্ট বাড়লে −১.০%",
+    "preview.zakat": "প্রদেয় যাকাত",
+    "preview.label": "কাল্পনিক কোম্পানি দিয়ে উদাহরণ",
+    "questions.title": "আপনি যে প্রশ্নগুলো সত্যিই করেন, তার উত্তর",
+    "questions.lead": "analysisACE শুরু হয় বাংলাদেশের মানুষের অর্থ নিয়ে নেওয়া সিদ্ধান্ত থেকে, চার্টের তালিকা থেকে নয়।",
+    "questions.halal.q": "“এই শেয়ারটি কি শরিয়াহসম্মত, এবং কেন?”",
+    "questions.halal.a": "প্রতিটি নিয়ম, কোম্পানির নিজস্ব সংখ্যা, সীমা এবং যে প্রতিবেদনের পৃষ্ঠা থেকে নেওয়া।",
+    "questions.rates.q": "“সুদহার বাড়লে আমার মতো শেয়ারের কী হয়েছিল?”",
+    "questions.rates.a": "পাঁচ বছরের সাপ্তাহিক তথ্য থেকে প্রতিটি শেয়ার ও খাতের সংবেদনশীলতা স্কোর।",
+    "questions.shock.q": "“অতীতের সংকটে বাজার কেমন আচরণ করেছে?”",
+    "questions.shock.a": "যুদ্ধ, জ্বালানি সংকট ও নীতি পরিবর্তনের পর দামের ওঠানামা, এবং ফিরে আসতে কত সময় লেগেছে।",
+    "questions.zakat.q": "“এ বছর আমার যাকাত কত?”",
+    "questions.zakat.a": "আপনার রেকর্ড থেকে লাইন ধরে হিসাব, সাথে বাংলা বা ইংরেজিতে PDF।",
+    "questions.tax.q": "“সম্পদ বিবরণীতে কী কী দিতে হবে?”",
+    "questions.tax.a": "সম্পদ, ঋণ, আয় ও উৎসে কাটা কর, রিটার্নের জন্য প্রস্তুত।",
+    "questions.fire.q": "“কবে আমাদের সঞ্চয় দিয়ে খরচ চলবে?”",
+    "questions.fire.a": "বাজার পতন, বাড়তি খরচ বা বাড়তি মূল্যস্ফীতির হিসাবসহ একটি FIRE পরিকল্পনা।",
+    "markets.eyebrow": "বাজার, ব্যাখ্যাসহ",
+    "markets.title": "সিদ্ধান্তের আগে ডিএসইর শেয়ার বুঝে নিন",
+    "markets.lead": "উন্মুক্ত পদ্ধতি, প্রকাশিত নিয়ম আর যাচাই করা যায় এমন ইতিহাস। analysisACE জানায় কী ঘটেছিল; সিদ্ধান্ত আপনার।",
+    "markets.shariah.title": "কারণসহ শরিয়াহ যাচাই",
+    "markets.shariah.body": "AAOIFI ও S&P, দুই পদ্ধতি পাশাপাশি। কোন অনুপাতে অবস্থা ঠিক হলো দেখুন এবং পেছনের প্রতিবেদন খুলুন।",
+    "markets.basket.title": "শরিয়াহ তালিকা ও ঝুড়ি",
+    "markets.basket.body": "যাচাই করা সব কোম্পানি ছেঁকে দেখুন, এবং শরিয়াহসম্মত শেয়ারের ঝুড়িকে এক, তিন বা পাঁচ বছরে ডিএসইএস ও ডিএসইএক্সের সাথে তুলনা করুন।",
+    "markets.rates.title": "সুদহারের প্রতি সংবেদনশীলতা",
+    "markets.rates.body": "৯১ দিনের ট্রেজারি বিলের সুদহার ১ পয়েন্ট বাড়লে প্রতিটি শেয়ার ও খাত সাধারণত কতটা নড়েছে, অনুমানের আস্থাসহ।",
+    "markets.shocks.title": "শক প্লেবুক",
+    "markets.shocks.body": "অতীতের যুদ্ধ, জ্বালানি সংকট ও নীতি পরিবর্তনের পর বাজার, খাত ও আলাদা শেয়ার কেমন নড়েছে।",
+    "markets.macro.title": "সাপ্তাহিক সামষ্টিক নোট",
+    "markets.macro.body": "প্রতি সপ্তাহে সুদহার, মূল্যস্ফীতি, টাকা, রেমিট্যান্স, তেল ও ডিএসই, সহজ বাংলা ও ইংরেজিতে, প্রতিটি সংখ্যার উৎসসহ।",
+    "markets.regime.title": "সামষ্টিক পরিস্থিতি",
+    "markets.regime.body": "সুদহার, মূল্যস্ফীতি ও তেলের দাম থেকে মাসিক লেবেল, এবং এমন অতীত মাসগুলোতে প্রতিটি খাত কেমন করেছে।",
+    "markets.watch": "যেকোনো কোম্পানি নজরে রাখুন; শরিয়াহ অবস্থা বদলালে নোটিশ পাবেন।",
+    "money.eyebrow": "আমার অর্থ",
+    "money.title": "পুরো পরিবারের অর্থ, গোছানো",
+    "money.lead": "বিও অ্যাকাউন্ট থেকে সোনা, জমি ও সঞ্চয়পত্র পর্যন্ত বাংলাদেশি পরিবারের যা কিছু আছে ও যা দেনা, সাথে যাকাত ও করের হিসাব।",
+    "money.zakat.title": "লাইন ধরে যাকাত",
+    "money.zakat.body": "সোনা বা রুপার নিসাব ও তারিখ বেছে নিন। প্রতিটি সম্পদ প্রত্যেক সদস্যের অংশ অনুযায়ী গোনা হয়, সুদভিত্তিক বিষয় চিহ্নিত থাকে। বাংলা বা ইংরেজিতে PDF বিবরণী নামান।",
+    "money.zakat.cash": "নগদ ও ব্যাংক",
+    "money.zakat.gold": "সোনা ও রুপা",
+    "money.zakat.shares": "তালিকাভুক্ত শেয়ার ও ফান্ড",
+    "money.zakat.sukuk": "সুকুক ও ইসলামী আমানত",
+    "money.zakat.business": "ব্যবসা",
+    "money.wealth.title": "আপনার সব সম্পদ",
+    "money.wealth.body": "ব্যাংক, বিও ও ফান্ড অ্যাকাউন্ট, সুকুক ও ইসলামী আমানত, জমি, ফ্ল্যাট, সোনা ও ব্যবসার অংশ। এক ধাপে ব্রোকারের বিবরণী আনুন।",
+    "money.check.title": "পোর্টফোলিওর শরিয়াহ যাচাই",
+    "money.check.body": "মূল্য অনুযায়ী শরিয়াহসম্মত অংশ, সুদহার ও ধাক্কার প্রভাব, এবং পরিশোধনযোগ্য লভ্যাংশের আনুমানিক হিসাব।",
+    "money.tax.title": "কর বিবরণী",
+    "money.tax.body": "করবর্ষের সম্পদ বিবরণী, ধরন অনুযায়ী আয়, উৎসে কাটা কর ও রেয়াতযোগ্য কেনাকাটা, PDF বা CSV হিসেবে।",
+    "money.plans.title": "FIRE পরিকল্পনা ও লক্ষ্য",
+    "money.plans.body": "কবে সঞ্চয় দিয়ে খরচ চলবে দেখুন, বিভিন্ন পরিস্থিতি পরখ করুন, এবং নিট সম্পদ বা নির্দিষ্ট বয়সের লক্ষ্য অনুসরণ করুন।",
+    "money.costs.title": "খরচ ও পারফরম্যান্স",
+    "money.costs.body": "আজকের টাকায় মাসিক খরচ, নিয়মিত বিল আপনাআপনি যোগ, এবং ডিএসই সূচকের পাশে রিটার্ন।",
+    "money.family.title": "পরিবারের জন্য তৈরি",
+    "money.family.body": "প্রত্যেক সদস্যের নিজস্ব ভূমিকা ও যাকাতের তারিখ, মালিক অনুযায়ী যৌথ সম্পদ ভাগ, আর মা-বাবার অর্থ আলাদা পরিবারে রাখুন।",
+    "money.alerts.title": "সময়মতো মনে করিয়ে দেওয়া",
+    "money.alerts.body": "মেয়াদপূর্তি, সুকুক নিলাম, যাকাতের তারিখ, লক্ষ্য বণ্টন থেকে বিচ্যুতি ও লক্ষ্য অর্জনের নোটিশ।",
+    "steps.title": "তিন ধাপে শুরু করুন",
+    "steps.one.title": "অ্যাকাউন্ট খুলুন",
+    "steps.one.body": "এক মিনিটে নিবন্ধন করুন, বাংলা বা ইংরেজি বেছে নিন।",
+    "steps.two.title": "পরিবার যোগ করুন",
+    "steps.two.body": "হিসাব, বিনিয়োগ, সোনা ও জমি লিখুন, অথবা ব্রোকারের CSV আনুন।",
+    "steps.three.title": "পুরো ছবি দেখুন",
+    "steps.three.body": "নিট সম্পদ, শরিয়াহসম্মত অংশ, প্রদেয় যাকাত ও পরিকল্পনা, সবসময় হালনাগাদ।",
+    "trust.title": "টিপস নয়, আস্থার ওপর তৈরি",
+    "trust.lead": "অর্থের সিদ্ধান্তে যাচাইযোগ্য প্রমাণ দরকার। এই নীতিগুলো analysisACE তৈরির অংশ।",
+    "trust.traceable.title": "প্রতিটি সংখ্যা যাচাইযোগ্য",
+    "trust.traceable.body": "প্রতিটি সংখ্যার পাশে তার উৎস ও হিসাবের সময় দেখা যায়।",
+    "trust.rules.title": "নিয়ম প্রকাশিত",
+    "trust.rules.body": "যাচাই ও যাকাতের নিয়ম সংস্করণসহ রাখা, প্রতিটি ফলাফলে দেখানো এবং অনুমোদনের জন্য শরিয়াহ উপদেষ্টার কাছে পাঠানো।",
+    "trust.advice.title": "ইতিহাস, টিপস নয়",
+    "trust.advice.body": "আমরা জানাই অতীতে বাজার কেমন নড়েছে। কখনো কিনতে, বিক্রি করতে বা ধরে রাখতে বলি না।",
+    "trust.privacy.title": "আপনার তথ্য, আপনার নিয়ন্ত্রণে",
+    "trust.privacy.body": "প্রতিটি ঐচ্ছিক ব্যবহারে সম্মতি, অ্যাকাউন্ট নম্বর ও নথি এনক্রিপ্ট করা, যেকোনো সময় নামানো বা মুছে ফেলা যায়।",
+    "trust.local.title": "বাংলাদেশের জন্য তৈরি",
+    "trust.local.body": "ডিএসইর লেনদেনের দিন, লাখ ও কোটি, বাংলা অঙ্ক, সঞ্চয়পত্র, মুদারাবা আমানত এবং জুলাই-জুন করবর্ষ।",
+    "trust.own.title": "নিজস্ব যাচাই",
+    "trust.own.body": "analysisACE কোম্পানির প্রতিবেদন থেকে নিজস্ব যাচাই চালায়। ডিএসইর লাইসেন্সকৃত তালিকা কখনো পুনঃপ্রকাশ করে না।",
+    "faq.title": "সাধারণ প্রশ্ন",
+    "faq.launch.q": "analysisACE কবে চালু হবে?",
+    "faq.launch.a": "এই পাতার ফিচারগুলো তৈরি হয়েছে এবং নমুনা তথ্যে পরীক্ষা চলছে। নিচে ইমেইল দিন; চালুর দিন আমরা জানিয়ে দেব।",
+    "faq.advice.q": "এটি কি বিনিয়োগ পরামর্শ?",
+    "faq.advice.a": "না। analysisACE শিক্ষার জন্য ঐতিহাসিক বিশ্লেষণ দেখায়। কখনো কিছু কিনতে, বিক্রি করতে বা ধরে রাখতে বলে না; সিদ্ধান্ত সবসময় আপনার।",
+    "faq.method.q": "কোন শরিয়াহ পদ্ধতি ব্যবহার করেন?",
+    "faq.method.a": "দুটি: AAOIFI ও S&P পদ্ধতি, পাশাপাশি দেখানো। সীমাগুলো প্রকাশিত ও সংস্করণসহ, এবং শরিয়াহ উপদেষ্টা অনুমোদন না করা পর্যন্ত অস্থায়ী।",
+    "faq.data.q": "তথ্য কোথা থেকে আসে?",
+    "faq.data.a": "দাম ও সূচক স্টক এক্সচেঞ্জ থেকে, সুদহার ও সামষ্টিক তথ্য বাংলাদেশ ব্যাংক ও অন্যান্য সরকারি উৎস থেকে, এবং কোম্পানির সংখ্যা বার্ষিক ও প্রান্তিক প্রতিবেদন থেকে। প্রতিটি সংখ্যার উৎস উল্লেখ থাকে।",
+    "faq.privacy.q": "পরিবারের তথ্য কি গোপন থাকে?",
+    "faq.privacy.a": "হ্যাঁ। শুধু আপনার পরিবারের সদস্যরা দেখতে পান। অ্যাকাউন্ট নম্বর ও নথি এনক্রিপ্ট করা, ঐচ্ছিক ব্যবহারে আপনার সম্মতি লাগে, এবং যেকোনো সময় তথ্য নামানো বা মুছে ফেলা যায়।",
+    "faq.language.q": "বাংলায় ব্যবহার করা যায়?",
+    "faq.language.a": "হ্যাঁ। প্রতিটি পাতা, নোটিশ ও PDF বিবরণী বাংলা ও ইংরেজিতে, বাংলা অঙ্কসহ।",
+    "notify.title": "সবার আগে জানুন",
+    "notify.lead": "ইমেইল দিন; analysisACE চালুর দিন আমরা জানিয়ে দেব। এর বাইরে কিছু নয়।",
+    "notify.label": "ইমেইল ঠিকানা",
+    "notify.submit": "জানিয়ে দিন",
+    "notify.fineprint": "আপনার ইমেইল শুধু analysisACE চালুর খবর জানাতে ব্যবহার হবে। কোনো প্রচারণা নয়, কারও সাথে শেয়ার নয়।",
+    "notify.thanks": "ধন্যবাদ। analysisACE চালু হলে আমরা আপনাকে ইমেইল করব।",
+    disclaimer: "ঐতিহাসিক বিশ্লেষণ শুধু শিক্ষার উদ্দেশ্যে। এটি বিনিয়োগ পরামর্শ নয়।",
+  };
+  var NOTIFY_ERROR = {
+    en: "That did not go through. Please try again in a moment.",
+    bn: "পাঠানো যায়নি। একটু পরে আবার চেষ্টা করুন।",
+  };
+  var BN_DIGITS = "০১২৩৪৫৬৭৮৯";
+  var STORAGE_KEY = "aa-lang";
+
+  var textNodes = document.querySelectorAll("[data-i18n]");
+  var numNodes = document.querySelectorAll("[data-num]");
+  // The English text is the page itself; keep it to switch back.
+  var english = new Map();
+  textNodes.forEach(function (el) {
+    english.set(el, el.textContent);
+  });
+  numNodes.forEach(function (el) {
+    english.set(el, el.textContent);
+  });
+
+  function toBanglaDigits(text) {
+    return text.replace(/[0-9]/g, function (d) {
+      return BN_DIGITS[Number(d)];
+    });
+  }
+
+  var current = "en";
+
+  function apply(lang) {
+    current = lang === "bn" ? "bn" : "en";
+    document.documentElement.lang = current;
+    textNodes.forEach(function (el) {
+      var key = el.getAttribute("data-i18n");
+      el.textContent = current === "bn" && BN[key] ? BN[key] : english.get(el);
+    });
+    numNodes.forEach(function (el) {
+      var original = english.get(el);
+      el.textContent = current === "bn" ? toBanglaDigits(original) : original;
+    });
+    document.querySelectorAll(".lang-switch button").forEach(function (button) {
+      button.setAttribute("aria-pressed", String(button.getAttribute("data-lang") === current));
+    });
+    var languageField = document.querySelector('.notify-form input[name="language"]');
+    if (languageField) languageField.value = current;
+    try {
+      localStorage.setItem(STORAGE_KEY, current);
+    } catch (e) {
+      /* Storage can be blocked; the choice then lasts for this visit only. */
+    }
+  }
+
+  document.querySelectorAll(".lang-switch button").forEach(function (button) {
+    button.addEventListener("click", function () {
+      apply(button.getAttribute("data-lang"));
+    });
+  });
+
+  var saved = null;
+  try {
+    saved = localStorage.getItem(STORAGE_KEY);
+  } catch (e) {
+    saved = null;
+  }
+  var preferred = saved || ((navigator.language || "").toLowerCase().indexOf("bn") === 0 ? "bn" : "en");
+  if (preferred === "bn") apply("bn");
+
+  // Launch notice form: send in place to Netlify Forms, then thank the visitor.
+  var form = document.querySelector(".notify-form");
+  if (form && window.fetch) {
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      var button = form.querySelector("button");
+      button.disabled = true;
+      fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(new FormData(form)).toString(),
+      })
+        .then(function (response) {
+          if (!response.ok) throw new Error(String(response.status));
+          form.hidden = true;
+          document.querySelector(".notify .fineprint").hidden = true;
+          var thanks = document.querySelector(".notify .thanks");
+          thanks.hidden = false;
+        })
+        .catch(function () {
+          button.disabled = false;
+          var fine = document.querySelector(".notify .fineprint");
+          fine.textContent = NOTIFY_ERROR[current];
+        });
+    });
+  }
+})();
+  </script>
 </body>
 </html>
