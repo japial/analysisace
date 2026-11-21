@@ -1,0 +1,25 @@
+# Macro regime rules (FR8.1). Bump `version` on any change.
+version: "0.2.0"
+
+rate_trend:
+  series: TBILL_91D
+  lookback_months: 3
+  easing_max_change_pts: -0.5
+  tightening_min_change_pts: 0.5
+oil_shock:
+  series: BRENT_USD
+  lookback_months: 1
+  min_change_pct: 15.0
+# TODO(owner): FR8.1 - the PRD names an inflation band but not its limits. Provisional
+# bands on year-on-year CPI; `max` is exclusive and the last band has no max.
+inflation:
+  series: CPI_YOY
+  bands:
+    - { key: low, max: 6.0 }
+    - { key: moderate, max: 9.0 }
+    - { key: high, max: null }
+# The PRD names a liquidity trend but no series or rule. Off until one is chosen; the
+# label then leaves it out.
+liquidity_trend: null
+# Fewer past months than this with the same label: the sector table says "too few months".
+min_months_for_sector_stats: 3

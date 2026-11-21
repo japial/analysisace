@@ -1,0 +1,26 @@
+"use client";
+
+import { Moon, Sun } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useTheme } from "next-themes";
+
+import { Button } from "@/components/ui/button";
+
+export function ThemeToggle() {
+  const t = useTranslations("common");
+  const { resolvedTheme, setTheme } = useTheme();
+
+  return (
+    <Button
+      variant="ghost"
+      mode="icon"
+      shape="circle"
+      aria-label={t("theme")}
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+    >
+      {/* Both icons render; CSS picks one, so server and client markup match. */}
+      <Moon className="dark:hidden" />
+      <Sun className="hidden dark:block" />
+    </Button>
+  );
+}

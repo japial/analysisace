@@ -1,0 +1,162 @@
+/*
+ * Metronic 9 theme tokens, set to the analysisACE brand (docs/DECISIONS.md, D11 and D14).
+ * Brand colours come from the owner's logo system: navy #0B1F3A, teal #2DD4BF, deep teal #0F766E.
+ */
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/** Dark and light variants follow the `.dark` class set by next-themes. **/
+@custom-variant dark (&:is(.dark *));
+@custom-variant light (&:not(.dark *));
+
+:root {
+  /* Brand */
+  --brand-navy: #0b1f3a;
+  --brand-teal: #2dd4bf;
+  --brand-teal-deep: #0f766e;
+
+  --background: #ffffff;
+  --foreground: var(--brand-navy);
+  --card: #ffffff;
+  --card-foreground: var(--brand-navy);
+  --popover: #ffffff;
+  --popover-foreground: var(--brand-navy);
+  /* White on deep teal is 5.5:1. */
+  --primary: var(--brand-teal-deep);
+  --primary-foreground: #ffffff;
+  --secondary: #f4f6f9;
+  --secondary-foreground: #374151;
+  --muted: #f4f6f9;
+  --muted-foreground: #4b5563;
+  --accent: #eaf0f6;
+  --accent-foreground: var(--brand-navy);
+  --destructive: var(--color-red-600);
+  --destructive-foreground: #ffffff;
+  --mono: var(--brand-navy);
+  --mono-foreground: #ffffff;
+  --chart-1: var(--brand-teal-deep);
+  --chart-2: var(--brand-navy);
+  --chart-3: var(--color-amber-500);
+  --chart-4: var(--color-red-500);
+  --chart-5: var(--color-violet-500);
+  /* Line-chart series, in fixed order. Validated for colour-blind separation on white and
+     on the dark card; light-mode charts also carry a legend and a table view. */
+  --viz-1: #2a78d6;
+  --viz-2: #eb6834;
+  --viz-3: #1baf7a;
+  --viz-4: #eda100;
+  --border: #e2e8f0;
+  --input: #cbd5e1;
+  --ring: var(--brand-teal-deep);
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: var(--brand-navy);
+  --foreground: #f1f5f9;
+  --card: #0f2847;
+  --card-foreground: #f1f5f9;
+  --popover: #0f2847;
+  --popover-foreground: #f1f5f9;
+  /* Navy on bright teal is 10:1. */
+  --primary: var(--brand-teal);
+  --primary-foreground: var(--brand-navy);
+  --secondary: #14305a;
+  --secondary-foreground: #cbd5e1;
+  --muted: #0d2543;
+  --muted-foreground: #a9b4c4;
+  --accent: #14305a;
+  --accent-foreground: #f1f5f9;
+  --destructive: var(--color-red-600);
+  --destructive-foreground: #ffffff;
+  --mono: #ffffff;
+  --mono-foreground: var(--brand-navy);
+  --viz-1: #3987e5;
+  --viz-2: #d95926;
+  --viz-3: #199e70;
+  --viz-4: #c98500;
+  --border: #1e3a5f;
+  --input: #2a4a74;
+  --ring: var(--brand-teal);
+}
+
+@theme inline {
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-teal: var(--brand-teal);
+  --color-brand-teal-deep: var(--brand-teal-deep);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-mono: var(--mono);
+  --color-mono-foreground: var(--mono-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  /* Latin text uses Inter; Bangla glyphs fall through to Noto Sans Bengali. */
+  --font-sans: var(--font-inter), var(--font-bengali), system-ui, sans-serif;
+  /* Space Grotesk is the brand face: wordmark and large headings. */
+  --font-display: var(--font-space-grotesk), var(--font-inter), var(--font-bengali), system-ui,
+    sans-serif;
+}
+
+@theme {
+  --text-2sm: 0.8125rem;
+  --text-2sm--line-height: calc(1.075 / 0.8125);
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: calc(0.825 / 0.6875);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  *:focus-visible {
+    @apply outline-ring rounded-xs shadow-none outline-2 outline-offset-3 transition-none!;
+  }
+
+  /* Bangla script needs more line height than Latin to keep vowel signs from colliding. */
+  :lang(bn) {
+    line-height: 1.7;
+  }
+}
+
+/** Page container used by Layout 9. **/
+@utility container {
+  @apply mx-auto max-w-none px-4 lg:px-5;
+
+  @media (width >= --theme(--breakpoint-xl)) {
+    @apply max-w-(--breakpoint-xl);
+  }
+}
+
+/* Printing a Zakat or tax statement ("Save as PDF" in the browser's print dialog). */
+@media print {
+  header,
+  nav,
+  footer,
+  [data-print="hide"] {
+    display: none !important;
+  }
+  body {
+    background: #ffffff;
+  }
+}

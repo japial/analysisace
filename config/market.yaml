@@ -1,0 +1,68 @@
+# Market analytics parameters (F1 to F8). Bump `version` on any change.
+version: "0.1.0"
+
+# F3 rate sensitivity (FR3.1 to FR3.3).
+rate_sensitivity:
+  yield_series: TBILL_91D
+  market_index: DSEX
+  max_years: 5
+  min_valid_weeks: 104
+  # Newey-West lag. null uses floor(4 * (n / 100) ^ (2 / 9)).
+  newey_west_lags: null
+  high_min_abs_t: 2.5
+  medium_min_abs_t: 1.5
+
+# F5 shock playbook (FR5.2).
+events:
+  return_horizons: [1, 5, 20]
+  drawdown_window: 60
+  # How many sessions after t0 to look for a recovery to the pre-event close.
+  recovery_window: 250
+  similar_events_limit: 5
+
+# F2 Shariah basket (FR2.2).
+basket:
+  code: AACE_SHARIAH_EW
+  name: analysisACE Shariah basket (equal weight, computed)
+  base_value: 100
+  compare_indices: [DSES, DSEX]
+  periods_years: [1, 3, 5]
+
+# F4 weekly macro note (FR4.1). `kind`: level shows the value, pct shows % change.
+macro_note:
+  figures:
+    - { code: TBILL_91D, kind: level, unit: pct }
+    - { code: TBILL_182D, kind: level, unit: pct }
+    - { code: TBILL_364D, kind: level, unit: pct }
+    - { code: POLICY_RATE, kind: level, unit: pct }
+    - { code: CPI_YOY, kind: level, unit: pct }
+    - { code: BDT_USD, kind: level, unit: bdt }
+    - { code: REMITTANCE_USD_MN, kind: level, unit: usd_mn }
+    - { code: BRENT_USD, kind: level, unit: usd }
+    - { code: DSEX, kind: index, unit: points }
+    - { code: DSES, kind: index, unit: points }
+  # A figure enters the "what changed" list when it moves at least this much.
+  what_changed:
+    level_min_change_pts: 0.10
+    pct_min_change: 1.0
+
+# Admin entry of gold and silver prices (Q9).
+metal_prices:
+  series: [GOLD_22K_BDT_PER_GRAM, SILVER_BDT_PER_GRAM]
+  # Reject an entry that moves more than this from the previous value (typing errors).
+  max_change_pct: 15.0
+
+# Series an admin may load from CSV (backfill without a live adapter).
+csv_series:
+  index_codes: [DSEX, DSES, DS30]
+  macro_codes:
+    - TBILL_91D
+    - TBILL_182D
+    - TBILL_364D
+    - POLICY_RATE
+    - CPI_YOY
+    - BDT_USD
+    - REMITTANCE_USD_MN
+    - BRENT_USD
+    - GOLD_22K_BDT_PER_GRAM
+    - SILVER_BDT_PER_GRAM

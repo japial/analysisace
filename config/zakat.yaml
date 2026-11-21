@@ -1,0 +1,68 @@
+# Zakat rules (PRD 7.3, FR13.2-FR13.4).
+# PROVISIONAL: all rules need advisor approval (Q2).
+version: "0.2.0"
+approved_by: null
+
+rate_pct: 2.5
+nisab:
+  gold_grams: 87.48
+  silver_grams: 612.36
+
+# TODO(owner): Q2 - default method for shares. MARKET_VALUE or ZAKATABLE_ASSETS.
+shares_method: MARKET_VALUE
+# Sukuk valued at MARKET or FACE value.
+sukuk_basis: MARKET
+# Price per gram used for nisab unless the person enters one (FR13.2).
+nisab_price_series:
+  GOLD: GOLD_22K_BDT_PER_GRAM
+  SILVER: SILVER_BDT_PER_GRAM
+# An asset with no named owner belongs to the household jointly. For a per-person
+# calculation (FR13.7) it is split equally between the members.
+joint_assets: EQUAL_SPLIT
+
+# treatment: FULL (100% of value), PRINCIPAL (principal only, profit flagged),
+# SHARES_METHOD, EXEMPT, BUSINESS_ZAKATABLE_ASSETS, IF_RECOVERABLE, DEDUCT
+assets:
+  cash: { treatment: FULL }
+  bank_balance: { treatment: FULL }
+  islamic_deposit: { treatment: FULL }
+  sukuk: { treatment: FULL, include_profit_received: true }
+  savings_certificate: { treatment: PRINCIPAL, flag_interest: true }
+  fdr: { treatment: PRINCIPAL, flag_interest: true }
+  dps: { treatment: PRINCIPAL, flag_interest: true }
+  dse_share: { treatment: SHARES_METHOD }
+  mutual_fund_unit: { treatment: FULL }
+  gold: { treatment: FULL }
+  silver: { treatment: FULL }
+  property_for_resale: { treatment: FULL }
+  family_home: { treatment: EXEMPT }
+  personal_car: { treatment: EXEMPT }
+  rental_property: { treatment: EXEMPT, note: saved rental income is counted as cash }
+  business_stake: { treatment: BUSINESS_ZAKATABLE_ASSETS, fallback: FULL }
+  private_loan_given: { treatment: IF_RECOVERABLE }
+  # Not in PRD 7.3; added so every asset type has a stated rule. PROVISIONAL (Q2).
+  provident_fund: { treatment: EXEMPT, note: counted when it is paid out }
+  foreign_security: { treatment: FULL }
+  property_personal_use: { treatment: EXEMPT }
+  collectible: { treatment: EXEMPT }
+  other: { treatment: FULL }
+
+# Rule used for an alternative asset when the person has not chosen one.
+alt_asset_defaults:
+  LAND: property_personal_use
+  FLAT: property_personal_use
+  PLOT: property_personal_use
+  RENTAL_PROPERTY: rental_property
+  FAMILY_HOME: family_home
+  PERSONAL_CAR: personal_car
+  GOLD: gold
+  SILVER: silver
+  BUSINESS_STAKE: business_stake
+  PARTNERSHIP: business_stake
+  AGRICULTURE: business_stake
+  PRIVATE_EQUITY: business_stake
+  PRIVATE_LOAN: private_loan_given
+  COLLECTIBLE: collectible
+  OTHER: other
+liabilities:
+  debt_due_within_year: { treatment: DEDUCT }

@@ -1,0 +1,8 @@
+# Date ranges left out of return and regression samples (FR3.2).
+# The DSE imposed floor prices in these periods, so prices did not move freely.
+# PROVISIONAL: dates are approximate and must be checked against DSE/BSEC orders.
+version: "0.1.0"
+
+floor_price_periods:
+  - { start: 2020-03-19, end: 2021-06-17, note: "Covid floor price; lifted in stages" }
+  - { start: 2022-07-28, end: 2024-01-18, note: "Second floor price; lifted for most stocks in January 2024" }
