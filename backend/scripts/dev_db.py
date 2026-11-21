@@ -10,6 +10,7 @@ to backend/.env as DATABASE_URL, where the API, the worker and Alembic pick it u
 Install once with: python -m pip install -e ".[dev,localdb]"
 """
 
+import atexit
 import subprocess
 import sys
 import time
@@ -61,6 +62,12 @@ def main() -> int:
         if not _wait_until_ready():
             print(f"Database did not become ready. See {DATA_DIR / 'log'}")
             return 1
+        # pgserver caches the instance before starting Postgres, so the failed attempt (with
+        # no postmaster info) would be handed back again. Drop it so the retry re-reads
+        # postmaster.pid and attaches to the now-running server.
+        stale = pgserver.PostgresServer._instances.pop(DATA_DIR.resolve(), None)
+        if stale is not None:
+            atexit.unregister(stale._cleanup)
         server = pgserver.get_server(DATA_DIR, cleanup_mode=None)
     if "--stop" in sys.argv:
         server.cleanup()

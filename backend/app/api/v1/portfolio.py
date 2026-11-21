@@ -32,7 +32,7 @@ from app.schemas.personal import (
     TransactionIn,
     TransactionOut,
 )
-from app.services import performance, portfolio
+from app.services import market_check, performance, portfolio
 from app.services.households import OwnerInput, owned
 from app.services.valuation import Portfolio, Position, today_dhaka
 
@@ -274,6 +274,14 @@ def portfolio_summary(access: Viewer, db: Db) -> Envelope[dict[str, Any]]:
     """Everything the household owns and owes, valued today, and its net worth (FR14.4)."""
     result = portfolio.summary(db, access.household.id)
     return computed(db, summary_data(result), result.source_ids)
+
+
+@router.get("/portfolio/market-check")
+def portfolio_market_check(access: Viewer, db: Db) -> Envelope[dict[str, Any]]:
+    """F6: Shariah share, rate sensitivity, shock exposure and purification of the listed
+    holdings."""
+    data, result = market_check.market_check(db, access.household.id)
+    return computed(db, data, result.source_ids)
 
 
 @router.get("/portfolio/history")

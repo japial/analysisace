@@ -14,6 +14,7 @@ const SECTIONS = [
   ["/en/personal/sukuk", "Sukuk and Islamic banking"],
   ["/en/personal/performance", "Performance"],
   ["/en/personal/allocation", "Allocation"],
+  ["/en/personal/market-check", "Market check"],
   ["/en/personal/zakat", "Zakat"],
   ["/en/personal/tax", "Tax statement"],
   ["/en/personal/fire", "FIRE plan"],
@@ -122,4 +123,26 @@ test("record a cost, an account with a holding, an asset, a goal and a FIRE plan
   await page.goto("/en/personal");
   await expect(page.getByText("Net worth").first()).toBeVisible();
   await expect(page.getByText("Tester family · Owner")).toBeVisible();
+});
+
+test("the grouped section menu reaches every section on desktop and phone", async ({ page }) => {
+  await signUpWithHousehold(page);
+  await page.goto("/en/personal");
+  const wide = (page.viewportSize()?.width ?? 0) >= 1024;
+  if (wide) {
+    // Desktop: task groups open a list with a short description for each section.
+    const menu = page.getByRole("navigation", { name: "My money sections" });
+    await menu.getByRole("button", { name: /What you own/ }).click();
+    await menu.getByRole("link", { name: /Accounts and holdings/ }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Accounts and holdings" })).toBeVisible();
+    await menu.getByRole("button", { name: /Plans/ }).click();
+    await menu.getByRole("link", { name: /^Goals/ }).click();
+  } else {
+    // Phone: one button names the current section and opens every section by group.
+    await page.getByRole("button", { name: /All sections/ }).click();
+    await expect(page.getByRole("dialog").getByText("What you own")).toBeVisible();
+    await page.getByRole("dialog").getByRole("link", { name: /^Goals/ }).click();
+    await expect(page.getByRole("button", { name: /Goals/ })).toBeVisible();
+  }
+  await expect(page.getByRole("heading", { level: 1, name: "Goals" })).toBeVisible();
 });

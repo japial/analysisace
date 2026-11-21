@@ -29,6 +29,7 @@ class EventType(StrEnum):
 class SubjectType(StrEnum):
     TICKER = "TICKER"
     SECTOR = "SECTOR"
+    INDEX = "INDEX"  # the market as a whole, for event metrics (F5)
 
 
 class ScoreType(StrEnum):

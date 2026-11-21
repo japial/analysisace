@@ -81,7 +81,11 @@ class BusinessClassification(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 
 class ShariahResult(UUIDPrimaryKeyMixin, TimestampMixin, Base):
-    """One run of one methodology for one reporting period. Never updated; history is kept."""
+    """One methodology's result for one reporting period and config version.
+
+    Updated only when its inputs change under the same version (a reclassification or
+    corrected figures); every change of shown status is kept in `shariah_status_change`.
+    """
 
     __tablename__ = "shariah_result"
     __table_args__ = (UniqueConstraint("ticker", "period_end", "method", "method_version"),)

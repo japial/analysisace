@@ -28,34 +28,241 @@
     "home": "Home",
     "companies": "Companies",
     "personal": "My money",
-    "adminUsers": "Users",
-    "adminRoles": "Roles",
     "signIn": "Sign in",
     "signUp": "Create account",
     "account": "My account",
     "signOut": "Sign out",
     "userMenu": "Account menu",
-    "searchPlaceholder": "Search companies"
+    "searchPlaceholder": "Search companies",
+    "shariah": "Shariah list",
+    "rates": "Rates",
+    "events": "Shocks",
+    "macro": "Macro notes",
+    "regime": "Regime",
+    "admin": "Admin",
+    "markets": "Markets",
+    "marketsIntro": "analysisACE's own screening and history-based analytics for DSE stocks.",
+    "describe": {
+      "shariah": "Every screened company and the Shariah basket against DSES and DSEX",
+      "rates": "T-bill yields and how stocks moved when rates rose",
+      "events": "How the market moved after past shocks",
+      "macro": "A weekly summary of yields, inflation, the taka and oil",
+      "regime": "This month's macro label and sectors in similar months",
+      "companies": "Search every listed company"
+    }
   },
   "home": {
-    "metaTitle": "analysisACE: Shariah screening and macro analytics for the DSE",
-    "title": "See why a DSE stock passes or fails a Shariah screen",
-    "subtitle": "analysisACE is building open, explained Shariah screening and macro analytics for the Dhaka Stock Exchange, with household finance tools for Bangladesh.",
-    "browseCompanies": "Browse companies",
-    "featuresTitle": "What we are building",
-    "features": {
-      "shariah": {
-        "title": "Shariah screen with reasons",
-        "body": "Every listed company tested against published rules, shown with the company's own figures and the report they came from."
-      },
-      "macro": {
-        "title": "Rates and shocks",
-        "body": "How each stock has historically moved when treasury bill yields changed, and how it behaved in past crises."
-      },
-      "household": {
-        "title": "Household finance",
-        "body": "Daily costs, Zakat, tax figures, net worth across shares, sukuk, deposits, gold and land, and FIRE planning."
+    "metaTitle": "analysisACE: Shariah screening, market history and household money for Bangladesh",
+    "subtitle": "Clear Shariah screening and market history for DSE stocks, and every part of your household's money in one place: costs, holdings, Zakat, tax and plans. In Bangla and English.",
+    "hero": {
+      "eyebrow": "Made for investors and families in Bangladesh",
+      "title": "Invest with clarity. Manage money by your values.",
+      "lead": "See why a DSE stock passes or fails a Shariah screen, how it moved when rates rose or a crisis hit, and where your household stands on Zakat, tax and long-term plans. Every number shows where it came from.",
+      "ctaSignUp": "Create your account",
+      "ctaExplore": "Explore the Shariah list",
+      "ctaMyMoney": "Open My money",
+      "trust": {
+        "sources": "Every number shows its source",
+        "bilingual": "Bangla and English",
+        "noTips": "No tips, no hype"
       }
+    },
+    "preview": {
+      "label": "Illustration with a fictional company",
+      "company": "Demo Pharma Ltd.",
+      "status": "Shariah compliant",
+      "debt": "Interest-bearing debt",
+      "cash": "Cash and interest securities",
+      "income": "Non-permissible income",
+      "limit": "limit {value}",
+      "pass": "Pass",
+      "rate": "Rate sensitivity",
+      "rateValue": "−1.0% per 1-point yield rise",
+      "zakat": "Zakat due",
+      "source": "Source: annual report, page 64"
+    },
+    "questions": {
+      "title": "Answers to the questions you actually ask",
+      "lead": "analysisACE starts from the decisions people in Bangladesh make about their money, not from a list of charts.",
+      "items": {
+        "halal": {
+          "q": "Is this stock Shariah compliant, and why?",
+          "a": "Every rule, the company's own figure, the limit and the report page it came from."
+        },
+        "rates": {
+          "q": "What happened to stocks like mine when rates rose?",
+          "a": "A sensitivity score for each stock and sector, from five years of weekly data."
+        },
+        "shock": {
+          "q": "How did the market behave in past crises?",
+          "a": "Moves after wars, energy shocks and policy changes, and how long recovery took."
+        },
+        "zakat": {
+          "q": "How much Zakat do I owe this year?",
+          "a": "A line-by-line calculation from your records, with a PDF in Bangla or English."
+        },
+        "tax": {
+          "q": "What goes in my wealth statement?",
+          "a": "Assets, debts, income and tax already deducted, ready for your return."
+        },
+        "fire": {
+          "q": "When could our savings cover our costs?",
+          "a": "A FIRE plan with what-ifs for a market fall, higher costs or higher inflation."
+        }
+      }
+    },
+    "markets": {
+      "eyebrow": "Markets, explained",
+      "title": "Understand DSE stocks before you decide",
+      "lead": "Open methods, published rules and history you can check. analysisACE describes what happened; the decision stays yours.",
+      "features": {
+        "shariah": {
+          "title": "Shariah screen with reasons",
+          "body": "Two methods, AAOIFI-style and S&P-style, side by side. See which ratio decided a status and open the report behind it.",
+          "cta": "See a screen"
+        },
+        "basket": {
+          "title": "Shariah list and basket",
+          "body": "Filter every screened company, and compare a basket of compliant stocks with the DSES and DSEX over one, three or five years.",
+          "cta": "Open the list"
+        },
+        "rates": {
+          "title": "Rate sensitivity",
+          "body": "How far each stock and sector has typically moved when the 91-day T-bill yield rose one point, with the confidence of the estimate.",
+          "cta": "See the scores"
+        },
+        "shocks": {
+          "title": "Shock playbook",
+          "body": "How the market, sectors and single stocks moved after past wars, energy events and policy changes.",
+          "cta": "Browse events"
+        },
+        "macro": {
+          "title": "Weekly macro note",
+          "body": "Yields, inflation, the taka, remittance, oil and the DSE each week, in plain Bangla and English, every figure sourced.",
+          "cta": "Read the note"
+        },
+        "regime": {
+          "title": "Macro regime",
+          "body": "A monthly label from rates, inflation and oil, and how each sector did in past months like this one.",
+          "cta": "See this month"
+        }
+      },
+      "watch": "Watch any company and get a notice if its Shariah status changes."
+    },
+    "money": {
+      "eyebrow": "My money",
+      "title": "Your whole household's money, organised",
+      "lead": "Everything a Bangladeshi family owns and owes, from BO accounts to gold, land and sanchayapatra, with Zakat and tax worked out for you.",
+      "features": {
+        "zakat": {
+          "title": "Zakat, line by line",
+          "body": "Choose gold or silver nisab and the date. Every asset is counted at each member's share, with interest-bearing items flagged. Download a PDF statement in Bangla or English."
+        },
+        "wealth": {
+          "title": "Everything you own",
+          "body": "Bank, BO and fund accounts, sukuk and Islamic deposits, land, flats, gold and business stakes. Import your broker statement in one step."
+        },
+        "check": {
+          "title": "Shariah check of your portfolio",
+          "body": "Your compliant share by value, rate and shock exposure, and an estimate of dividends to purify."
+        },
+        "tax": {
+          "title": "Tax statement",
+          "body": "Wealth statement, income by kind, tax deducted at source and rebate-eligible purchases for the tax year, as PDF or CSV."
+        },
+        "plans": {
+          "title": "FIRE plan and goals",
+          "body": "See when savings could cover your costs, test what-ifs, and track goals for net worth or a target age."
+        },
+        "costs": {
+          "title": "Costs and performance",
+          "body": "Monthly spending in today's taka, recurring bills added for you, and returns beside the DSE indices."
+        },
+        "family": {
+          "title": "Built for families",
+          "body": "Add members with their own roles and Zakat dates, split shared assets by owner, and keep parents' money in a separate household."
+        },
+        "alerts": {
+          "title": "Gentle reminders",
+          "body": "Notices for maturities, sukuk auctions, Zakat dates, drift from your target mix and goals reached."
+        }
+      }
+    },
+    "steps": {
+      "title": "Up and running in three steps",
+      "items": {
+        "one": {
+          "title": "Create your account",
+          "body": "Sign up in a minute and choose Bangla or English."
+        },
+        "two": {
+          "title": "Add your household",
+          "body": "Record accounts, holdings, gold and land, or import a broker CSV."
+        },
+        "three": {
+          "title": "See the full picture",
+          "body": "Net worth, Shariah share, Zakat due and your plans, kept up to date."
+        }
+      }
+    },
+    "trust": {
+      "title": "Built on trust, not tips",
+      "lead": "Money decisions deserve evidence you can check. These principles are part of how analysisACE is built.",
+      "items": {
+        "traceable": {
+          "title": "Every number is traceable",
+          "body": "Each figure shows its source and the time it was worked out."
+        },
+        "rules": {
+          "title": "Rules are published",
+          "body": "Screening and Zakat rules are versioned, shown on every result and sent to a Shariah advisor for approval."
+        },
+        "advice": {
+          "title": "History, never tips",
+          "body": "We describe how markets moved in the past. We never tell you to buy, sell or hold."
+        },
+        "privacy": {
+          "title": "Your data, your control",
+          "body": "Consent for every optional use, encrypted account numbers and documents, export or delete at any time."
+        },
+        "local": {
+          "title": "Made for Bangladesh",
+          "body": "DSE trading days, lakh and crore, Bangla digits, sanchayapatra, Mudaraba deposits and the July-to-June tax year."
+        },
+        "own": {
+          "title": "Our own screen",
+          "body": "analysisACE runs its own screening from company reports. It never republishes the DSE's licensed constituent list."
+        }
+      }
+    },
+    "faq": {
+      "title": "Common questions",
+      "items": {
+        "advice": {
+          "q": "Is this investment advice?",
+          "a": "No. analysisACE shows historical analysis for education. It never recommends buying, selling or holding anything, and the decision is always yours."
+        },
+        "method": {
+          "q": "Which Shariah method do you use?",
+          "a": "Two: an AAOIFI-style and an S&P-style method, shown side by side. The thresholds are published and versioned, and they stay provisional until a Shariah advisor approves them."
+        },
+        "data": {
+          "q": "Where does the data come from?",
+          "a": "Prices and indices from the stock exchange, rates and macro figures from Bangladesh Bank and other public sources, and company figures from annual and quarterly reports. Every figure names its source. While analysisACE is in development, market pages run on clearly labelled demo data."
+        },
+        "privacy": {
+          "q": "Is my household's data private?",
+          "a": "Yes. Only members of your household can see it. Account numbers and documents are encrypted, optional uses need your consent, and you can export or delete your data at any time."
+        },
+        "language": {
+          "q": "Can I use it in Bangla?",
+          "a": "Yes. Every page, notice and PDF statement is available in Bangla and English, with Bangla digits."
+        }
+      }
+    },
+    "final": {
+      "title": "Start seeing your money clearly",
+      "lead": "Create an account, add your household, and see your Shariah share, Zakat and plans in one place."
     }
   },
   "companies": {
@@ -82,9 +289,7 @@
     "volume": "Shares traded",
     "sector": "Sector",
     "listed": "Listed on",
-    "noPrice": "No price data has been loaded for this company yet.",
-    "shariahTitle": "Shariah screen",
-    "shariahPending": "The Shariah screen for this company has not been published yet."
+    "noPrice": "No price data has been loaded for this company yet."
   },
   "auth": {
     "email": "Email",
@@ -178,17 +383,44 @@
     "permission": "Permission"
   },
   "roles": {
-    "USER": { "name": "User", "description": "Every registered person. Uses the public and personal features." },
-    "ANALYST": { "name": "Analyst", "description": "Staff who review data and publish content." },
-    "ADMIN": { "name": "Administrator", "description": "Full control, including users and rule files." }
+    "USER": {
+      "name": "User",
+      "description": "Every registered person. Uses the public and personal features."
+    },
+    "ANALYST": {
+      "name": "Analyst",
+      "description": "Staff who review data and publish content."
+    },
+    "ADMIN": {
+      "name": "Administrator",
+      "description": "Full control, including users and rule files."
+    }
   },
   "permissions": {
-    "DATA_REVIEW": { "name": "Review data", "description": "Work the data review queue and correct extracted financial figures." },
-    "CONTENT_PUBLISH": { "name": "Publish content", "description": "Publish weekly macro notes and shock events." },
-    "SHARIAH_OVERRIDE": { "name": "Override Shariah status", "description": "Add Shariah board notes and manual overrides with a reason." },
-    "CONFIG_MANAGE": { "name": "Manage rules", "description": "Approve rule file versions and bank flags." },
-    "USERS_MANAGE": { "name": "Manage users", "description": "See all users, change roles and turn access on or off." },
-    "AUDIT_VIEW": { "name": "View audit log", "description": "Read the record of admin actions." }
+    "DATA_REVIEW": {
+      "name": "Review data",
+      "description": "Work the data review queue and correct extracted financial figures."
+    },
+    "CONTENT_PUBLISH": {
+      "name": "Publish content",
+      "description": "Publish weekly macro notes and shock events."
+    },
+    "SHARIAH_OVERRIDE": {
+      "name": "Override Shariah status",
+      "description": "Add Shariah board notes and manual overrides with a reason."
+    },
+    "CONFIG_MANAGE": {
+      "name": "Manage rules",
+      "description": "Approve rule file versions and bank flags."
+    },
+    "USERS_MANAGE": {
+      "name": "Manage users",
+      "description": "See all users, change roles and turn access on or off."
+    },
+    "AUDIT_VIEW": {
+      "name": "View audit log",
+      "description": "Read the record of admin actions."
+    }
   },
   "errors": {
     "INVALID_CREDENTIALS": "The email or password is not correct.",
@@ -231,7 +463,13 @@
     "TRANSACTION_NOT_REVERSIBLE": "This transaction cannot be deleted because later ones depend on it.",
     "UNITS_REQUIRED": "Enter the number of units for a purchase or sale.",
     "UNKNOWN_TICKER": "That DSE ticker is not known.",
-    "TARGETS_MUST_TOTAL_100": "Targets must add up to 100%."
+    "TARGETS_MUST_TOTAL_100": "Targets must add up to 100%.",
+    "NOT_SCREENED": "This company has not been screened yet. Run the screen first.",
+    "DUPLICATE": "That record already exists.",
+    "PRICE_CHANGE_TOO_LARGE": "That price is far from the previous day's. Check it for a typing error.",
+    "CSV_INVALID": "The file must be UTF-8 CSV with the columns code, date and value.",
+    "FIGURE_WITHOUT_SOURCE": "Every figure needs a source before the note can be published.",
+    "LIMIT_REACHED": "You have reached the limit for this list."
   },
   "personal": {
     "metaTitle": "My money",
@@ -241,7 +479,7 @@
     "details": "Details",
     "edit": "Edit",
     "actions": "Actions",
-    "print": "Print or save as PDF",
+    "pdf": "Download PDF",
     "date": "Date",
     "month": "Month",
     "amount": "Amount (৳)",
@@ -274,7 +512,8 @@
       "goals": "Goals",
       "alerts": "Alerts",
       "community": "Compare with peers",
-      "household": "Household"
+      "household": "Household",
+      "marketCheck": "Market check"
     },
     "import": {
       "file": "CSV file",
@@ -725,7 +964,10 @@
         "MATURITY_DUE": "Before a holding matures, and before a government sukuk auction.",
         "REVALUATION_DUE": "When a property or other asset needs a new value.",
         "HAWL_APPROACHING": "Before a Zakat date.",
-        "MONTHLY_REPORT": "A summary at the start of each month."
+        "MONTHLY_REPORT": "A summary at the start of each month.",
+        "SHARIAH_STATUS": "When a stock you hold or watch changes Shariah status.",
+        "REGIME_CHANGE": "When the monthly macro regime label changes.",
+        "SHOCK_EVENT": "When a new event is published in the shock playbook."
       }
     },
     "notice": {
@@ -736,7 +978,10 @@
       "SUKUK_AUCTION": "{name} is scheduled for auction on {date} ({days} days from now).",
       "REVALUATION_DUE": "{name} was last valued more than {months} months ago. Enter its current value to keep your net worth up to date.",
       "HAWL_APPROACHING": "The Zakat date for {name} is {date} ({days} days from now).",
-      "MONTHLY_REPORT": "Spending in {month}: {spending}. Net worth: {net_worth}."
+      "MONTHLY_REPORT": "Spending in {month}: {spending}. Net worth: {net_worth}.",
+      "SHARIAH_STATUS_CHANGED": "The Shariah status of {ticker} changed from {from_status} to {to_status}.",
+      "REGIME_CHANGED": "The macro regime label changed from {previous} to {label}.",
+      "SHOCK_EVENT_PUBLISHED": "A new event was added to the shock playbook: {title_en} ({date})."
     },
     "community": {
       "intro": "See how your savings rate and FIRE progress compare with people of a similar age. Anonymous and opt-in.",
@@ -987,6 +1232,543 @@
         "INSTANT": "Straight away",
         "DAILY_DIGEST": "Once a day"
       }
+    },
+    "marketCheck": {
+      "intro": "Your listed shares and funds against the market layer: Shariah share, rate sensitivity, how they moved in past shocks, and a dividend purification estimate.",
+      "listedValue": "Listed holdings",
+      "shariahTitle": "Shariah share of listed value",
+      "rateTitle": "Rate sensitivity",
+      "rateWeighted": "Value-weighted % move per 1-point yield rise",
+      "coverage": "Covers {pct} of listed value",
+      "shockTitle": "Past shocks",
+      "shockIntro": "Value-weighted moves of your current holdings after each published event.",
+      "purificationTitle": "Dividend purification estimate",
+      "purificationIntro": "Dividends received in the last 12 months × each company's non-permissible income ratio. Ask your scholar how to give it.",
+      "total": "Estimated amount to purify",
+      "unknownRatio": "Dividends where the ratio is not known: {amount}",
+      "holdingsTitle": "Holdings",
+      "weight": "Weight",
+      "dividends": "Dividends, 12 months",
+      "ratio": "Income ratio",
+      "purification": "To purify",
+      "empty": "No listed shares or funds yet. Add them under Accounts and holdings."
+    },
+    "nav": {
+      "label": "My money sections",
+      "allSections": "All sections",
+      "unread": "{n, plural, one {# new notice} other {# new notices}}",
+      "groups": {
+        "overview": "Overview",
+        "costs": "Costs",
+        "wealth": "What you own",
+        "insights": "How it's doing",
+        "duties": "Zakat and tax",
+        "plans": "Plans",
+        "everyday": "Day to day",
+        "settings": "Notices and settings"
+      },
+      "describe": {
+        "overview": "Net worth, costs and notices at a glance",
+        "costs": "What the household spends, month by month",
+        "portfolio": "Bank, BO, savings and fund accounts",
+        "assets": "Land, flats, gold, business stakes, loans",
+        "sukuk": "Sukuk, Islamic deposits and coming dates",
+        "performance": "Returns beside the DSE indices",
+        "allocation": "How your money is spread, and drift",
+        "marketCheck": "Shariah share, rate and shock exposure",
+        "zakat": "Zakat for a member on a date, line by line",
+        "tax": "Wealth statement and income for the return",
+        "fire": "When savings could cover your costs",
+        "goals": "Targets and how close you are",
+        "community": "Anonymous comparison with your age group",
+        "alerts": "Notices and how you receive them",
+        "household": "Members, roles and Zakat dates"
+      },
+      "shortcutsIntro": "Everything in My money, grouped by what you want to do."
+    }
+  },
+  "market": {
+    "methodLabel": {
+      "aaoifi": "AAOIFI-style",
+      "sp": "S&P-style"
+    },
+    "status": {
+      "COMPLIANT": "Shariah compliant",
+      "NON_COMPLIANT": "Not compliant",
+      "UNDER_REVIEW": "Under review"
+    },
+    "series": {
+      "TBILL_91D": "91-day T-bill yield",
+      "TBILL_182D": "182-day T-bill yield",
+      "TBILL_364D": "364-day T-bill yield",
+      "POLICY_RATE": "Policy rate",
+      "CPI_YOY": "CPI inflation (year on year)",
+      "BDT_USD": "Taka per US dollar",
+      "REMITTANCE_USD_MN": "Remittance (USD million, month)",
+      "BRENT_USD": "Brent crude (USD a barrel)",
+      "DSEX": "DSEX",
+      "DSES": "DSES",
+      "DS30": "DS30",
+      "AACE_SHARIAH_EW": "analysisACE Shariah basket",
+      "GOLD_22K_BDT_PER_GRAM": "Gold 22 karat (Tk a gram)",
+      "SILVER_BDT_PER_GRAM": "Silver (Tk a gram)"
+    },
+    "eventType": {
+      "WAR": "War",
+      "ENERGY": "Energy",
+      "POLITICAL": "Political",
+      "POLICY": "Policy",
+      "OTHER": "Other"
+    },
+    "demoNotice": "Figures marked as demo data are synthetic and only show how the page works.",
+    "shariah": {
+      "metaTitle": "Shariah list",
+      "title": "Shariah list",
+      "intro": "Every screened company, its status and the method behind it. analysisACE runs its own screen; it does not show the DSE's DSES constituents.",
+      "provisional": "The screening thresholds are provisional until approved by a Shariah advisor.",
+      "basketTitle": "analysisACE Shariah basket compared with DSES and DSEX",
+      "basketIntro": "An equal-weight basket of today's compliant companies, rebalanced monthly and rebased to 100. It shows how today's list would have moved, not a fund that existed.",
+      "years": "{n, plural, one {# year} other {# years}}",
+      "members": "{n, plural, one {# company} other {# companies}} in the basket",
+      "noBasket": "The basket appears once at least one company is compliant.",
+      "listTitle": "{n, plural, =0 {No companies} one {# company} other {# companies}}",
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "sector": "Sector",
+      "allSectors": "All sectors",
+      "search": "Ticker or name",
+      "apply": "Apply",
+      "sort": "Sort by",
+      "sortBy": {
+        "ticker": "Ticker",
+        "status": "Status",
+        "sector": "Sector",
+        "market_cap": "Market cap",
+        "screened_at": "Last screened"
+      },
+      "ticker": "Ticker",
+      "name": "Company",
+      "marketCap": "Market cap",
+      "screened": "Last screened",
+      "overridden": "Set by board",
+      "empty": "No company matches these filters."
+    },
+    "screen": {
+      "title": "Shariah screen",
+      "notScreened": "This company has not been screened yet.",
+      "shown": "Shown status",
+      "lastScreened": "Last screened",
+      "methodVersion": "Method version",
+      "defaultMethod": "The shown status uses the {method} result.",
+      "override": "Set by the Shariah board. Reason: {reason}",
+      "screenSaid": "The screen's own result is {status}.",
+      "boardNote": "Shariah board note",
+      "rulesTitle": "{method}: rules tested",
+      "period": "Figures for the period ending {date}",
+      "rule": "Rule",
+      "value": "Company value",
+      "threshold": "Threshold",
+      "result": "Result",
+      "pass": "Pass",
+      "fail": "Fail",
+      "review": "Within review margin",
+      "missing": "Not stated",
+      "below": "below {value}",
+      "rules": {
+        "debt_to_market_cap": "Interest-bearing debt ÷ market cap",
+        "cash_and_interest_securities_to_market_cap": "Cash and interest-bearing securities ÷ market cap",
+        "non_permissible_income_to_revenue": "Non-permissible income ÷ revenue",
+        "receivables_to_market_cap": "Receivables ÷ market cap"
+      },
+      "marketCap": "Average market cap over {months} months: {value}",
+      "stage1Title": "Business activity (stage 1)",
+      "stage1Pass": "Core business is permissible.",
+      "stage1Fail": "Core business is not permissible: {activity}.",
+      "stage1None": "Business activity has not been classified yet.",
+      "activity": {
+        "conventional_banking": "Conventional banking",
+        "conventional_insurance": "Conventional insurance",
+        "interest_based_lending": "Interest-based lending",
+        "alcohol": "Alcohol",
+        "tobacco": "Tobacco",
+        "pork": "Pork",
+        "gambling": "Gambling",
+        "adult_entertainment": "Adult entertainment",
+        "weapons": "Weapons"
+      },
+      "financialsTitle": "Figures used",
+      "figures": {
+        "total_debt_interest_bearing": "Interest-bearing debt",
+        "cash_and_interest_securities": "Cash and interest-bearing securities",
+        "receivables": "Receivables",
+        "total_revenue": "Total revenue",
+        "non_permissible_income": "Non-permissible income",
+        "zakatable_assets": "Zakatable assets"
+      },
+      "shares": "Shares outstanding",
+      "source": "Source",
+      "page": "page {page}",
+      "historyTitle": "Status history",
+      "cause": {
+        "SCREEN": "Screen",
+        "OVERRIDE": "Board decision"
+      },
+      "changed": "{from} to {to}",
+      "first": "First screened as {to}",
+      "purificationRatio": "Non-permissible income ratio (for dividend purification)"
+    },
+    "scores": {
+      "title": "Rate sensitivity",
+      "intro": "How the price has historically moved in weeks when the 91-day T-bill yield rose one percentage point, from weekly data. Floor-price periods are left out.",
+      "value": "% move per 1-point yield rise",
+      "withMarket": "Allowing for the market",
+      "withoutMarket": "Without the market term",
+      "stock": "This stock",
+      "sector": "Sector: {name}",
+      "confidence": {
+        "HIGH": "High confidence",
+        "MEDIUM": "Medium confidence",
+        "LOW": "Low confidence",
+        "INSUFFICIENT": "Not enough data"
+      },
+      "sample": "{start} to {end} · {n} weeks",
+      "tStat": "t-statistic (Newey-West)",
+      "none": "No score has been computed yet.",
+      "insufficient": "Fewer than 104 usable weeks, so no score is shown."
+    },
+    "rates": {
+      "metaTitle": "Rate sensitivity",
+      "title": "Interest rates and rate sensitivity",
+      "intro": "Latest T-bill auction yields, the past year of the 91-day yield, and how sectors and stocks have historically moved when yields rose.",
+      "auctions": "Latest auction yields",
+      "trend": "91-day yield, past 12 months",
+      "sectorsTitle": "Sectors",
+      "stocksTitle": "Stocks",
+      "subject": "Name",
+      "score": "% per 1-point rise",
+      "confidence": "Confidence",
+      "weeks": "Weeks"
+    },
+    "events": {
+      "metaTitle": "Shock playbook",
+      "title": "Shock playbook",
+      "intro": "How the market, sectors and stocks moved after past shocks, measured from the close of the last session before each event.",
+      "allTypes": "All types",
+      "t0": "Started",
+      "empty": "No events have been published yet.",
+      "open": "Open",
+      "metricsTitle": "How prices moved",
+      "market": "Market (DSEX)",
+      "sectors": "Sectors",
+      "stocks": "Stocks",
+      "subject": "Name",
+      "ret1": "After 1 session",
+      "ret5": "After 5 sessions",
+      "ret20": "After 20 sessions",
+      "maxDd": "Deepest fall in 60 sessions",
+      "recover": "Back to pre-event close",
+      "notRecovered": "Not yet",
+      "neverFell": "Did not fall",
+      "sessions": "{n, plural, one {# session} other {# sessions}}",
+      "similarTitle": "Similar events",
+      "similarIntro": "Other events of the same type, newest first.",
+      "noSimilar": "No other events of this type yet.",
+      "sourcesTitle": "Sources",
+      "companyTitle": "Around past shocks",
+      "companyEmpty": "No event data for this company yet."
+    },
+    "macro": {
+      "metaTitle": "Weekly macro notes",
+      "title": "Weekly macro notes",
+      "intro": "A weekly summary of yields, inflation, the taka, remittance, oil and the DSE, written from stored data. Every figure shows its source.",
+      "latest": "Latest note",
+      "archive": "Earlier notes",
+      "empty": "No note has been published yet.",
+      "week": "Week of {date}",
+      "figuresTitle": "Figures this week",
+      "figure": "Figure",
+      "value": "Value",
+      "change": "Change on the week",
+      "asOf": "Date",
+      "source": "Source",
+      "notFound": "There is no published note for that week.",
+      "read": "Read"
+    },
+    "regime": {
+      "metaTitle": "Macro regime",
+      "title": "Macro regime",
+      "intro": "A rules-based label for each month from the yield trend, inflation and oil, and how sectors have done in past months with the same label.",
+      "current": "Current regime",
+      "month": "Month",
+      "label": "Regime",
+      "rate": {
+        "EASING": "Easing",
+        "TIGHTENING": "Tightening",
+        "FLAT": "Rates flat",
+        "UNKNOWN": "Rate trend unknown"
+      },
+      "inflation": {
+        "LOW": "inflation low",
+        "MODERATE": "inflation moderate",
+        "HIGH": "inflation high",
+        "UNKNOWN": "inflation unknown"
+      },
+      "oil": {
+        "CALM": "oil calm",
+        "SHOCK": "oil shock",
+        "UNKNOWN": "oil unknown"
+      },
+      "yieldChange": "91-day yield change over 3 months",
+      "cpi": "CPI inflation",
+      "oilChange": "Brent change over 1 month",
+      "pts": "{value} points",
+      "sectorsTitle": "Sectors in past months with this label",
+      "sectorsIntro": "Average monthly return and share of months with a gain, in past months that carried the same label.",
+      "sector": "Sector",
+      "avgReturn": "Average month",
+      "hitRate": "Months with a gain",
+      "months": "Months",
+      "tooFew": "Few months",
+      "noSectors": "No past months share this label yet.",
+      "history": "Recent months",
+      "none": "No regime has been computed yet.",
+      "provisional": "The inflation bands are provisional until the rules are confirmed."
+    },
+    "watch": {
+      "watch": "Watch",
+      "unwatch": "Stop watching",
+      "watching": "You will be told if this company's Shariah status changes.",
+      "signIn": "Sign in to watch this company"
+    }
+  },
+  "adminMarket": {
+    "hub": {
+      "metaTitle": "Admin",
+      "title": "Admin",
+      "intro": "The admin screens you may use. Every change is written to the audit log.",
+      "users": {
+        "title": "Users",
+        "description": "Change roles and turn access off."
+      },
+      "roles": {
+        "title": "Roles",
+        "description": "What each role may do."
+      },
+      "data": {
+        "title": "Data",
+        "description": "Review queue, gold and silver prices, CSV loads, corporate actions."
+      },
+      "shariah": {
+        "title": "Shariah screen",
+        "description": "Financial figures, business classification, overrides and board notes."
+      },
+      "events": {
+        "title": "Shock events",
+        "description": "Curate and publish the event library."
+      },
+      "notes": {
+        "title": "Macro notes",
+        "description": "Generate, edit and publish the weekly note."
+      },
+      "audit": {
+        "title": "Audit log and jobs",
+        "description": "Who changed what, and how scheduled jobs ran."
+      },
+      "bankFlags": {
+        "title": "Bank notices",
+        "description": "Neutral, sourced notices about banks shown beside deposits."
+      }
+    },
+    "data": {
+      "metaTitle": "Data",
+      "title": "Data",
+      "intro": "Failed quality checks wait here. Bad rows are not stored until the issue is handled.",
+      "issuesTitle": "Review queue",
+      "open": "{n, plural, =0 {Nothing open} one {# open} other {# open}}",
+      "status": {
+        "OPEN": "Open",
+        "RESOLVED": "Resolved",
+        "IGNORED": "Ignored"
+      },
+      "allStatuses": "All",
+      "check": "Check",
+      "dataset": "Dataset",
+      "entity": "Item",
+      "date": "Date",
+      "detail": "Detail",
+      "resolve": "Resolve",
+      "ignore": "Ignore",
+      "reopen": "Reopen",
+      "noIssues": "No issues match.",
+      "runChecks": "Run checks now",
+      "metalTitle": "Gold and silver price",
+      "metalIntro": "Enter the price a gram for the day (Q9: manual entry). A price far from the previous day's is refused.",
+      "series": "Series",
+      "price": "Price (Tk a gram)",
+      "note": "Note",
+      "add": "Save price",
+      "csvTitle": "Load a series from CSV",
+      "csvIntro": "Columns: code, date (YYYY-MM-DD), value. A file with any bad row is refused whole.",
+      "kind": {
+        "index": "Index levels",
+        "macro": "Macro series"
+      },
+      "kindLabel": "Kind",
+      "sourceName": "Source name",
+      "sourceUrl": "Source link",
+      "content": "CSV text",
+      "file": "or choose a file",
+      "load": "Load",
+      "loaded": "Loaded {inserted} new and {updated} changed rows.",
+      "actionsTitle": "Corporate actions",
+      "actionsIntro": "Bonus, rights and splits rewrite the stock's adjusted prices at once.",
+      "ticker": "Ticker",
+      "exDate": "Ex-date",
+      "actionType": {
+        "BONUS": "Bonus shares",
+        "RIGHTS": "Rights issue",
+        "SPLIT": "Split",
+        "CASH_DIVIDEND": "Cash dividend"
+      },
+      "type": "Type",
+      "ratio": "Ratio",
+      "ratioHint": "Bonus 0.10 for 10%; split 2 for 1:2; rights shares per share held.",
+      "amount": "Amount (Tk)",
+      "amountHint": "Rights issue price, or cash dividend a share.",
+      "addAction": "Add action",
+      "noActions": "No corporate actions yet.",
+      "analyticsTitle": "Market analytics",
+      "analyticsIntro": "Screen, scores, event metrics, basket and regime run every night. Run them now after loading data.",
+      "run": "Run now",
+      "done": "Done."
+    },
+    "shariah": {
+      "metaTitle": "Shariah screen",
+      "title": "Shariah screen administration",
+      "intro": "Figures are screened only after a reviewer has checked them against the report. Overrides need a reason and are audited.",
+      "company": "Company",
+      "status": "Shown status",
+      "screen": "Screen result",
+      "pending": "{n, plural, one {# period to review} other {# periods to review}}",
+      "manage": "Manage",
+      "classificationTitle": "Business activity",
+      "stage1": "Core business is permissible",
+      "activity": "Excluded activity",
+      "reason": "Reason",
+      "saveClassification": "Save classification",
+      "overrideTitle": "Override",
+      "overrideIntro": "Sets the shown status by board decision. Choose \"No override\" to go back to the screen's result.",
+      "overrideStatus": "Shown status",
+      "noOverride": "No override",
+      "saveOverride": "Save override",
+      "noteTitle": "Board note",
+      "note": "Note shown on the company page",
+      "saveNote": "Save note",
+      "financialsTitle": "Financial figures",
+      "financialsIntro": "Enter figures from the report in taka. Leave a figure empty when the report does not state it. Saved figures wait for review.",
+      "periodEnd": "Period end",
+      "periodType": "Period",
+      "periodTypes": {
+        "ANNUAL": "Annual",
+        "Q1": "Quarter 1",
+        "Q2": "Quarter 2",
+        "Q3": "Quarter 3"
+      },
+      "shares": "Shares outstanding",
+      "sourceName": "Report name",
+      "sourceUrl": "Report link",
+      "sourcePage": "Page",
+      "saveFinancials": "Save figures",
+      "review": "Mark as reviewed",
+      "reviewed": "Reviewed",
+      "unreviewed": "Waiting for review",
+      "noFinancials": "No figures yet.",
+      "back": "All companies"
+    },
+    "events": {
+      "metaTitle": "Shock events",
+      "title": "Shock events",
+      "intro": "Published events appear in the shock playbook. Publishing computes the event's metrics and alerts users who asked for it.",
+      "create": "Add event",
+      "slug": "Short name for the link",
+      "slugHint": "Lower case letters, digits and dashes, for example lng-fire-2026.",
+      "type": "Type",
+      "t0": "First day",
+      "titleEn": "Title (English)",
+      "titleBn": "Title (Bangla)",
+      "descriptionEn": "Description (English)",
+      "descriptionBn": "Description (Bangla)",
+      "links": "Source links",
+      "linksHint": "One per line: label | https://link",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "published": "Published",
+      "draft": "Draft",
+      "save": "Save",
+      "none": "No events yet."
+    },
+    "notes": {
+      "metaTitle": "Macro notes",
+      "title": "Weekly macro notes",
+      "intro": "A draft is written every week from stored data. Edit the text, then publish each language.",
+      "generate": "Write draft",
+      "weekStart": "Any day in the week",
+      "replace": "Replace an unpublished draft",
+      "status": {
+        "DRAFT": "Draft",
+        "PUBLISHED": "Published"
+      },
+      "locale": {
+        "en": "English",
+        "bn": "Bangla"
+      },
+      "titleField": "Title",
+      "body": "Text",
+      "bodyHint": "Lines starting with \"## \" become headings and \"- \" become list items.",
+      "save": "Save text",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "figures": "{n, plural, one {# figure} other {# figures}}",
+      "none": "No notes yet."
+    },
+    "audit": {
+      "metaTitle": "Audit log",
+      "title": "Audit log and jobs",
+      "intro": "Every admin action, override and access change. Entries name user ids, never emails.",
+      "action": "Action",
+      "entity": "Record",
+      "actor": "By (user id)",
+      "at": "When",
+      "change": "Change",
+      "filter": "Filter",
+      "since": "Since",
+      "none": "No entries match.",
+      "jobsTitle": "Scheduled jobs",
+      "job": "Job",
+      "started": "Started",
+      "status": "Result",
+      "detail": "Detail",
+      "noJobs": "No job has run yet.",
+      "pageOf": "Showing {from} to {to} of {total}"
+    },
+    "bankFlags": {
+      "metaTitle": "Bank notices",
+      "title": "Bank notices",
+      "intro": "A notice appears beside a household's deposits at that bank. Keep it factual and give a source; it must not tell anyone what to do.",
+      "add": "Add or change a notice",
+      "bank": "Bank name",
+      "bankHint": "Exactly as the bank appears in product and holding records.",
+      "status": "Status",
+      "noteEn": "Notice (English)",
+      "noteBn": "Notice (Bangla)",
+      "links": "Sources",
+      "linksHint": "One per line: title | https://link",
+      "save": "Save notice",
+      "none": "No notices yet.",
+      "updated": "Updated {date}",
+      "edit": "Edit",
+      "delete": "Delete notice",
+      "deleteBody": "The notice will no longer appear beside deposits at this bank."
     }
   }
 }

@@ -15,6 +15,7 @@ import { isActivePath, type NavItem } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
 import { LocaleSwitcher } from "./locale-switcher";
+import { NAV_ICONS } from "./nav-icons";
 import { ThemeToggle } from "./theme-toggle";
 import { UserMenu } from "./user-menu";
 
@@ -91,6 +92,22 @@ function SearchForm({ className, id = "header-search" }: { className?: string; i
   );
 }
 
+function MobileLink({ item, pathname, onPick }: { item: NavItem; pathname: string; onPick: () => void }) {
+  const t = useTranslations("nav");
+  const Icon = NAV_ICONS[item.key];
+  return (
+    <Link
+      href={item.href}
+      onClick={onPick}
+      aria-current={isActivePath(pathname, item.href) ? "page" : undefined}
+      className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-secondary-foreground hover:bg-accent aria-[current=page]:bg-accent aria-[current=page]:text-mono [&_svg]:size-4 [&_svg]:text-muted-foreground aria-[current=page]:[&_svg]:text-primary"
+    >
+      {Icon && <Icon aria-hidden="true" />}
+      {t(item.key)}
+    </Link>
+  );
+}
+
 /** Below the `lg` breakpoint the menu bar is replaced by this slide-in menu. */
 function MobileMenu({ items }: { items: NavItem[] }) {
   const t = useTranslations();
@@ -110,17 +127,20 @@ function MobileMenu({ items }: { items: NavItem[] }) {
           <SheetBody className="space-y-4 overflow-y-auto p-4">
             <SearchForm id="menu-search" />
             <nav aria-label={t("nav.label")} className="flex flex-col gap-1">
-              {items.map((item) => (
-                <Link
-                  key={item.key}
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  aria-current={isActivePath(pathname, item.href) ? "page" : undefined}
-                  className="rounded-md px-3 py-2.5 text-sm font-medium text-secondary-foreground hover:bg-accent aria-[current=page]:bg-accent aria-[current=page]:text-mono"
-                >
-                  {t(`nav.${item.key}`)}
-                </Link>
-              ))}
+              {items.map((item) =>
+                item.children ? (
+                  <div key={item.key} className="flex flex-col gap-1 pt-2">
+                    <span className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {t(`nav.${item.key}`)}
+                    </span>
+                    {item.children.map((child) => (
+                      <MobileLink key={child.key} item={child} pathname={pathname} onPick={() => setOpen(false)} />
+                    ))}
+                  </div>
+                ) : (
+                  <MobileLink key={item.key} item={item} pathname={pathname} onPick={() => setOpen(false)} />
+                ),
+              )}
             </nav>
           </SheetBody>
         </SheetContent>

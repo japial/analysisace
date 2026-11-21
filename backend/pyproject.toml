@@ -16,6 +16,9 @@ dependencies = [
     "pyyaml>=6.0",
     "apscheduler>=3.10,<4",
     "tzdata>=2024.2",
+    # PDF statements (F13). uharfbuzz shapes Bangla text.
+    "fpdf2>=2.8",
+    "uharfbuzz>=0.39",
 ]
 
 [project.optional-dependencies]
@@ -27,6 +30,8 @@ dev = [
     "ruff>=0.8",
     "mypy>=1.13",
     "types-PyYAML>=6.0",
+    # Reads the text of generated PDFs in tests.
+    "pypdfium2>=4.30",
 ]
 # Bundled PostgreSQL for machines without Docker. See scripts/dev_db.py.
 localdb = ["pgserver>=0.1.4"]
@@ -37,6 +42,10 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 include = ["app*"]
+
+[tool.setuptools.package-data]
+# Noto fonts for the PDF statements (SIL Open Font License).
+app = ["assets/fonts/*.ttf", "assets/fonts/OFL.txt"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -55,6 +64,9 @@ select = ["E", "F", "I", "UP", "B", "SIM", "DTZ", "RUF"]
 "app/seed/*" = ["E501", "RUF001"]
 # Email texts in two languages: one sentence per line reads better than wrapped strings.
 "app/services/alert_texts.py" = ["E501", "RUF001"]
+"app/services/macro_notes.py" = ["E501", "RUF001"]
+"app/services/statements.py" = ["E501", "RUF001"]
+"app/services/statement_labels.py" = ["E501", "RUF001"]
 
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]

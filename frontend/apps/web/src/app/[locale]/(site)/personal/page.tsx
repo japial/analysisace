@@ -13,6 +13,7 @@ import { recordNetWorthAction } from "@/app/actions/personal";
 import { Empty, LoadError, Panel, ShareBars, Stat, StatGrid } from "@/components/personal/display";
 import { ActionButton } from "@/components/personal/forms";
 import { LineChart } from "@/components/personal/line-chart";
+import { SectionShortcuts } from "@/components/personal/section-shortcuts";
 import { PersonalShell } from "@/components/personal/shell";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
@@ -196,6 +197,7 @@ export default async function PersonalOverviewPage({ params }: PageProps) {
           )}
         </Panel>
       </div>
+      <SectionShortcuts />
     </PersonalShell>
   );
 }

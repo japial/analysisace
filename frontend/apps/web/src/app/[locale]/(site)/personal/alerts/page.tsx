@@ -8,6 +8,7 @@ import { ActionButton, ActionForm, CheckField, SelectField } from "@/components/
 import { PersonalShell } from "@/components/personal/shell";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
+import { regimeLabel, statusLabel } from "@/lib/market-labels";
 import { get, load } from "@/lib/personal";
 import { type PageProps, enumLabel, sectionMetadata, setup } from "@/lib/personal-page";
 
@@ -40,6 +41,10 @@ export default async function AlertsPage({ params }: PageProps) {
         if (/(amount|spending|net_worth|zakat_due)$/.test(k) && typeof v === "string") return [k, f.bdt(v)];
         if (k === "month" && typeof v === "string") return [k, f.month(v.length === 7 ? `${v}-01` : v)];
         if (k === "asset_class" && typeof v === "string") return [k, enumLabel(t, "assetClass", v)];
+        // Market alerts (F7) store codes; show them as words in the reader's language.
+        if ((k === "from_status" || k === "to_status") && typeof v === "string") return [k, statusLabel(t, v)];
+        if ((k === "label" || k === "previous") && typeof v === "string") return [k, regimeLabel(t, v)];
+        if (k === "title_en" && locale === "bn" && typeof data.title_bn === "string") return [k, data.title_bn];
         return [k, String(v)];
       }),
     );
@@ -76,7 +81,7 @@ export default async function AlertsPage({ params }: PageProps) {
                   <p className="text-xs text-muted-foreground">{f.date(n.created_at, true)}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  {n.link?.startsWith("/personal") && (
+                  {n.link?.startsWith("/") && !n.link.startsWith("//") && (
                     <Link href={n.link} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
                       {t("personal.alerts.open")}
                       <ArrowRight className="size-3.5" />

@@ -12,6 +12,7 @@ htmlcov/
 # Node
 node_modules/
 .next/
+.next-verify/
 out/
 coverage/
 *.tsbuildinfo

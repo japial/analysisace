@@ -28,6 +28,7 @@ npm workspaces. Root rules in [../CLAUDE.md](../CLAUDE.md) apply here; commands 
 - Build pages from the components in `apps/web/src/components/ui` (copied from the licensed Metronic starter kit) and the shell in `components/layout`. Start each page with `<Toolbar title breadcrumbs>` and put content in a `container` div, usually inside `Card`s.
 - Need a Metronic component that is not here yet? Copy that one file from the theme's `metronic-tailwind-react-starter-kit/typescript/nextjs/components/ui`, plus anything it imports. Do not copy whole folders, demo pages or sample data. The theme download lives outside the repo.
 - Files in `components/ui` are vendor code: change them only to fix a real defect, and keep app-specific styling in the calling component.
+- Copied so far beyond the first set: `navigation-menu`, `tabs`, `toggle`, `toggle-group`, `tooltip`. A server component cannot call helpers from these client files (such as `toggleVariants`); repeat the classes instead, as `components/market/segmented-links.tsx` does.
 - Metronic layouts are client components with fixed English text. Ours are adapted: text comes from messages, links use our locale-aware `Link`, and only the parts that need the browser are client components.
 - Dark mode follows the `.dark` class set by `next-themes`. Check new pages in both themes.
 
@@ -36,11 +37,13 @@ npm workspaces. Root rules in [../CLAUDE.md](../CLAUDE.md) apply here; commands 
 - `src/lib/session.ts`: `getCurrentUser()`, `requireUser(locale, returnTo)`, `requirePermission(locale, returnTo, permission)`. Call a guard at the top of every protected page.
 - Forms post to server actions in `src/app/actions/` and use `useActionState` with `Field`, `SubmitButton` and `FormMessage` from `components/form/form-parts.tsx`. Actions return an error code; `FormMessage` translates it from the `errors` messages.
 - Hiding a menu item is for convenience only. The API enforces every permission.
-- Menu entries are defined in `src/lib/nav.ts`.
+- Menu entries are defined in `src/lib/nav.ts`. Market pages sit under the "Markets" group (a Layout 9 dropdown); their icons are in `components/layout/nav-icons.ts`, because icons cannot be passed from server components.
+- Dropdown menus open on click only (`CLICK_ONLY` in the navbars): with hover opening too, pointing at a group and clicking it closes it again.
 
 ## Personal finance pages ("My money", F12 to F26)
 
 - Pages live under `app/[locale]/(site)/personal/`. The paths match the links the API stores in notifications (`/personal/allocation`, `/personal/assets/{id}` and so on), so do not rename them.
+- Sections are grouped by task in `src/lib/personal-sections.ts` (Overview, Costs, What you own, How it's doing, Zakat and tax, Plans; Alerts and Household apart). The section menu, the phone sheet and the overview's "All sections" panel all read it, so a new page is added there once, with an icon and a `personal.nav.describe.<key>` line in both message files.
 - Start a page with `setup(locale, returnTo)` from `src/lib/personal-page.ts` and wrap it in `<PersonalShell>`, which adds the toolbar, the household switcher, the "create a household" card and the disclaimer.
 - Read API data with `hh(ctx, path)` (household routes) or `get(ctx, path)`, wrapped in `load(...)` so one failing block shows an error in place instead of breaking the page.
 - Writes go through `src/app/actions/personal.ts`. Pass them bound (`action.bind(null, householdId, ...)`) to `ActionForm`, `DeleteButton`, `ActionButton` or `ToggleSwitch` from `components/personal/forms.tsx`.

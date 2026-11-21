@@ -656,6 +656,10 @@ export const ALERT_TYPES = [
   "REVALUATION_DUE",
   "HAWL_APPROACHING",
   "MONTHLY_REPORT",
+  // Market alerts (F7). Shariah status reaches holders and watchers; the other two are opt-in.
+  "SHARIAH_STATUS",
+  "REGIME_CHANGE",
+  "SHOCK_EVENT",
 ] as const;
 export type PersonalAlertType = (typeof ALERT_TYPES)[number];
 

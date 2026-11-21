@@ -58,6 +58,13 @@ const KNOWN_CODES: ReadonlySet<string> = new Set<ErrorCode>([
   "UNITS_REQUIRED",
   "UNKNOWN_TICKER",
   "TARGETS_MUST_TOTAL_100",
+  // Market layer (F1 to F8) and its admin screens.
+  "NOT_SCREENED",
+  "DUPLICATE",
+  "PRICE_CHANGE_TOO_LARGE",
+  "CSV_INVALID",
+  "FIGURE_WITHOUT_SOURCE",
+  "LIMIT_REACHED",
 ]);
 
 /** Maps a failed API call to a message code. Anything unexpected is logged and hidden. */

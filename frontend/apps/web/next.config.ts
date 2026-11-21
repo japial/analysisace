@@ -6,6 +6,9 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  // A separate output folder for test builds (NEXT_DIST_DIR=.next-verify), so a production
+  // build never replaces the files a running dev server is serving from `.next`.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   // Workspace packages ship TypeScript source.
   transpilePackages: ["@analysisace/core", "@analysisace/i18n"],
   // Self-contained server bundle for the Docker image.

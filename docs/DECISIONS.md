@@ -80,3 +80,22 @@ Only base data is seeded. Screening results, scores, event metrics, regimes, net
 - `regime_sector_stat` (FR8.2), `macro_note` (F4), `liability` and `net_worth_snapshot` (FR14.4), `target_allocation` (FR16.2), `push_subscription` (FR7.1).
 - `owner_share` and `valuation` point at holdings, alternative assets or liabilities through `asset_kind` + `asset_id` with no foreign key. `services/household_data.py` removes them when a household is deleted.
 - Unit tests run SQLite with foreign keys enforced, after a row-ordering bug passed on SQLite and failed on PostgreSQL.
+
+## D17. Market analytics run on stored data only, in one nightly pipeline (2026-11-21)
+
+F1, F2, F3, F5, F6 and F8 are computed by `services/market_pipeline.py` (worker job `market_analytics`, also runnable by an admin) from rows already in the database: adjusted closes, index levels, macro series and reviewed financials. No outside service is called, so the features work on demo data now and on real data once the adapters exist (Q5). Choices made along the way:
+
+- **Screening market cap** is the mean of daily close × shares outstanding over the method's trailing window ending on the period end, so a result can be reproduced from stored prices. A stored result is updated in place only when its inputs change under the same config version (a reclassification or corrected figures); shown-status changes are always kept in `shariah_status_change`.
+- **Only reviewed financials are screened** (`reviewed_at` set). Reviewing figures re-screens that company at once (FR1.4).
+- **Rate sensitivity** uses weekly DSE weeks keyed by their Sunday. A week is dropped if it or the week before touches a floor-price period, or if either week had no trade. Standard errors are Newey-West (Bartlett, default lag `floor(4(n/100)^(2/9))`) with an n/(n−k) factor. Sector scores use an equal-weight sector index.
+- **The Shariah basket** (FR2.2) uses the current COMPLIANT set at every monthly rebalance, as the PRD acceptance criterion says. Its history therefore shows how today's list would have moved, and the page says so. Levels are stored in `index_daily` under `AACE_SHARIAH_EW` with a `source` row naming the computation.
+- **Event metrics** are also computed for the DSEX (`subject_type = INDEX`), so an event page can show the market's move.
+- **Regime inflation bands** are not in the PRD. Provisional bands (under 6%, 6 to 9%, 9% and over) are in `config/regime.yaml` with a TODO for the owner; the liquidity trend is off until a series and rule are chosen.
+- **Market alerts (F7)** are in-app only until an email provider and web push exist. Status changes reach holders and watchers; regime and shock alerts reach only users who turned them on.
+- **Gold and silver prices** are entered by an admin (Q9 default), with a check that refuses a move of more than 15% from the previous value. Index and macro series can also be loaded from CSV for backfills.
+
+## D18. PDF statements with fpdf2 and HarfBuzz shaping (2026-11-21)
+
+Zakat and tax statements (F13) are made as PDFs by the API (`services/statements.py`), in the language the person asks for. fpdf2 is used with `uharfbuzz` because Bangla needs text shaping for joined letters; ReportLab draws Bangla wrongly, and WeasyPrint needs GTK on Windows. Fonts are Noto Sans and Noto Sans Bengali, kept in `backend/app/assets/fonts` under the SIL Open Font License (OFL.txt beside them).
+
+A PDF repeats the stored snapshot; nothing is recalculated. Each page carries the disclaimer, and the end of the statement gives the computation time and the sources of the market prices valid on the snapshot date. Enum labels are copied from the web message files into `services/statement_labels.py`, and a test fails if the two copies differ. The browser "print" button was replaced by a "Download PDF" button. The same document class can produce the F9 white-label weekly report later.

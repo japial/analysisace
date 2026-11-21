@@ -1,5 +1,5 @@
 # Ingestion schedules (PRD section 8). Times are Asia/Dhaka.
-version: "0.2.0"
+version: "0.3.0"
 timezone: Asia/Dhaka
 
 jobs:
@@ -21,6 +21,11 @@ jobs:
   net_worth_snapshots: { days: daily, at: "18:30" }
   personal_alerts: { days: daily, at: "07:00" }
   monthly_report: { days: monthly, day: 1, at: "08:00" }
+  # Market analytics (F1 to F8). They read stored data only, so they need no outside service.
+  adjusted_prices: { days: daily, at: "19:30" }
+  data_quality: { days: trading, at: "18:15" }
+  market_analytics: { days: daily, at: "21:00" }
+  macro_note_draft: { days: weekly, weekday: FRI, at: "11:00" }
 
 quality:
   max_unexplained_move_pct: 10.0

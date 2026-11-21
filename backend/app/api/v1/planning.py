@@ -2,7 +2,7 @@
 
 import uuid
 from decimal import Decimal
-from typing import Any
+from typing import Any, Literal
 
 from fastapi import APIRouter, Response, status
 from sqlalchemy import select
@@ -29,7 +29,7 @@ from app.schemas.personal import (
     ZakatIn,
     ZakatSnapshotOut,
 )
-from app.services import households, planning, zakat_tax
+from app.services import households, planning, statements, zakat_tax
 from app.services.auth import ConsentPurpose
 from app.services.valuation import load_portfolio, today_dhaka
 
@@ -74,6 +74,29 @@ def get_zakat_snapshot(snapshot_id: uuid.UUID, access: Viewer, db: Db) -> ZakatS
     households.require_consent(access.user, ConsentPurpose.RELIGIOUS_PREFERENCES)
     row = zakat_tax.get_zakat_snapshot(db, access.household.id, snapshot_id)
     return ZakatSnapshotOut.model_validate(row)
+
+
+def _pdf(content: bytes, filename: str) -> Response:
+    return Response(
+        content,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+@router.get(f"{HOUSEHOLD}/zakat/snapshots/{{snapshot_id}}/statement.pdf")
+def zakat_statement_pdf(
+    snapshot_id: uuid.UUID, access: Viewer, db: Db, locale: Literal["en", "bn"] = "en"
+) -> Response:
+    """FR13: the Zakat snapshot as a PDF in English or Bangla, every line as stored."""
+    households.require_consent(access.user, ConsentPurpose.RELIGIOUS_PREFERENCES)
+    row = zakat_tax.get_zakat_snapshot(db, access.household.id, snapshot_id)
+    member = households.get_member(db, access.household.id, row.member_id)
+    content = statements.zakat_pdf(db, access.household.id, row, member, locale)
+    return _pdf(content, f"analysisace-zakat-{row.date.isoformat()}-{locale}.pdf")
 
 
 @router.delete(f"{HOUSEHOLD}/zakat/snapshots/{{snapshot_id}}", status_code=204)
@@ -130,6 +153,17 @@ def export_tax_snapshot(snapshot_id: uuid.UUID, access: Viewer, db: Db) -> Respo
             "Content-Disposition": f'attachment; filename="analysisace-tax-{row.tax_year}.csv"'
         },
     )
+
+
+@router.get(f"{HOUSEHOLD}/tax/snapshots/{{snapshot_id}}/statement.pdf")
+def tax_statement_pdf(
+    snapshot_id: uuid.UUID, access: Viewer, db: Db, locale: Literal["en", "bn"] = "en"
+) -> Response:
+    """FR13.5: the tax statement as a PDF in English or Bangla."""
+    row = zakat_tax.get_tax_snapshot(db, access.household.id, snapshot_id)
+    member = households.get_member(db, access.household.id, row.member_id)
+    content = statements.tax_pdf(db, access.household.id, row, member, locale)
+    return _pdf(content, f"analysisace-tax-{row.tax_year}-{locale}.pdf")
 
 
 @router.delete(f"{HOUSEHOLD}/tax/snapshots/{{snapshot_id}}", status_code=204)

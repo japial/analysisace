@@ -20,9 +20,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from app.core.config import get_settings
 from app.core.db import get_sessionmaker
 from app.core.trading_calendar import get_trading_calendar
+from app.seed.demo_market import END as market_end
 from app.seed.demo_market import seed_demo_market
 from app.seed.demo_personal import ANALYST_EMAIL, DEMO_EMAIL, FIRM_EMAIL, seed_demo_personal
 from app.seed.reference import seed_reference
+from app.services.email import get_email_sender
+from app.services.macro_notes import generate_draft
+from app.services.market_pipeline import run_market_analytics
 
 
 def main() -> int:
@@ -39,6 +43,13 @@ def main() -> int:
         print("Market demo data:", market or "already present.")
 
         personal = seed_demo_personal(session, password)
+        session.commit()
+
+        # Screening, scores, event metrics, basket and regime are computed, never seeded.
+        analytics = run_market_analytics(session, get_email_sender())
+        print("Market analytics:", analytics)
+        if market:
+            generate_draft(session, market_end)
         session.commit()
         if personal.created:
             print("Personal demo data:", personal.counts)

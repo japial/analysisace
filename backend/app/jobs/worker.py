@@ -17,11 +17,13 @@ from sqlalchemy.orm import Session
 from app.core.app_config import get_config
 from app.core.config import get_settings
 from app.core.db import get_sessionmaker
+from app.core.trading_calendar import get_trading_calendar
 from app.models import JobRun
 from app.seed.reference import seed_reference
-from app.services import alerts, costs, portfolio
+from app.services import alerts, costs, macro_notes, market_data, portfolio
 from app.services.config_registry import sync_config_versions
 from app.services.email import get_email_sender
+from app.services.market_pipeline import run_market_analytics
 from app.services.valuation import today_dhaka
 
 logger = logging.getLogger("analysisace.worker")
@@ -50,13 +52,42 @@ def _monthly_report(session: Session) -> dict[str, Any]:
     return {"sent": sent}
 
 
-# name in schedules.yaml -> implementation. Ingestion jobs are added in M1 as each source
-# adapter is written.
+def _adjusted_prices(session: Session) -> dict[str, Any]:
+    """PRD 7.2: write adjusted closes wherever they are missing."""
+    return {"changed": market_data.recompute_adjusted_closes(session)}
+
+
+def _data_quality(session: Session) -> dict[str, Any]:
+    """PRD section 8: checks that span days; failures go to the review queue."""
+    calendar = get_trading_calendar()
+    today = today_dhaka()
+    if not calendar.is_trading_day(today):
+        return {"skipped": "not a trading day"}
+    return market_data.run_quality_checks(session, calendar, today)
+
+
+def _market_analytics(session: Session) -> dict[str, Any]:
+    """F1 screen, F3 scores, F5 event metrics, F2 basket, F8 regime, F7 alerts."""
+    return run_market_analytics(session, get_email_sender())
+
+
+def _macro_note_draft(session: Session) -> dict[str, Any]:
+    """FR4.1: draft this week's note in both languages for an editor to publish."""
+    notes = macro_notes.generate_draft(session, today_dhaka())
+    return {"notes": [f"{n.week_start}:{n.locale}:{n.status}" for n in notes]}
+
+
+# name in schedules.yaml -> implementation. Live ingestion jobs are added as each source
+# adapter is written (they need outside services).
 JOBS: dict[str, JobFn] = {
     "recurring_expenses": _recurring_expenses,
     "net_worth_snapshots": _net_worth_snapshots,
     "personal_alerts": _personal_alerts,
     "monthly_report": _monthly_report,
+    "adjusted_prices": _adjusted_prices,
+    "data_quality": _data_quality,
+    "market_analytics": _market_analytics,
+    "macro_note_draft": _macro_note_draft,
 }
 
 

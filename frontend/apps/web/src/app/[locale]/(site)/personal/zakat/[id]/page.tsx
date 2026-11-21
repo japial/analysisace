@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { deleteZakatAction } from "@/app/actions/personal";
 import { Facts, Panel, Stat, StatGrid } from "@/components/personal/display";
 import { DeleteButton } from "@/components/personal/forms";
-import { PrintButton } from "@/components/personal/print-button";
+import { PdfButton } from "@/components/personal/pdf-button";
 import { PersonalShell } from "@/components/personal/shell";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -38,7 +38,7 @@ export default async function ZakatSnapshotPage({ params }: PageProps<{ id: stri
       trail={trail}
       actions={
         <>
-          <PrintButton label={t("personal.print")} />
+          <PdfButton locale={locale} apiPath={`/households/${ctx.household.id}/zakat/snapshots/${id}/statement.pdf`} label={t("personal.pdf")} />
           {ctx.canEdit && (
             <DeleteButton action={deleteZakatAction.bind(null, ctx.household.id, id)} label={t("personal.zakat.delete")} title={t("personal.zakat.delete")} />
           )}

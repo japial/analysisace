@@ -21,6 +21,7 @@ export type Section =
   | "sukuk"
   | "performance"
   | "allocation"
+  | "marketCheck"
   | "zakat"
   | "tax"
   | "fire"

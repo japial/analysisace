@@ -2,13 +2,15 @@ import { requestRaw } from "@/lib/api";
 import { getSessionToken } from "@/lib/session";
 
 /**
- * Passes a file from the API to the browser: the cost export (FR12.5), a tax statement
- * (FR13.5) or a stored document (FR25.5). Only these paths are allowed, and the API checks
- * that the signed-in person may read the household.
+ * Passes a file from the API to the browser: the cost export (FR12.5), a tax statement as
+ * CSV (FR13.5), a Zakat or tax statement as PDF (FR13) or a stored document (FR25.5). Only
+ * these paths are allowed, and the API checks that the signed-in person may read the
+ * household.
  */
 const ALLOWED = [
   /^\/households\/[0-9a-f-]{36}\/costs\/export\.csv$/,
   /^\/households\/[0-9a-f-]{36}\/tax\/snapshots\/[0-9a-f-]{36}\/export\.csv$/,
+  /^\/households\/[0-9a-f-]{36}\/(zakat|tax)\/snapshots\/[0-9a-f-]{36}\/statement\.pdf\?locale=(en|bn)$/,
   /^\/households\/[0-9a-f-]{36}\/alt-assets\/[0-9a-f-]{36}\/documents\/[0-9a-f-]{36}$/,
 ];
 

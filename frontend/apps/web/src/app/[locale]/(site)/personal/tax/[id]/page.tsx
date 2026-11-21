@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { deleteTaxAction } from "@/app/actions/personal";
 import { Empty, Panel, Stat, StatGrid } from "@/components/personal/display";
 import { DeleteButton } from "@/components/personal/forms";
-import { PrintButton } from "@/components/personal/print-button";
+import { PdfButton } from "@/components/personal/pdf-button";
 import { PersonalShell } from "@/components/personal/shell";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -47,7 +47,7 @@ export default async function TaxSnapshotPage({ params }: PageProps<{ id: string
               {t("personal.tax.csv")}
             </a>
           </Button>
-          <PrintButton label={t("personal.print")} />
+          <PdfButton locale={locale} apiPath={`/households/${hid}/tax/snapshots/${id}/statement.pdf`} label={t("personal.pdf")} />
           {ctx.canEdit && (
             <DeleteButton action={deleteTaxAction.bind(null, hid, id)} label={t("personal.tax.delete")} title={t("personal.tax.delete")} />
           )}

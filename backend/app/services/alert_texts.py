@@ -64,6 +64,37 @@ EMAIL_TEXT: dict[str, dict[str, tuple[str, str]]] = {
         ),
         "bn": ("আপনার যাকাতের তারিখ নিকটে", "{name}-এর যাকাতের তারিখ {date} ({days} দিন পর)।"),
     },
+    # Market alerts (F7). Status codes appear as stored (COMPLIANT, NON_COMPLIANT, UNDER_REVIEW).
+    "SHARIAH_STATUS_CHANGED": {
+        "en": (
+            "Shariah status changed: {ticker}",
+            "The Shariah screening status of {ticker} changed from {from_status} to {to_status}.",
+        ),
+        "bn": (
+            "শরিয়াহ অবস্থা বদলেছে: {ticker}",
+            "{ticker}-এর শরিয়াহ স্ক্রিনিং অবস্থা {from_status} থেকে {to_status} হয়েছে।",
+        ),
+    },
+    "REGIME_CHANGED": {
+        "en": (
+            "Macro regime label changed",
+            "The rules-based macro regime label changed from {previous} to {label}.",
+        ),
+        "bn": (
+            "সামষ্টিক অর্থনৈতিক অবস্থার লেবেল বদলেছে",
+            "নিয়মভিত্তিক সামষ্টিক অর্থনৈতিক অবস্থার লেবেল {previous} থেকে {label} হয়েছে।",
+        ),
+    },
+    "SHOCK_EVENT_PUBLISHED": {
+        "en": (
+            "New event in the shock playbook",
+            "A new event was added to the shock playbook: {title_en} ({date}).",
+        ),
+        "bn": (
+            "শক প্লেবুকে নতুন ঘটনা",
+            "শক প্লেবুকে নতুন একটি ঘটনা যোগ হয়েছে: {title_bn} ({date})।",
+        ),
+    },
 }
 
 
