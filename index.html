@@ -13,7 +13,7 @@
   <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&family=Fredoka:wght@600&display=swap" rel="stylesheet">
   <style>
 /*
  * analysisACE coming-soon page. Plain CSS, no build step, no framework.
@@ -33,6 +33,8 @@
   --text-3: #64748b;
   --primary: var(--teal-deep);
   --primary-soft: rgba(15, 118, 110, 0.1);
+  --logo: #007078;
+  --logo-on-page: #007078;
   --note: #fef9e7;
   --note-border: #f5e3a3;
   --note-text: #6b4e00;
@@ -53,6 +55,7 @@
     --text-3: #94a3b8;
     --primary: var(--teal);
     --primary-soft: rgba(45, 212, 191, 0.12);
+    --logo-on-page: var(--teal);
     --note: #2a2410;
     --note-border: #4d4119;
     --note-text: #f5e3a3;
@@ -175,29 +178,29 @@ a {
   height: 68px;
 }
 
+/* Text logo, following assets/images/logo.png: one rounded face in the logo teal. On the
+   dark header it sits on a white badge so the teal keeps its contrast. */
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  padding: 7px 14px 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
   text-decoration: none;
+  transition: transform 0.2s;
 }
 
-.logo svg {
-  width: 36px;
-  height: 36px;
+.logo:hover {
+  transform: scale(1.03);
 }
 
 .wordmark {
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 1.35rem;
-  letter-spacing: -0.035em;
+  font-family: "Fredoka", var(--font);
+  font-weight: 600;
+  font-size: 1.45rem;
+  letter-spacing: -0.01em;
   line-height: 1;
-}
-
-.wordmark b {
-  color: var(--teal);
-  font-weight: 700;
+  color: var(--logo);
 }
 
 .header-actions {
@@ -1075,12 +1078,8 @@ section.band {
 }
 
 .site-footer .wordmark {
-  font-size: 1.05rem;
-  color: var(--text);
-}
-
-.site-footer .wordmark b {
-  color: var(--primary);
+  font-size: 1.15rem;
+  color: var(--logo-on-page);
 }
 
 /* Bangla text needs a little more line height. */
@@ -1128,9 +1127,8 @@ html[lang="bn"] .section-head h2 {
 
   <header class="site-header">
     <div class="container">
-      <a class="logo" href="#top" aria-label="analysisACE">
-        <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6L60 58H4Z" fill="#fff"/><rect x="17" y="42" width="7" height="10" rx="1.5" fill="#0b1f3a"/><rect x="40" y="42" width="7" height="10" rx="1.5" fill="#0b1f3a"/><rect x="28.5" y="30" width="7" height="22" rx="1.5" fill="#2dd4bf"/></svg>
-        <span class="wordmark" lang="en">analysis<b>ACE</b></span>
+      <a class="logo" href="#top">
+        <span class="wordmark" lang="en">analysisACE</span>
       </a>
       <div class="header-actions">
         <div class="lang-switch" role="group" aria-label="Language">
@@ -1343,7 +1341,7 @@ html[lang="bn"] .section-head h2 {
 
   <footer class="site-footer">
     <div class="container">
-      <span class="wordmark" lang="en">analysis<b>ACE</b></span>
+      <span class="wordmark" lang="en">analysisACE</span>
       <span>&copy; 2026 analysisACE · <span data-i18n="disclaimer">Historical analysis for education only. Not investment advice.</span></span>
     </div>
   </footer>
