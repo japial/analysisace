@@ -8,6 +8,7 @@ const PASSWORD = "e2e-password-123";
 
 const SECTIONS = [
   ["/en/personal", "My money"],
+  ["/en/personal/income", "Income"],
   ["/en/personal/costs", "Costs"],
   ["/en/personal/portfolio", "Accounts and holdings"],
   ["/en/personal/assets", "Property and other assets"],
@@ -63,6 +64,9 @@ test("record a cost, an account with a holding, an asset, a goal and a FIRE plan
   page,
 }) => {
   await signUpWithHousehold(page);
+  // D21: a new household's overview starts with the first steps toward FIRE.
+  await expect(page.getByRole("heading", { name: "Your road to FIRE" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Record income" })).toBeVisible();
 
   // F12: a cost appears in the entries.
   await page.goto("/en/personal/costs");
@@ -71,6 +75,17 @@ test("record a cost, an account with a holding, an asset, a goal and a FIRE plan
   await expect(page.getByText("Cost added.")).toBeVisible();
   // Shown in the entries and in the monthly and category totals.
   await expect(page.getByRole("cell", { name: "৳1,250.50" }).first()).toBeVisible();
+
+  // F27: income is recorded and what is left after the cost above is worked out.
+  await page.goto("/en/personal/income");
+  await page.getByLabel("Amount (৳)").first().fill("50000");
+  await pick(page, "Kind of income", "Salary");
+  await page.getByRole("button", { name: "Add income" }).click();
+  await expect(page.getByText("Income added.")).toBeVisible();
+  await expect(page.getByRole("cell", { name: "৳48,749.50" }).first()).toBeVisible();
+  // FR27.5: the tax form shows the salary it would take from the records.
+  await page.goto("/en/personal/tax");
+  await expect(page.getByText(/salary ৳50,000\.00/)).toBeVisible();
 
   // F14: an account, then a holding in it.
   await page.goto("/en/personal/portfolio");
@@ -123,6 +138,9 @@ test("record a cost, an account with a holding, an asset, a goal and a FIRE plan
   await page.goto("/en/personal");
   await expect(page.getByText("Net worth").first()).toBeVisible();
   await expect(page.getByText("Tester family · Owner")).toBeVisible();
+  // D21: with a plan, the overview leads with the projected FIRE age from it.
+  await expect(page.getByText("Projected FIRE age")).toBeVisible();
+  await expect(page.getByRole("progressbar", { name: "Progress to your FIRE number" })).toBeVisible();
 });
 
 test("the grouped section menu reaches every section on desktop and phone", async ({ page }) => {
@@ -132,7 +150,7 @@ test("the grouped section menu reaches every section on desktop and phone", asyn
   if (wide) {
     // Desktop: task groups open a list with a short description for each section.
     const menu = page.getByRole("navigation", { name: "My money sections" });
-    await menu.getByRole("button", { name: /What you own/ }).click();
+    await menu.getByRole("button", { name: /Capital/ }).click();
     await menu.getByRole("link", { name: /Accounts and holdings/ }).click();
     await expect(page.getByRole("heading", { level: 1, name: "Accounts and holdings" })).toBeVisible();
     await menu.getByRole("button", { name: /Plans/ }).click();
@@ -140,7 +158,7 @@ test("the grouped section menu reaches every section on desktop and phone", asyn
   } else {
     // Phone: one button names the current section and opens every section by group.
     await page.getByRole("button", { name: /All sections/ }).click();
-    await expect(page.getByRole("dialog").getByText("What you own")).toBeVisible();
+    await expect(page.getByRole("dialog").getByText("Capital", { exact: true })).toBeVisible();
     await page.getByRole("dialog").getByRole("link", { name: /^Goals/ }).click();
     await expect(page.getByRole("button", { name: /Goals/ })).toBeVisible();
   }

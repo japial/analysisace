@@ -14,7 +14,7 @@ export async function SectionShortcuts() {
   const groups = [
     ...SECTION_GROUPS.filter((g) => g.key !== "overview").map((g) => ({
       key: g.key,
-      title: t(g.key === "costs" ? "nav.groups.everyday" : `nav.groups.${g.key}`),
+      title: t(`nav.groups.${g.key}`),
       sections: g.sections,
     })),
     { key: "settings", title: t("nav.groups.settings"), sections: UTILITY_SECTIONS },

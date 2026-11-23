@@ -591,8 +591,9 @@ class ZakatSnapshotOut(Row):
 class TaxIn(BaseModel):
     member_id: uuid.UUID
     tax_year: Annotated[str, Field(pattern=r"^\d{4}-\d{2}$")]
-    salary_income: Money = Decimal(0)
-    other_income: Money = Decimal(0)
+    # Left out, they are taken from the income records (FR27.5).
+    salary_income: Money | None = None
+    other_income: Money | None = None
 
 
 class TaxSnapshotOut(Row):
@@ -736,3 +737,62 @@ class NotificationsOut(BaseModel):
 
 class MarkReadIn(BaseModel):
     id: uuid.UUID | None = None
+
+
+# --- F27 income records ----------------------------------------------------------------
+
+
+class IncomeIn(BaseModel):
+    date: dt.date
+    amount: PositiveMoney
+    kind: Annotated[str, Field(min_length=1, max_length=20)]
+    note: Note | None = None
+    member_id: uuid.UUID | None = None
+
+
+class IncomeUpdateIn(BaseModel):
+    date: dt.date | None = None
+    amount: PositiveMoney | None = None
+    kind: Annotated[str, Field(min_length=1, max_length=20)] | None = None
+    note: Note | None = None
+    member_id: uuid.UUID | None = None
+
+
+class IncomeOut(Row):
+    id: uuid.UUID
+    date: dt.date
+    amount: Decimal
+    kind: str
+    note: str | None
+    member_id: uuid.UUID | None
+    recurring_id: uuid.UUID | None
+
+
+class IncomeRuleIn(BaseModel):
+    kind: Annotated[str, Field(min_length=1, max_length=20)]
+    amount: PositiveMoney
+    frequency: RecurringFrequency
+    start_date: dt.date
+    end_date: dt.date | None = None
+    note: Note | None = None
+    member_id: uuid.UUID | None = None
+
+
+class IncomeRuleUpdateIn(BaseModel):
+    kind: Annotated[str, Field(min_length=1, max_length=20)] | None = None
+    amount: PositiveMoney | None = None
+    end_date: dt.date | None = None
+    note: Note | None = None
+    is_active: bool | None = None
+
+
+class IncomeRuleOut(Row):
+    id: uuid.UUID
+    kind: str
+    amount: Decimal
+    frequency: str
+    start_date: dt.date
+    end_date: dt.date | None
+    note: str | None
+    member_id: uuid.UUID | None
+    is_active: bool

@@ -101,14 +101,16 @@ EMAIL_TEXT: dict[str, dict[str, tuple[str, str]]] = {
 REPORT_TEXT = {
     "en": (
         "Your analysisACE monthly report for {month}",
-        "Spending in {month}: {spending}\nNet worth: {net_worth}\n{zakat}{fire}\nOpen your dashboard: {link}",
+        "Spending in {month}: {spending}\n{savings}Net worth: {net_worth}\n{zakat}{fire}\nOpen your dashboard: {link}",
         "Zakat estimate: {amount}\n",
         "FIRE progress: {pct}% of your FIRE number\n",
+        "Income: {income}. Left after costs: {savings}\n",
     ),
     "bn": (
         "{month} মাসের analysisACE মাসিক প্রতিবেদন",
-        "{month} মাসের খরচ: {spending}\nনিট সম্পদ: {net_worth}\n{zakat}{fire}\nআপনার ড্যাশবোর্ড খুলুন: {link}",
+        "{month} মাসের খরচ: {spending}\n{savings}নিট সম্পদ: {net_worth}\n{zakat}{fire}\nআপনার ড্যাশবোর্ড খুলুন: {link}",
         "যাকাতের আনুমানিক হিসাব: {amount}\n",
         "FIRE অগ্রগতি: আপনার FIRE অঙ্কের {pct}%\n",
+        "আয়: {income}। খরচের পর বাকি: {savings}\n",
     ),
 }

@@ -299,6 +299,44 @@ class Expense(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     )
 
 
+class IncomeRule(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    """Income that repeats, such as a monthly salary or rent (FR27.2)."""
+
+    __tablename__ = "income_rule"
+
+    household_id: Mapped[uuid.UUID] = _household_fk()
+    member_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid, ForeignKey("household_member.id", ondelete="SET NULL")
+    )
+    kind: Mapped[str] = mapped_column(String(20), nullable=False)
+    amount: Mapped[Decimal] = mapped_column(MONEY, nullable=False)
+    note: Mapped[str | None] = mapped_column(String(300))
+    frequency: Mapped[str] = mapped_column(String(20), nullable=False)
+    start_date: Mapped[dt.date] = mapped_column(Date, nullable=False)
+    end_date: Mapped[dt.date | None] = mapped_column(Date)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+
+class IncomeEntry(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    """Money that came in on a date (FR27.1)."""
+
+    __tablename__ = "income_entry"
+    # One generated entry per rule per date, so a job that runs twice makes no duplicates.
+    __table_args__ = (UniqueConstraint("recurring_id", "date"),)
+
+    household_id: Mapped[uuid.UUID] = _household_fk()
+    member_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid, ForeignKey("household_member.id", ondelete="SET NULL")
+    )
+    date: Mapped[dt.date] = mapped_column(Date, nullable=False, index=True)
+    amount: Mapped[Decimal] = mapped_column(MONEY, nullable=False)
+    kind: Mapped[str] = mapped_column(String(20), nullable=False)
+    note: Mapped[str | None] = mapped_column(String(300))
+    recurring_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid, ForeignKey("income_rule.id", ondelete="SET NULL")
+    )
+
+
 # --- F13 Zakat and tax ----------------------------------------------------------------
 
 

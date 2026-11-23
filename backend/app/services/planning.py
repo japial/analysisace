@@ -25,6 +25,7 @@ from app.models import (
     ScenarioResult,
 )
 from app.services import costs as cost_service
+from app.services import income as income_service
 from app.services import islamic
 from app.services.auth import AuthError
 from app.services.households import member_age, owned
@@ -38,6 +39,12 @@ def _fire_config() -> dict[str, Any]:
     config = personal_config()["fire"]
     assert isinstance(config, dict)
     return config
+
+
+def _non_negative(value: Decimal | None) -> Decimal | None:
+    """The FIRE form takes savings of zero or more; a household that spends more than it
+    earns starts from zero."""
+    return None if value is None else max(value, Decimal(0))
 
 
 def investable_base(portfolio: Portfolio, include_illiquid: bool) -> tuple[Decimal, Decimal]:
@@ -98,6 +105,9 @@ def defaults(
         "illiquid_excluded": Decimal(0) if include_illiquid else excluded,
         "include_illiquid": include_illiquid,
         "yearly_expenses": cost_service.trailing_cost_of_living(db, household_id, portfolio.day),
+        "monthly_savings": _non_negative(
+            income_service.summary(db, household_id).average_monthly_savings
+        ),
         "inflation_pct": inflation,
         "inflation_months": len(rows),
         "nominal_return_pct": safe_rate,
@@ -349,8 +359,12 @@ def goal_progress(
     )
     plans = list_plans(db, household_id)
     today = portfolio.day
+    goals = list_goals(db, household_id)
+    saving: Decimal | None = None
+    if any(g.type == "MONTHLY_SAVINGS" for g in goals):
+        saving = income_service.summary(db, household_id, as_of=today).average_monthly_savings
     rows = []
-    for goal in list_goals(db, household_id):
+    for goal in goals:
         current: Decimal | None
         target: Decimal | None
         reached = False
@@ -368,14 +382,17 @@ def goal_progress(
             )
             reached = bool(plan and base is not None and base >= plan.fire_number)
         else:
-            current = portfolio.net_worth if goal.type == "NET_WORTH" else invested
+            if goal.type == "MONTHLY_SAVINGS":
+                current = saving
+            else:
+                current = portfolio.net_worth if goal.type == "NET_WORTH" else invested
             target = goal.target_amount
             pct = (
                 max(min(current / target * 100, HUNDRED), Decimal(0)).quantize(Q2)
-                if target
+                if target and current is not None
                 else None
             )
-            reached = bool(target and current >= target)
+            reached = bool(target and current is not None and current >= target)
         rows.append(
             {
                 "goal": goal,
@@ -424,3 +441,69 @@ def fire_progress(db: Session, household_id: uuid.UUID) -> dict[str, Any] | None
         "progress_pct": max(min(pct, HUNDRED), Decimal(0)),
         "computed_at": plan.computed_at,
     }
+
+
+def fire_overview(db: Session, household_id: uuid.UUID) -> tuple[dict[str, Any], set[uuid.UUID]]:
+    """Where the household stands on the way to FIRE, for the top of My money (D21).
+
+    With a plan: the newest plan's FIRE number and projected age, against today's
+    investable capital. Without one: an estimated FIRE number from the last 12 months of
+    costs and the configured withdrawal rate (FR17.2), so a new household sees a starting
+    point. Without costs either, `basis` is NO_COSTS and no FIRE number is given.
+    """
+    plans = list_plans(db, household_id)
+    plan = plans[0] if plans else None
+    portfolio = load_portfolio(db, household_id)
+    include_illiquid = bool(plan.inputs.get("include_illiquid")) if plan else False
+    investable, _ = investable_base(portfolio, include_illiquid)
+    savings = income_service.summary(db, household_id, as_of=portfolio.day)
+    withdrawal = (
+        Decimal(str(plan.inputs["withdrawal_rate_pct"]))
+        if plan
+        else Decimal(str(_fire_config()["withdrawal_rate_pct"]))
+    )
+
+    yearly_costs: Decimal | None = None
+    cost_months = 0
+    target: Decimal | None
+    if plan:
+        basis = "PLAN"
+        target = plan.fire_number
+    else:
+        yearly_costs, cost_months = cost_service.cost_of_living(db, household_id, portfolio.day)
+        basis = "ESTIMATE" if yearly_costs > 0 else "NO_COSTS"
+        target = fire.fire_number(yearly_costs, withdrawal) if yearly_costs > 0 else None
+
+    progress = (
+        max(min(investable / target * HUNDRED, HUNDRED), Decimal(0)).quantize(Q2)
+        if target
+        else None
+    )
+    current_age = Decimal(str(plan.inputs["current_age"])) if plan else None
+    data = {
+        "basis": basis,
+        "plan": {
+            "id": plan.id,
+            "name": plan.name,
+            "computed_at": plan.computed_at,
+            "fire_age": plan.fire_age,
+            "current_age": current_age,
+            # Whole years from the age entered in the plan; None when FIRE is not reached.
+            "years_to_fire": (plan.fire_age - current_age).quantize(Q2)
+            if plan.fire_age is not None and current_age is not None
+            else None,
+        }
+        if plan
+        else None,
+        "fire_number": target,
+        "yearly_costs": yearly_costs,
+        "cost_months": cost_months,
+        "withdrawal_rate_pct": withdrawal,
+        "investable": investable,
+        "include_illiquid": include_illiquid,
+        "progress_pct": progress,
+        "gap": max(target - investable, Decimal(0)).quantize(Q2) if target else None,
+        "savings_rate_pct": savings.savings_rate_pct,
+        "average_monthly_savings": savings.average_monthly_savings,
+    }
+    return data, set(portfolio.source_ids)

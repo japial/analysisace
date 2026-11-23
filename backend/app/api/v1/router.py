@@ -9,6 +9,7 @@ from app.api.v1 import (
     companies,
     costs,
     households,
+    income,
     market,
     me,
     planning,
@@ -30,6 +31,7 @@ api_router.include_router(watchlist.router)
 # Personal finance (F12 to F26).
 api_router.include_router(households.router)
 api_router.include_router(costs.router)
+api_router.include_router(income.router)
 api_router.include_router(portfolio.router)
 api_router.include_router(assets.router)
 api_router.include_router(planning.router)

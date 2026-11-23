@@ -26,6 +26,7 @@ from app.models import (
     FirePlan,
     Household,
     HouseholdMember,
+    IncomeEntry,
     Notification,
     User,
 )
@@ -346,7 +347,8 @@ def run_personal_alerts(db: Session, sender: EmailSender, today: dt.date | None 
 def monthly_figures(
     db: Session, user: User, household_id: uuid.UUID, member: HouseholdMember, today: dt.date
 ) -> dict[str, Any]:
-    """Last month's spending, net worth now, a Zakat estimate and FIRE progress."""
+    """Last month's spending, income and savings, net worth now, a Zakat estimate and
+    FIRE progress."""
     first = add_months(month_start(today), -1)
     last = month_start(today) - dt.timedelta(days=1)
     spending = db.scalar(
@@ -354,6 +356,15 @@ def monthly_figures(
             Expense.household_id == household_id, Expense.date >= first, Expense.date <= last
         )
     )
+    earned = db.scalar(
+        select(func.coalesce(func.sum(IncomeEntry.amount), 0)).where(
+            IncomeEntry.household_id == household_id,
+            IncomeEntry.date >= first,
+            IncomeEntry.date <= last,
+        )
+    )
+    income = Decimal(earned or 0).quantize(Q2)
+    spent = Decimal(spending or 0).quantize(Q2)
     portfolio = load_portfolio(db, household_id, today)
     zakat_due: Decimal | None = None
     if has_consent(user, ConsentPurpose.RELIGIOUS_PREFERENCES) and member.nisab_basis:
@@ -365,7 +376,10 @@ def monthly_figures(
     progress = planning.fire_progress(db, household_id)
     return {
         "month": first.strftime("%Y-%m"),
-        "spending": Decimal(spending or 0).quantize(Q2),
+        "spending": spent,
+        # FR27.3: None when nothing was recorded, so the report does not show a saving of 0.
+        "income": income if income > 0 else None,
+        "savings": income - spent if income > 0 else None,
         "net_worth": portfolio.net_worth.quantize(Q2),
         "zakat_due": zakat_due,
         "fire_progress_pct": progress["progress_pct"] if progress else None,
@@ -403,10 +417,16 @@ def send_monthly_reports(
         db.add(row)
         if rule is not None and rule.channel in ("EMAIL", "BOTH"):
             locale = user.locale if user.locale in ("bn", "en") else "en"
-            subject, body, zakat_line, fire_line = REPORT_TEXT[locale]
+            subject, body, zakat_line, fire_line, savings_line = REPORT_TEXT[locale]
             text = body.format(
                 month=figures["month"],
                 spending=taka(figures["spending"], locale),
+                savings=savings_line.format(
+                    income=taka(figures["income"], locale),
+                    savings=taka(figures["savings"], locale),
+                )
+                if figures["income"] is not None
+                else "",
                 net_worth=taka(figures["net_worth"], locale),
                 zakat=zakat_line.format(amount=taka(figures["zakat_due"], locale))
                 if figures["zakat_due"] is not None

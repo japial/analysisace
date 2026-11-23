@@ -15,6 +15,7 @@ export interface PageProps<P extends object = object> {
 
 export type Section =
   | "overview"
+  | "income"
   | "costs"
   | "portfolio"
   | "assets"

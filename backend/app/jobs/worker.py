@@ -20,7 +20,7 @@ from app.core.db import get_sessionmaker
 from app.core.trading_calendar import get_trading_calendar
 from app.models import JobRun
 from app.seed.reference import seed_reference
-from app.services import alerts, costs, macro_notes, market_data, portfolio
+from app.services import alerts, costs, income, macro_notes, market_data, portfolio
 from app.services.config_registry import sync_config_versions
 from app.services.email import get_email_sender
 from app.services.market_pipeline import run_market_analytics
@@ -34,6 +34,11 @@ JobFn = Callable[[Session], dict[str, Any]]
 def _recurring_expenses(session: Session) -> dict[str, Any]:
     """FR12.2: write the cost entries that recurring rules have fallen due for."""
     return {"added": costs.generate_recurring(session, today_dhaka())}
+
+
+def _recurring_income(session: Session) -> dict[str, Any]:
+    """FR27.2: write the income entries that recurring rules have fallen due for."""
+    return {"added": income.generate_recurring(session, today_dhaka())}
 
 
 def _net_worth_snapshots(session: Session) -> dict[str, Any]:
@@ -81,6 +86,7 @@ def _macro_note_draft(session: Session) -> dict[str, Any]:
 # adapter is written (they need outside services).
 JOBS: dict[str, JobFn] = {
     "recurring_expenses": _recurring_expenses,
+    "recurring_income": _recurring_income,
     "net_worth_snapshots": _net_worth_snapshots,
     "personal_alerts": _personal_alerts,
     "monthly_report": _monthly_report,

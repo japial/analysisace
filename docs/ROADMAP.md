@@ -1,6 +1,8 @@
 # Roadmap and status
 
-Milestones are defined in [PRD.md](PRD.md) section 14 and are built in order. Update this file when an item is finished. Last updated: 2026-11-21.
+Milestones are defined in [PRD.md](PRD.md) section 14 and are built in order. Update this file when an item is finished. Last updated: 2026-11-23.
+
+**Product focus (2026-11-23, D19):** analysisACE helps a household grow its ACE: Assets, Capital, Earnings. Stock analysis is one kind of capital, an optional tool layer, not the headline. Features below are grouped by pillar in the status table.
 
 ## M0 Project setup
 
@@ -85,15 +87,38 @@ Last updated 2026-11-21. "Blocked" means a decision or input from the owner is n
 | F24 | Multi-owner household records | R3+ | Built | — |
 | F25 | Alternative investments | R2 basic, R3 full | Built | S3 storage (documents are encrypted on local disk for now) |
 | F26 | Sukuk and Islamic bank investments | R2 / R3 | Built | Real product catalogue and bank flag content (admin screen `/admin/bank-flags` done 2026-11-21) |
+| F27 | Income records and savings | R2 | Built | CSV import and export. Tax line mapping (`income.tax_lines`) is provisional until the tax adviser review (Q2) |
 
 Also built, not a numbered feature: accounts, roles and user management (see below), the data foundation tables, the trading calendar, price adjustment and quality checks.
 
+### ACE pillars
+
+| Pillar | Features | State |
+|-|-|-|
+| **Assets** | F14, F24, F25, F26, F13 (Zakat, wealth statement) | Built. Open: advisor review of Zakat rules (Q2), broker CSV aliases, S3 storage, product catalogue content |
+| **Capital** | F15 to F19, F6, and the stock tools F1 to F5, F8 | Personal capital features built. Stock tools built on demo data; real data waits on Q5 |
+| **Earnings** | F12, F27, income and tax parts of F13, F20 | Built. Open: email provider for reminders and the monthly report |
+| Platform | F7, F9, F11, F21, F23 | F9 and F11 not built |
+
 ### Suggested order
 
-1. **Personal finance layer first** (household tables, F12, F14 manual entry, F25, F26, F13 Zakat, F17 FIRE, F19 goals). Nothing here waits on a data licence, and Zakat must ship before Ramadan 2027 (about early February 2027).
-2. **Data adapters** as soon as Q5 is answered, then F2, F3, F5, F4, F8.
-3. **Shariah screening** (F1) once the advisor signs off the method (Q1) and financial statements are being extracted.
-4. **Alerts, firm features and payments** once the email provider, the Extended Metronic licence and the BSEC check (Q4) are settled.
+1. **Assets and Earnings first.** Nothing here waits on a data licence, and Zakat must ship before Ramadan 2027 (about early February 2027). Start the advisor review of the Zakat rules (Q2) now. Polish the first-run experience: guided set-up of the first household, an ACE summary on the My money overview (net worth, capital at work, monthly savings), and import helpers.
+2. **Capital plans:** FIRE, goals, scenarios and drift are built; finish tuning with real households. Add an ACE trend (how net worth, capital share and savings changed month by month).
+3. **Email provider and reminders**, so dues, maturities, Zakat dates and the monthly report reach people outside the app.
+4. **Stock tools and data adapters** as soon as Q5 is answered (F2, F3, F5, F4, F8), and Shariah screening (F1) once the advisor signs off the method (Q1).
+5. **Firm features and payments** (F9) once the Extended Metronic licence and the BSEC check (Q4) are settled.
+
+### Positioning work
+
+- [x] Landing page, hero, menu and message files rewritten around ACE (2026-11-23)
+- [x] PRD overview, goals, personas and ACE map updated; decision D19
+- [x] Coming-soon page rewritten
+- [x] Landing page and coming-soon page refocused on FIRE, with ACE as the levers (D21, 2026-11-23)
+- [x] My money overview leads with FIRE progress (`GET /fire/progress`): projected FIRE age from the newest plan, or an estimated FIRE number from costs, with savings rate. A partial year of costs is now annualised (average month x 12) for the estimate and the FIRE form (2026-11-23)
+- [x] My money overview shows an ACE card (net worth, capital at work, average monthly cost) from `GET /households/{id}/ace/summary`, and the section menu is grouped Assets, Capital, Earnings, Plans (2026-11-23)
+- [x] Income records and savings (F27, 2026-11-23): income entries and recurring income, monthly savings and savings rate, ACE card and FIRE default use them. Linked (2026-11-23): tax statement takes salary and other income from the records (FR27.5), monthly report shows income and savings, "saved each month" goal type, FIRE default, community comparison through the FIRE plan. Open: CSV import and export of income; an in-app (not only email) income line on the monthly report notice
+- [ ] Move the stock tools' company page links inside the portfolio holding page so shares are reached from the portfolio first
+- [ ] Bangla text review of the new landing copy (with the existing Bangla review item)
 
 ## Accounts and roles (built ahead of M2 at the owner's request)
 
@@ -134,4 +159,3 @@ Not started.
 | Netlify settings | `netlify.toml` now publishes `coming-soon/`. Check the site still deploys after merging to `main` |
 | Metronic licence type | An Extended licence is needed before charging users (see DECISIONS D11) |
 | Email provider | Password reset emails are not delivered until one is chosen |
-| Coming-soon page wording | It promises "Predictive AI" forecasts, which conflicts with the no-signals rule |

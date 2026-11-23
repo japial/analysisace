@@ -1,4 +1,6 @@
 import type {
+  AceSummary,
+  FireProgress,
   Allocation,
   CostSummary,
   Envelope,
@@ -10,6 +12,8 @@ import type {
 import { ArrowRight } from "lucide-react";
 
 import { recordNetWorthAction } from "@/app/actions/personal";
+import { AceSummaryPanel } from "@/components/personal/ace-summary";
+import { FireProgressPanel } from "@/components/personal/fire-progress";
 import { Empty, LoadError, Panel, ShareBars, Stat, StatGrid } from "@/components/personal/display";
 import { ActionButton } from "@/components/personal/forms";
 import { LineChart } from "@/components/personal/line-chart";
@@ -22,7 +26,10 @@ import { type PageProps, enumLabel, sectionMetadata, setup } from "@/lib/persona
 
 export const generateMetadata = sectionMetadata("overview");
 
-/** "My money" overview: net worth, who owns what, goals and new notices (F14, F19, F20, F24). */
+/**
+ * "My money" overview: progress toward FIRE first (F17, D21), then the ACE summary, net
+ * worth, who owns what, goals and new notices (F14, F19, F20, F24).
+ */
 export default async function PersonalOverviewPage({ params }: PageProps) {
   const { locale } = await params;
   const { ctx, t, f } = await setup(locale, "/personal");
@@ -30,7 +37,9 @@ export default async function PersonalOverviewPage({ params }: PageProps) {
     return <PersonalShell ctx={ctx} title={t("personal.sections.overview")} root>{null}</PersonalShell>;
   }
 
-  const [summary, allocation, history, goals, costs, notices] = await Promise.all([
+  const [fire, ace, summary, allocation, history, goals, costs, notices] = await Promise.all([
+    load(hh<Envelope<FireProgress>>(ctx, "/fire/progress")),
+    load(hh<Envelope<AceSummary>>(ctx, "/ace/summary")),
     load(hh<Envelope<PortfolioSummary>>(ctx, "/portfolio/summary")),
     load(hh<Envelope<Allocation>>(ctx, "/portfolio/allocation")),
     load(hh<NetWorthPoint[]>(ctx, "/portfolio/history")),
@@ -46,6 +55,10 @@ export default async function PersonalOverviewPage({ params }: PageProps) {
       title={t("personal.sections.overview")}
       description={t("personal.overview.intro")}
     >
+      {fire.ok ? <FireProgressPanel progress={fire.data} locale={locale} /> : <LoadError code={fire.code} />}
+
+      {ace.ok ? <AceSummaryPanel summary={ace.data} locale={locale} /> : <LoadError code={ace.code} />}
+
       {!summary.ok ? (
         <LoadError code={summary.code} />
       ) : (

@@ -1,12 +1,26 @@
 # Personal finance defaults (F12 to F26). Nothing here is advice: these are the starting
 # values of forms and the labels used to group what a household enters.
 # PROVISIONAL items are marked; change a value and bump `version`.
-version: "0.1.0"
+version: "0.3.0"
 
 costs:
   # Monthly year-on-year CPI from BBS, used for the inflation-adjusted view (FR12.3).
   cpi_series: CPI_YOY
   import_max_rows: 5000
+
+income:
+  # What an income record can be (F27). Kept as a list so a kind can be added without code.
+  kinds: [SALARY, BUSINESS, RENT, REMITTANCE, PROFIT, DIVIDEND, OTHER]
+  # Which line of the tax statement each kind fills when a statement is prepared from the
+  # records (FR27.5). Kinds left out are listed on the statement as "not counted":
+  # rent, profit and dividends are already worked out from holdings and asset cash flows, so
+  # counting the income records too would count them twice. Remittance from abroad is
+  # treated as exempt.
+  # PROVISIONAL: confirm with a tax adviser (TODO(owner): Q2).
+  tax_lines:
+    SALARY: salary
+    BUSINESS: other
+    OTHER: other
 
 portfolio:
   # Instrument type -> asset class (FR16.1).

@@ -183,6 +183,54 @@ export async function deleteRecurringAction(householdId: string, id: string) {
   return run(() => call("DELETE", hh(householdId, `/recurring/${id}`)));
 }
 
+// --- F27 income -----------------------------------------------------------------------
+
+export async function addIncomeAction(
+  householdId: string,
+  _: FormState,
+  form: FormData,
+): Promise<FormState> {
+  return run(() =>
+    call("POST", hh(householdId, "/income"), {
+      date: text(form, "date"),
+      amount: text(form, "amount"),
+      kind: text(form, "kind"),
+      note: optional(form, "note"),
+      member_id: optional(form, "member_id"),
+    }),
+  );
+}
+
+export async function deleteIncomeAction(householdId: string, id: string) {
+  return run(() => call("DELETE", hh(householdId, `/income/${id}`)));
+}
+
+export async function addIncomeRuleAction(
+  householdId: string,
+  _: FormState,
+  form: FormData,
+): Promise<FormState> {
+  return run(() =>
+    call("POST", hh(householdId, "/income-rules"), {
+      kind: text(form, "kind"),
+      amount: text(form, "amount"),
+      frequency: text(form, "frequency"),
+      start_date: text(form, "start_date"),
+      end_date: optional(form, "end_date"),
+      note: optional(form, "note"),
+      member_id: optional(form, "member_id"),
+    }),
+  );
+}
+
+export async function setIncomeRuleActiveAction(householdId: string, id: string, active: boolean) {
+  return run(() => call("PATCH", hh(householdId, `/income-rules/${id}`), { is_active: active }));
+}
+
+export async function deleteIncomeRuleAction(householdId: string, id: string) {
+  return run(() => call("DELETE", hh(householdId, `/income-rules/${id}`)));
+}
+
 export async function addCategoryAction(
   householdId: string,
   _: FormState,

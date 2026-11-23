@@ -74,6 +74,44 @@ export interface RecurringRule {
   is_active: boolean;
 }
 
+/** F27 income records. */
+export interface IncomeEntry {
+  id: string;
+  date: string;
+  amount: Decimal;
+  kind: string;
+  note: string | null;
+  member_id: string | null;
+  recurring_id: string | null;
+}
+
+export interface IncomeRule {
+  id: string;
+  kind: string;
+  amount: Decimal;
+  frequency: RecurringFrequency;
+  start_date: string;
+  end_date: string | null;
+  note: string | null;
+  member_id: string | null;
+  is_active: boolean;
+}
+
+export interface IncomeSummary {
+  as_of_date: string;
+  /** The kinds a record may have, from the API's configuration. */
+  kinds: string[];
+  months: { month: string; income: Decimal; costs: Decimal; savings: Decimal }[];
+  by_kind: { kind: string; total: Decimal }[];
+  income_12m: Decimal;
+  costs_12m: Decimal;
+  savings_12m: Decimal;
+  savings_rate_pct: Decimal | null;
+  months_counted: number;
+  average_monthly_income: Decimal | null;
+  average_monthly_savings: Decimal | null;
+}
+
 export interface CostSummary {
   as_of_date: string;
   months: { month: string; total: Decimal; real_total: Decimal | null; by_category: Record<string, Decimal> }[];
@@ -238,6 +276,22 @@ export interface PortfolioSummary {
   }[];
   positions: Position[];
   debts: (Liability & { household_outstanding: Decimal })[];
+}
+
+/** `GET /households/{id}/ace/summary`: Assets, Capital and Earnings in one view (D19). */
+export interface AceSummary {
+  assets: { total: Decimal; liabilities: Decimal; net_worth: Decimal };
+  capital: { at_work: Decimal; share_of_assets_pct: Decimal | null };
+  earnings: {
+    income_trailing_12_months: Decimal;
+    costs_trailing_12_months: Decimal;
+    savings_trailing_12_months: Decimal;
+    savings_rate_pct: Decimal | null;
+    average_monthly_income: Decimal | null;
+    average_monthly_cost: Decimal | null;
+    average_monthly_savings: Decimal | null;
+    months_counted: number;
+  };
 }
 
 export interface NetWorthPoint {
@@ -519,6 +573,22 @@ export interface ZakatSnapshot {
   created_at: string;
 }
 
+export interface RecordedIncomeBasis {
+  salary: "RECORDS" | "ENTERED";
+  other: "RECORDS" | "ENTERED";
+  not_counted: { kind: string; amount: Decimal }[];
+  unassigned: Decimal;
+}
+
+/** `GET /tax/recorded-income`: what a statement would take from the income records. */
+export interface RecordedIncome {
+  tax_year: string;
+  salary: Decimal;
+  other: Decimal;
+  not_counted: { kind: string; amount: Decimal }[];
+  unassigned: Decimal;
+}
+
 export interface TaxItems {
   period: { start: string; end: string };
   assets: { label: string; category: string; type: string; owner_pct: Decimal; cost: Decimal; value: Decimal }[];
@@ -531,6 +601,8 @@ export interface TaxItems {
     income: Decimal;
   };
   income: Record<string, Decimal>;
+  /** Where salary and other income came from (FR27.5). Missing on statements made before F27. */
+  income_basis?: RecordedIncomeBasis;
   tax_deducted: { in_year: Decimal; recorded_on_holdings: Decimal; lines: Record<string, unknown>[] };
   rebate_eligible: { label: string; amount?: Decimal; [key: string]: unknown }[];
   rebate_eligible_total: Decimal;
@@ -553,12 +625,38 @@ export interface ProjectionPoint {
   net_worth: Decimal;
 }
 
+/** `GET /households/{id}/fire/progress`: the overview's FIRE panel (D21). */
+export interface FireProgress {
+  /** PLAN: newest plan. ESTIMATE: no plan, FIRE number from a year of costs. NO_COSTS: nothing to go on. */
+  basis: "PLAN" | "ESTIMATE" | "NO_COSTS";
+  plan: {
+    id: string;
+    name: string;
+    computed_at: string;
+    fire_age: Decimal | null;
+    current_age: Decimal | null;
+    years_to_fire: Decimal | null;
+  } | null;
+  fire_number: Decimal | null;
+  yearly_costs: Decimal | null;
+  /** Months with cost records behind `yearly_costs` (up to 12). */
+  cost_months: number;
+  withdrawal_rate_pct: Decimal;
+  investable: Decimal;
+  include_illiquid: boolean;
+  progress_pct: Decimal | null;
+  gap: Decimal | null;
+  savings_rate_pct: Decimal | null;
+  average_monthly_savings: Decimal | null;
+}
+
 export interface FireDefaults {
   net_worth: Decimal;
   total_net_worth: Decimal;
   illiquid_excluded: Decimal;
   include_illiquid: boolean;
   yearly_expenses: Decimal;
+  monthly_savings: Decimal | null;
   inflation_pct: Decimal | null;
   inflation_months: number;
   nominal_return_pct: Decimal | null;
@@ -621,7 +719,7 @@ export interface MarketEvent {
   title_bn: string;
 }
 
-export const GOAL_TYPES = ["NET_WORTH", "INVESTED_AMOUNT", "FIRE_AGE"] as const;
+export const GOAL_TYPES = ["NET_WORTH", "INVESTED_AMOUNT", "MONTHLY_SAVINGS", "FIRE_AGE"] as const;
 export type GoalType = (typeof GOAL_TYPES)[number];
 
 export interface Goal {

@@ -28,6 +28,8 @@ from app.models import (
     Holding,
     Household,
     HouseholdMember,
+    IncomeEntry,
+    IncomeRule,
     IslamicProduct,
     Liability,
     MacroSeries,
@@ -576,6 +578,61 @@ def seed_demo_personal(session: Session, password: str) -> DemoPersonalResult:
         day += timedelta(days=1)
     session.execute(insert(Expense), expenses)
     counts["expenses"] = len(expenses)
+
+    # --- income (F27): two salaries as recurring rules, and a yearly bonus --------
+    salary_rules = [
+        IncomeRule(
+            household_id=hid,
+            member_id=m_karim.id,
+            kind="SALARY",
+            amount=D("120000"),
+            note="Demo salary",
+            frequency="MONTHLY",
+            start_date=EXPENSES_FROM,
+        ),
+        IncomeRule(
+            household_id=hid,
+            member_id=m_ayesha.id,
+            kind="SALARY",
+            amount=D("45000"),
+            note="Demo salary",
+            frequency="MONTHLY",
+            start_date=EXPENSES_FROM,
+        ),
+    ]
+    session.add_all(salary_rules)
+    session.flush()
+    incomes: list[dict[str, object]] = []
+    day = EXPENSES_FROM
+    while day <= END:
+        if day.day == 1:
+            for salary in salary_rules:
+                incomes.append(
+                    {
+                        "household_id": hid,
+                        "member_id": salary.member_id,
+                        "date": day,
+                        "amount": salary.amount,
+                        "kind": salary.kind,
+                        "note": salary.note,
+                        "recurring_id": salary.id,
+                    }
+                )
+        if day.month == 6 and day.day == 20:
+            incomes.append(
+                {
+                    "household_id": hid,
+                    "member_id": m_karim.id,
+                    "date": day,
+                    "amount": D("150000"),
+                    "kind": "SALARY",
+                    "note": "Demo festival bonus",
+                    "recurring_id": None,
+                }
+            )
+        day += timedelta(days=1)
+    session.execute(insert(IncomeEntry), incomes)
+    counts["income_entries"] = len(incomes)
 
     # --- goals, target allocation, watchlist, alerts ------------------------------
     session.add_all(

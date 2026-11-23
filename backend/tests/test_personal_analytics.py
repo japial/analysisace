@@ -384,3 +384,12 @@ def test_gold_is_valued_by_weight_and_purity_fr25_2() -> None:
     assert allocation.metal_value(D("80"), D("9000"), 22, 22) == D("720000.00")
     assert allocation.metal_value(D("22"), D("9000"), 21, 22) == D("189000.00")
     assert allocation.metal_value(D("100"), D("150"), None, None) == D("15000.00")
+
+
+def test_annualised_costs_scale_a_partial_year_fr12_4() -> None:
+    """One month of 85,000 is 10,20,000 a year; three months totalling 2,40,000 average
+    80,000, so 9,60,000; a full year is kept as recorded."""
+    assert costs.annualised(D("85000"), 1) == D("1020000.00")
+    assert costs.annualised(D("240000"), 3) == D("960000.00")
+    assert costs.annualised(D("1000000"), 12) == D("1000000.00")
+    assert costs.annualised(D("0"), 0) == D("0")

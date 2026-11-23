@@ -1,6 +1,6 @@
 # analysisACE
 
-Shariah screening and macro analytics for Dhaka Stock Exchange stocks, plus personal finance tools (costs, Zakat, tax, portfolio, sukuk, FIRE) for Bangladeshi households.
+Personal finance for Bangladeshi households, built around **ACE**: **Assets** (what you own and owe, Zakat, wealth statement), **Capital** (portfolio, sukuk, deposits, FIRE and goals) and **Earnings** (income, costs, savings, tax). Includes optional tools for Dhaka Stock Exchange shares: Shariah screening and macro analytics.
 
 | Folder | What it holds |
 |-|-|

@@ -99,3 +99,33 @@ F1, F2, F3, F5, F6 and F8 are computed by `services/market_pipeline.py` (worker 
 Zakat and tax statements (F13) are made as PDFs by the API (`services/statements.py`), in the language the person asks for. fpdf2 is used with `uharfbuzz` because Bangla needs text shaping for joined letters; ReportLab draws Bangla wrongly, and WeasyPrint needs GTK on Windows. Fonts are Noto Sans and Noto Sans Bengali, kept in `backend/app/assets/fonts` under the SIL Open Font License (OFL.txt beside them).
 
 A PDF repeats the stored snapshot; nothing is recalculated. Each page carries the disclaimer, and the end of the statement gives the computation time and the sources of the market prices valid on the snapshot date. Enum labels are copied from the web message files into `services/statement_labels.py`, and a test fails if the two copies differ. The browser "print" button was replaced by a "Download PDF" button. The same document class can produce the F9 white-label weekly report later.
+
+## D19. The product is organised around ACE, with stocks as one kind of capital (2026-11-23)
+
+The owner clarified that analysisACE is mainly a personal finance app whose goal is to improve a household's ACE (Assets, Capital, Earnings). Stock market analysis is one portfolio type among others, not the headline. Consequences:
+
+- **Pillars.** Assets = what is owned and owed (F14, F24, F25, F26, Zakat and wealth statement). Capital = money put to work and the plans it funds (F6, F15 to F19, and the stock tools F1 to F5, F8). Earnings = income, costs, savings, tax and reminders (F12, F20, income and tax parts of F13). The map is in PRD section 4.
+- **Landing page.** Leads with ACE and a sample household, then the three pillars, the questions households ask, and only then the stock tools ("Holding DSE shares? Understand them better"). The Shariah list is no longer the main call to action.
+- **Menu.** "My money" is a main menu item for everyone (signed-out visitors are sent to sign in) and comes before the stock tools. The "Markets" group is renamed "Stock tools" and sits after My money.
+- **Routes are unchanged.** `/shariah`, `/rates`, `/events`, `/macro`, `/regime` and `/companies` keep their paths because notifications and tests link to them. They are public pages and remain the free way in for people who hold shares.
+- **Build order.** Assets and Earnings come first, then Capital plans, then the stock tools as data licensing (Q5) allows. Nothing already built is removed.
+- **Coming-soon page.** Rewritten to the same positioning, without the "Predictive AI" claim that conflicted with the no-signals rule.
+- **Name of the second pillar.** "Capital" (singular), meaning invested money. In Bangla it is মূলধন.
+
+## D20. Income records feed the tax statement, never Zakat (2026-11-23)
+
+Income records (F27) are linked wherever a figure was typed by hand or guessed before:
+
+- **Tax statement (FR27.5).** Salary and other income default to the member's records for the tax year. Typing a value overrides the records, and the statement stores which was used (`income_basis`). Rent, profit and dividends are not taken from income records, because the statement already works them out from holdings and asset cash flows; counting both would count twice. Remittance is treated as exempt. Records with no member are not counted for anyone. The mapping lives in `config/personal.yaml` and is provisional (Q2).
+- **FIRE (F17)** starts from the 12-month average saving, floored at zero. **Community comparison (F21)** reads the FIRE plan, so it improves through that default and is not changed directly.
+- **Goals (F19)** gain `MONTHLY_SAVINGS`, measured against the 12-month average. **Monthly report (F20)** gains last month's income and savings in the email.
+- **Zakat is not linked.** Zakat is due on wealth held on the Zakat date. Income is already counted once it sits in a bank or cash balance, so adding it from records would count it twice.
+- **Message groups.** `personal.enum.incomeKind` stays the tax statement's line names (shared with the PDF labels); the recorded kinds use `personal.enum.incomeType`.
+
+## D21. The landing page leads with FIRE; ACE are the levers (2026-11-23)
+
+The owner asked for the landing page to focus on FIRE-oriented personal finance. The hero promises a FIRE date ("Find the year work becomes optional") and shows a sample FIRE plan. The page then explains the FIRE number (a year of costs × 25 at a 4% withdrawal rate), the savings rate and the FIRE date; shows why the savings rate matters more than returns; presents Assets, Capital and Earnings as levers on the FIRE date; and lists what a plan must handle in Bangladesh. Each Bangladesh point is backed by a built feature: BBS CPI inflation, returns from the household's own sukuk and deposits, family support as a cost, land and home left out of the investable base, Zakat, and the five stress tests.
+
+- **Savings-rate table.** Fixed illustrative text, not data: years from zero to 25× costs at a 5% real return, n = ln(1 + 25(1 − s) × 0.05 / s) / ln 1.05, rounded. It states its assumptions and says it is not a forecast. Figures in the hero illustration are fictional and agree with each other.
+- **Wording.** FIRE ages are always "projected" or "could"; the FAQ says a FIRE age is not a promise. This keeps the no-advice rule.
+- **Main call to action.** Goes to the FIRE plan for signed-in visitors, and to sign-up ("Start your FIRE plan") otherwise.

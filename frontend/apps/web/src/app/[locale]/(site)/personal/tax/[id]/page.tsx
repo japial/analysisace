@@ -67,7 +67,14 @@ export default async function TaxSnapshotPage({ params }: PageProps<{ id: string
             <TableBody>
               {Object.entries(items.income).map(([key, amount]) => (
                 <TableRow key={key}>
-                  <TableCell>{enumLabel(t, "incomeKind", key)}</TableCell>
+                  <TableCell>
+                    {enumLabel(t, "incomeKind", key)}
+                    {(key === "salary" || key === "other") && items.income_basis && (
+                      <span className="ms-1 text-xs text-muted-foreground">
+                        ({t(items.income_basis[key] === "RECORDS" ? "personal.tax.fromRecords" : "personal.tax.typedIn")})
+                      </span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-end tabular-nums">{f.bdt(amount)}</TableCell>
                 </TableRow>
               ))}
