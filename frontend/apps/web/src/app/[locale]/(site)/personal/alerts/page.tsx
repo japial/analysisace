@@ -32,13 +32,15 @@ export default async function AlertsPage({ params }: PageProps) {
 
   /** The notice text, filled in from the values the job stored with it. */
   const message = (key: string, data: Record<string, string | number | null>) => {
-    const path = `personal.notice.${key}`;
+    // A monthly report with income recorded (FR27.6) has a fuller text; older ones do not.
+    const variant = key === "MONTHLY_REPORT" && data.income != null ? "MONTHLY_REPORT_INCOME" : key;
+    const path = `personal.notice.${variant}`;
     if (!t.has(path as never)) return enumLabel(t, "alertType", key);
     const values = Object.fromEntries(
       Object.entries(data).map(([k, v]) => {
         if (v === null) return [k, "—"];
         if (k === "date" && typeof v === "string") return [k, f.date(v)];
-        if (/(amount|spending|net_worth|zakat_due)$/.test(k) && typeof v === "string") return [k, f.bdt(v)];
+        if (/(amount|spending|net_worth|zakat_due|income|savings)$/.test(k) && typeof v === "string") return [k, f.bdt(v)];
         if (k === "month" && typeof v === "string") return [k, f.month(v.length === 7 ? `${v}-01` : v)];
         if (k === "asset_class" && typeof v === "string") return [k, enumLabel(t, "assetClass", v)];
         // Market alerts (F7) store codes; show them as words in the reader's language.

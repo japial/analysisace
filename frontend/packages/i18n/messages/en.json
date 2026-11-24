@@ -1160,7 +1160,8 @@
       "MONTHLY_REPORT": "Spending in {month}: {spending}. Net worth: {net_worth}.",
       "SHARIAH_STATUS_CHANGED": "The Shariah status of {ticker} changed from {from_status} to {to_status}.",
       "REGIME_CHANGED": "The macro regime label changed from {previous} to {label}.",
-      "SHOCK_EVENT_PUBLISHED": "A new event was added to the shock playbook: {title_en} ({date})."
+      "SHOCK_EVENT_PUBLISHED": "A new event was added to the shock playbook: {title_en} ({date}).",
+      "MONTHLY_REPORT_INCOME": "Spending in {month}: {spending}. Income: {income}, left after costs: {savings}. Net worth: {net_worth}."
     },
     "community": {
       "intro": "See how your savings rate and FIRE progress compare with people of a similar age. Anonymous and opt-in.",
@@ -1559,6 +1560,13 @@
         "islamic": "Islamic deposits and sukuk (৳)"
       },
       "savingsLater": "Shares are best imported from your broker statement on the Accounts page. Gold and land go on the Property page."
+    },
+    "holdingCompany": {
+      "title": "About this company",
+      "intro": "How the company behind this holding has been screened, and how its price has historically moved with interest rates.",
+      "open": "Open {ticker}",
+      "notScreened": "Not screened yet",
+      "rateHint": "Typical move in the share price when the 91-day T-bill yield rose one point, from past weekly data. History, not a forecast."
     }
   },
   "market": {

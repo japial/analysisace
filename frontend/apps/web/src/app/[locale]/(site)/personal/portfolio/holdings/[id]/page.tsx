@@ -26,6 +26,7 @@ import {
   OwnersEditor,
   SelectField,
 } from "@/components/personal/forms";
+import { HoldingCompanyPanel } from "@/components/personal/holding-company";
 import { PersonalShell } from "@/components/personal/shell";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ApiError } from "@/lib/api";
@@ -99,6 +100,8 @@ export default async function HoldingPage({ params }: PageProps<{ id: string }>)
           ]}
         />
       </Panel>
+
+      {holding.ticker && <HoldingCompanyPanel ticker={holding.ticker} locale={locale} />}
 
       {ctx.canEdit && (
         <Panel title={t("personal.edit")}>

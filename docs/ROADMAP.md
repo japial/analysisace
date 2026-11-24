@@ -116,10 +116,10 @@ Also built, not a numbered feature: accounts, roles and user management (see bel
 - [x] Landing page and coming-soon page refocused on FIRE, with ACE as the levers (D21, 2026-11-23)
 - [x] My money overview leads with FIRE progress (`GET /fire/progress`): projected FIRE age from the newest plan, or an estimated FIRE number from costs, with savings rate. A partial year of costs is now annualised (average month x 12) for the estimate and the FIRE form (2026-11-23)
 - [x] My money overview shows an ACE card (net worth, capital at work, average monthly cost) from `GET /households/{id}/ace/summary`, and the section menu is grouped Assets, Capital, Earnings, Plans (2026-11-23)
-- [x] Income records and savings (F27, 2026-11-23): income entries and recurring income, monthly savings and savings rate, ACE card and FIRE default use them. Linked (2026-11-23): tax statement takes salary and other income from the records (FR27.5), monthly report shows income and savings, "saved each month" goal type, FIRE default, community comparison through the FIRE plan. CSV import and export of income done (FR27.7, 2026-11-24). Open: an in-app (not only email) income line on the monthly report notice
+- [x] Income records and savings (F27, 2026-11-23): income entries and recurring income, monthly savings and savings rate, ACE card and FIRE default use them. Linked (2026-11-23): tax statement takes salary and other income from the records (FR27.5), monthly report shows income and savings, "saved each month" goal type, FIRE default, community comparison through the FIRE plan. CSV import and export of income done (FR27.7, 2026-11-24). The in-app monthly report notice shows income and savings when recorded (2026-11-24)
 - [x] Guided set-up (D22, 2026-11-24): "Getting started" checklist on the overview and a one-form quick start for birth year, monthly income, typical costs and savings held
 - [x] ACE trend on the overview (D23, 2026-11-24): net worth and capital at work by month, change over the period, and monthly income, costs, savings and savings rate. Snapshots now keep capital at work (migration 0005)
-- [ ] Move the stock tools' company page links inside the portfolio holding page so shares are reached from the portfolio first
+- [x] A holding with a DSE ticker shows "About this company" (Shariah status, rate sensitivity, link to the company page), so shares lead to the stock tools (2026-11-24)
 - [ ] Bangla text review of the new landing copy (with the existing Bangla review item)
 
 ## Accounts and roles (built ahead of M2 at the owner's request)
