@@ -143,6 +143,14 @@ export function confirmPasswordReset(token: string, newPassword: string): Promis
   });
 }
 
+export function requestEmailVerification(token: string): Promise<void> {
+  return request("/auth/verify-email/request", { method: "POST", token });
+}
+
+export function confirmEmailVerification(token: string): Promise<void> {
+  return request("/auth/verify-email/confirm", { method: "POST", body: { token } });
+}
+
 export function getMe(token: string): Promise<User> {
   return request("/me", { token });
 }

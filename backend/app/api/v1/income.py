@@ -13,6 +13,8 @@ from app.api.v1.households import no_content
 from app.models import IncomeEntry, IncomeRule
 from app.schemas.common import Envelope, Page
 from app.schemas.personal import (
+    CsvIn,
+    ImportOut,
     IncomeIn,
     IncomeOut,
     IncomeRuleIn,
@@ -147,3 +149,21 @@ def income_summary(
         "average_monthly_savings": result.average_monthly_savings,
     }
     return computed(db, data, ())
+
+
+@router.get("/income/export.csv")
+def export_income(access: Viewer, db: Db) -> Response:
+    """FR27.7: every income entry as CSV."""
+    return Response(
+        income.export_csv(db, access.household.id),
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": 'attachment; filename="analysisace-income.csv"'},
+    )
+
+
+@router.post("/imports/income")
+def import_income(body: CsvIn, access: Editor, db: Db) -> ImportOut:
+    """FR27.7: add income from CSV (columns: date, amount, kind, note, member)."""
+    result = income.import_csv(db, access.household.id, body.csv)
+    db.commit()
+    return ImportOut(imported=result.imported, errors=result.errors)

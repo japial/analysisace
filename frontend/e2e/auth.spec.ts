@@ -79,6 +79,8 @@ test("Bangla pages and the forgot-password answer", async ({ page }) => {
   await page.goto("/bn/signin");
   await expect(page.getByRole("heading", { name: "প্রবেশ করুন" })).toBeVisible();
   await page.getByRole("link", { name: "পাসওয়ার্ড ভুলে গেছেন?" }).click();
+  // Both pages have an email field: wait for the forgot-password page before typing.
+  await expect(page).toHaveURL(/\/bn\/forgot-password/);
   await page.getByLabel("ইমেইল").fill(uniqueEmail("unknown"));
   await page.getByRole("button", { name: "লিংক পাঠান" }).click();
   // The same answer for known and unknown emails.
@@ -162,4 +164,21 @@ test("an administrator changes a user's role and access", async ({ page, browser
   await page.goto("/en/admin/roles");
   await expect(page.getByRole("heading", { name: "Roles and permissions" })).toBeVisible();
   await expect(page.getByText("Manage users", { exact: true })).toBeVisible();
+});
+
+test("a new account is asked to confirm its email, and a bad link says so (D25)", async ({ page }) => {
+  await page.goto("/en/signup");
+  await page.getByLabel("Full name").fill("Verify Tester");
+  await page.getByLabel("Email").fill(uniqueEmail("verify"));
+  await page.getByLabel("Password").fill(PASSWORD);
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Create account" }).click();
+  const banner = page.getByRole("region", { name: "Confirm your email" });
+  await expect(banner).toBeVisible();
+  await banner.getByRole("button", { name: "Send the link again" }).click();
+  await expect(banner).toBeVisible();
+
+  await page.goto("/en/verify-email?token=not-a-real-token-123");
+  await page.getByRole("button", { name: "Confirm my email" }).click();
+  await expect(page.getByText(/This link has expired, was replaced/)).toBeVisible();
 });

@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from app.api.v1.router import api_router
 from app.core.config import get_settings
 from app.services.auth import AuthError
+from app.services.email import check_email_settings
 
 
 def _auth_error_handler(_: Request, exc: Exception) -> JSONResponse:
@@ -18,6 +19,7 @@ def _auth_error_handler(_: Request, exc: Exception) -> JSONResponse:
 
 def create_app() -> FastAPI:
     settings = get_settings()
+    check_email_settings(settings)
     app = FastAPI(
         title="analysisACE API",
         version="0.1.0",

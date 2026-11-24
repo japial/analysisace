@@ -124,7 +124,8 @@ export interface CostSummary {
 export interface ImportResult {
   imported: number;
   updated: number;
-  errors: { row?: number; error?: string; [key: string]: unknown }[];
+  /** One per bad row: its number as a spreadsheet shows it and a code such as BAD_DATE. */
+  errors: { row?: number; code?: string; error?: string; [key: string]: unknown }[];
 }
 
 // --- F14 portfolio --------------------------------------------------------------------
@@ -299,6 +300,7 @@ export interface NetWorthPoint {
   assets: Decimal;
   liabilities: Decimal;
   net_worth: Decimal;
+  capital?: Decimal | null;
 }
 
 // --- F15 performance, F16 allocation ---------------------------------------------------
@@ -623,6 +625,41 @@ export interface ProjectionPoint {
   year: number;
   age: Decimal;
   net_worth: Decimal;
+}
+
+/** `GET /households/{id}/ace/trend` (D23). Null means no record for that month, not zero. */
+export interface AceTrendMonth {
+  month: string;
+  snapshot_date: string | null;
+  net_worth: Decimal | null;
+  assets: Decimal | null;
+  capital: Decimal | null;
+  capital_share_pct: Decimal | null;
+  income: Decimal | null;
+  costs: Decimal | null;
+  savings: Decimal | null;
+  savings_rate_pct: Decimal | null;
+}
+
+export interface AceTrend {
+  months: AceTrendMonth[];
+  /** Last month with a value less the first; null with fewer than two. */
+  change: { net_worth: Decimal | null; capital: Decimal | null; savings_total: Decimal | null };
+}
+
+/** D22 guided set-up. */
+export type SetupStep = "you" | "income" | "costs" | "savings" | "plan";
+
+export interface SetupStatus {
+  steps: { key: SetupStep; done: boolean }[];
+  done: number;
+  total: number;
+  complete: boolean;
+  /** Default expense category keys the quick start asks about. */
+  fixed_categories: string[];
+  variable_categories: string[];
+  /** Savings kinds from the API's configuration. */
+  savings_kinds: string[];
 }
 
 /** `GET /households/{id}/fire/progress`: the overview's FIRE panel (D21). */

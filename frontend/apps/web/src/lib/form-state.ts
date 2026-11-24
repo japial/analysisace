@@ -22,6 +22,7 @@ const KNOWN_CODES: ReadonlySet<string> = new Set<ErrorCode>([
   "EMAIL_TAKEN",
   "TERMS_REQUIRED",
   "INVALID_TOKEN",
+  "VERIFY_TOKEN_INVALID",
   "WRONG_PASSWORD",
   "NOT_AUTHENTICATED",
   "FORBIDDEN",

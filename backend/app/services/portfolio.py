@@ -348,6 +348,13 @@ def delete_liability(db: Session, row: Liability) -> None:
 # --- net worth (FR14.4) ---------------------------------------------------------------
 
 
+def capital_at_work(portfolio: Portfolio) -> Decimal:
+    """See `ace.capital_at_work`; imported here so the snapshot and the card agree."""
+    from app.services.ace import capital_at_work as measure
+
+    return measure(portfolio)
+
+
 def store_net_worth(db: Session, household_id: uuid.UUID, day: dt.date) -> NetWorthSnapshot:
     """Write (or rewrite) one day's net worth. Run daily by the worker."""
     portfolio = load_portfolio(db, household_id, day)
@@ -363,6 +370,7 @@ def store_net_worth(db: Session, household_id: uuid.UUID, day: dt.date) -> NetWo
     row.liabilities = portfolio.liabilities
     row.net_worth = portfolio.net_worth
     row.breakdown = {key: str(value) for key, value in portfolio.by_class().items()}
+    row.capital = capital_at_work(portfolio)
     db.flush()
     return row
 

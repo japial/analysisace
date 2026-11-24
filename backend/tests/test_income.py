@@ -314,3 +314,56 @@ def test_fire_progress_without_costs_gives_no_number_fr17_2(
     data = body["data"]
     assert data["basis"] == "NO_COSTS"
     assert data["fire_number"] is None and data["progress_pct"] is None
+
+
+def test_income_csv_round_trip_and_row_errors_fr27_7(
+    demo_client: TestClient, demo_session: Session
+) -> None:
+    """Exported income reads back in; bad rows are reported by row number and code while the
+    good rows are still imported."""
+    owner, root = login(demo_client), base(demo_session)
+    exported = demo_client.get(f"{root}/income/export.csv", headers=owner)
+    assert exported.status_code == 200
+    lines = exported.text.strip().splitlines()
+    assert lines[0] == "date,amount,kind,note,member"
+    assert (
+        len(lines) - 1 == demo_client.get(f"{root}/income?limit=1", headers=owner).json()["total"]
+    )
+
+    karim = member(demo_session, "Karim")
+    csv_text = (
+        "Date,Amount,Kind,Note,Member\n"
+        f"2026-10-15,12000,rent,Flat on the 3rd floor,{karim.display_name.upper()}\n"
+        '15/10/2026,"1,500.50",Other,,\n'
+        "2026-10-16,abc,SALARY,,\n"
+        "not a date,100,SALARY,,\n"
+        "2026-10-17,100,LOTTERY,,\n"
+        "2026-10-18,100,SALARY,,Someone Else\n"
+    )
+    result = demo_client.post(f"{root}/imports/income", headers=owner, json={"csv": csv_text})
+    assert result.status_code == 200, result.text
+    body = result.json()
+    assert body["imported"] == 2
+    assert [(e["row"], e["code"]) for e in body["errors"]] == [
+        (4, "BAD_AMOUNT"),
+        (5, "BAD_DATE"),
+        (6, "UNKNOWN_KIND"),
+        (7, "UNKNOWN_MEMBER"),
+    ]
+    rent = demo_client.get(f"{root}/income?kind=RENT", headers=owner).json()["items"][0]
+    assert rent["amount"] == "12000.00" and rent["member_id"] == str(karim.id)
+    other = demo_client.get(f"{root}/income?kind=OTHER", headers=owner).json()["items"][0]
+    assert other["amount"] == "1500.50" and other["member_id"] is None
+
+    bad = demo_client.post(f"{root}/imports/income", headers=owner, json={"csv": "a,b\n1,2\n"})
+    assert bad.json()["detail"] == "CSV_HEADER_INVALID"
+
+
+def test_income_csv_export_stops_formulas_fr27_7(
+    demo_client: TestClient, demo_session: Session
+) -> None:
+    owner, root = login(demo_client), base(demo_session)
+    body = {"date": "2026-11-01", "amount": "10", "kind": "OTHER", "note": "=HYPERLINK(1)"}
+    assert demo_client.post(f"{root}/income", headers=owner, json=body).status_code == 201
+    text = demo_client.get(f"{root}/income/export.csv", headers=owner).text
+    assert "'=HYPERLINK(1)" in text

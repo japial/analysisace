@@ -403,7 +403,15 @@
     "newPassword": "New password",
     "resetSubmit": "Set new password",
     "resetDone": "Your password has been changed. Sign in with the new password.",
-    "requestNewLink": "Ask for a new link"
+    "requestNewLink": "Ask for a new link",
+    "verifyTitle": "Confirm your email",
+    "verifyIntro": "Press the button to confirm this is your email address.",
+    "verifySubmit": "Confirm my email",
+    "verifyDone": "Thank you. Your email is confirmed, and reminders and reports can now be emailed to you.",
+    "verifyContinue": "Go to My money",
+    "verifyAccount": "Open my account",
+    "verifyBanner": "Please confirm {email}. Until you do, reminders and monthly reports are only shown here, not emailed.",
+    "verifyResend": "Send the link again"
   },
   "account": {
     "metaTitle": "My account",
@@ -555,7 +563,8 @@
     "PRICE_CHANGE_TOO_LARGE": "That price is far from the previous day's. Check it for a typing error.",
     "CSV_INVALID": "The file must be UTF-8 CSV with the columns code, date and value.",
     "FIGURE_WITHOUT_SOURCE": "Every figure needs a source before the note can be published.",
-    "LIMIT_REACHED": "You have reached the limit for this list."
+    "LIMIT_REACHED": "You have reached the limit for this list.",
+    "VERIFY_TOKEN_INVALID": "This link has expired, was replaced by a newer one, or was already used. If your email is not confirmed yet, sign in and ask for a new link."
   },
   "personal": {
     "metaTitle": "My money",
@@ -600,14 +609,25 @@
       "community": "Compare with peers",
       "household": "Household",
       "marketCheck": "Market check",
-      "income": "Income"
+      "income": "Income",
+      "setup": "Quick start"
     },
     "import": {
       "file": "CSV file",
       "paste": "Or paste the CSV here",
       "submit": "Import",
       "result": "{imported} rows added, {updated} updated.",
-      "rowError": "Row {row}: {error}"
+      "rowError": "Row {row}: {error}",
+      "codes": {
+        "BAD_DATE": "the date cannot be read (use 2026-11-01 or 01/11/2026)",
+        "BAD_AMOUNT": "the amount is not a positive number",
+        "BAD_QUANTITY": "the quantity is not a positive number",
+        "UNKNOWN_CATEGORY": "no category has that name",
+        "UNKNOWN_KIND": "the kind is not one of the income kinds",
+        "UNKNOWN_MEMBER": "no household member has that name",
+        "UNKNOWN_TICKER": "that DSE ticker is not known",
+        "TOO_MANY_ROWS": "the file has too many rows; the rest were not read"
+      }
     },
     "owners": {
       "title": "Who owns it",
@@ -635,9 +655,6 @@
       "byMember": "Each person's part",
       "byMemberIntro": "Shared assets and debts are split by each owner's share.",
       "empty": "Nothing recorded yet.",
-      "history": "Net worth over time",
-      "historyIntro": "Stored once a day by the daily job, or when you record it now.",
-      "historyEmpty": "The chart appears once two days have been stored.",
       "recordToday": "Record today",
       "notices": "New notices",
       "seeAll": "See all",
@@ -687,6 +704,25 @@
         "recordIncome": "Record income",
         "recordCosts": "Record costs",
         "illiquidNote": "Land and the family home are left out of the invested amount. Include them in your plan if you would sell them to live on."
+      },
+      "trend": {
+        "title": "Your ACE over time",
+        "intro": "The last {n} months. Net worth and capital at work are taken from each month's last daily snapshot; income, costs and savings from your records.",
+        "netWorthChange": "Net worth change",
+        "capitalChange": "Capital at work change",
+        "savedTotal": "Saved in these months",
+        "netWorth": "Net worth",
+        "capital": "Capital at work",
+        "chartEmpty": "The chart appears once two months have a stored snapshot. One is stored every day, or press \"Record today\".",
+        "tableTitle": "Earnings by month",
+        "tableEmpty": "No income or costs recorded in these months yet.",
+        "month": "Month",
+        "income": "Income",
+        "costs": "Costs",
+        "saved": "Saved",
+        "rate": "Savings rate",
+        "noIncome": "Savings show once income is recorded.",
+        "addIncome": "Add income"
       }
     },
     "costs": {
@@ -1464,7 +1500,65 @@
       "recurringIntro": "A salary or rent is added on its due dates automatically.",
       "recurringEmpty": "No recurring income.",
       "deleteRecurring": "Delete this recurring income",
-      "addRecurring": "Add recurring income"
+      "addRecurring": "Add recurring income",
+      "export": "Download CSV",
+      "importTitle": "Import income",
+      "importIntro": "A CSV with the columns date, amount, kind, and optionally note and member. Kind is one of SALARY, BUSINESS, RENT, REMITTANCE, PROFIT, DIVIDEND or OTHER. Member is a name from your household."
+    },
+    "setup": {
+      "checklistTitle": "Getting started",
+      "checklistIntro": "{done} of {total} steps done. Each one makes your FIRE plan more accurate.",
+      "openQuickStart": "Open quick start",
+      "doneLabel": "Done",
+      "steps": {
+        "you": {
+          "title": "Your birth year",
+          "body": "Needed for your FIRE age."
+        },
+        "income": {
+          "title": "Your income",
+          "body": "Salary and other income."
+        },
+        "costs": {
+          "title": "Your costs",
+          "body": "Fixed bills and day-to-day spending."
+        },
+        "savings": {
+          "title": "What you hold",
+          "body": "Bank, certificates, deposits."
+        },
+        "plan": {
+          "title": "Your FIRE plan",
+          "body": "See your projected FIRE age."
+        }
+      },
+      "intro": "The basics in one form. Leave out anything you do not know yet; you can change everything later on the usual pages.",
+      "viewerOnly": "You can view this household but not change it. Ask an owner or editor to fill in the quick start.",
+      "submit": "Save and see my FIRE picture",
+      "youTitle": "You",
+      "youIntro": "Your FIRE age is worked out from this.",
+      "birthYear": "Year you were born",
+      "alreadyDone": "Already recorded. A new value replaces it.",
+      "incomeTitle": "Income",
+      "incomeIntro": "What comes in each month after tax, from salary or other regular work.",
+      "monthlyIncome": "Monthly take-home income (৳)",
+      "monthlyIncomeHint": "Added as monthly income from the 1st of this month. A second earner can be added on the Income page.",
+      "alreadyIncome": "You already have income records. This adds another monthly income.",
+      "costsTitle": "A typical month of costs",
+      "costsIntro": "Fixed costs repeat every month from the 1st of this month. Day-to-day costs are entered once as this month's estimate; keep recording them on the Costs page.",
+      "alreadyCosts": "You already have cost records. Amounts here are added to them.",
+      "fixed": "Fixed every month",
+      "variable": "Day to day, this month's estimate",
+      "perMonth": "{name} (৳ a month)",
+      "savingsTitle": "What you hold today",
+      "savingsIntro": "Totals are enough for now. Each becomes one holding you can split up later.",
+      "alreadySavings": "You already have holdings. Amounts here are added as new holdings.",
+      "savings": {
+        "cash": "Cash and bank balances (৳)",
+        "certificates": "Savings certificates, FDR and DPS (৳)",
+        "islamic": "Islamic deposits and sukuk (৳)"
+      },
+      "savingsLater": "Shares are best imported from your broker statement on the Accounts page. Gold and land go on the Property page."
     }
   },
   "market": {

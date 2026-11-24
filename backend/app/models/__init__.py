@@ -66,7 +66,7 @@ from app.models.platform import (
     Subscription,
     Watchlist,
 )
-from app.models.user import PasswordResetToken, User, UserSession
+from app.models.user import EmailVerificationToken, PasswordResetToken, User, UserSession
 
 __all__ = [
     "Account",
@@ -86,6 +86,7 @@ __all__ = [
     "CorporateActionType",
     "DataIssue",
     "Document",
+    "EmailVerificationToken",
     "Event",
     "EventMetric",
     "Expense",

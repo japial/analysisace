@@ -34,7 +34,7 @@ from app.models.enums import AlertFrequency, AlertType, Channel
 from app.services import alt_assets, islamic, performance, planning, zakat_tax
 from app.services.alert_texts import DISCLAIMER, EMAIL_TEXT, REPORT_TEXT
 from app.services.auth import AuthError, ConsentPurpose
-from app.services.email import Email, EmailSender
+from app.services.email import Email, EmailSender, send_safely
 from app.services.households import has_consent, list_households
 from app.services.valuation import load_portfolio, personal_config, today_dhaka
 
@@ -170,17 +170,25 @@ def notify(
     )
     db.add(row)
     template = EMAIL_TEXT.get(message_key)
-    if rule is not None and rule.channel in ("EMAIL", "BOTH") and template is not None:
+    # D25: email only a confirmed address; the notice is in the app either way.
+    if (
+        rule is not None
+        and rule.channel in ("EMAIL", "BOTH")
+        and template is not None
+        and user.email_verified_at is not None
+    ):
         locale = user.locale if user.locale in ("bn", "en") else "en"
         subject, body = template[locale]
-        sender.send(
+        # The notice stays in the app either way; sent_at records that the email went.
+        if send_safely(
+            sender,
             Email(
                 to=user.email,
                 subject=subject,
                 body=f"{body.format(**data)}\n\n{DISCLAIMER[locale]}",
-            )
-        )
-        row.sent_at = utcnow()
+            ),
+        ):
+            row.sent_at = utcnow()
     db.flush()
     return row
 
@@ -415,7 +423,11 @@ def send_monthly_reports(
             dedupe_key=dedupe,
         )
         db.add(row)
-        if rule is not None and rule.channel in ("EMAIL", "BOTH"):
+        if (
+            rule is not None
+            and rule.channel in ("EMAIL", "BOTH")
+            and user.email_verified_at is not None
+        ):
             locale = user.locale if user.locale in ("bn", "en") else "en"
             subject, body, zakat_line, fire_line, savings_line = REPORT_TEXT[locale]
             text = body.format(
@@ -436,14 +448,15 @@ def send_monthly_reports(
                 else "",
                 link=f"{web_base_url}/{locale}/personal",
             )
-            sender.send(
+            if send_safely(
+                sender,
                 Email(
                     to=user.email,
                     subject=subject.format(month=figures["month"]),
                     body=f"{text}\n\n{DISCLAIMER[locale]}",
-                )
-            )
-            row.sent_at = utcnow()
+                ),
+            ):
+                row.sent_at = utcnow()
         sent += 1
     db.flush()
     return sent

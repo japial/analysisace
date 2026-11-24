@@ -48,6 +48,8 @@ async function pick(page: Page, label: string, option: string): Promise<void> {
 }
 
 test("every section opens for a new household, with the disclaimer", async ({ page }) => {
+  // Sixteen pages, each compiled on first visit by the dev server.
+  test.setTimeout(60_000);
   await signUpWithHousehold(page);
   for (const [path, heading] of SECTIONS) {
     await page.goto(path);
@@ -63,6 +65,8 @@ test("every section opens for a new household, with the disclaimer", async ({ pa
 test("record a cost, an account with a holding, an asset, a goal and a FIRE plan", async ({
   page,
 }) => {
+  // The longest journey: many pages, each compiled on first visit by the dev server.
+  test.setTimeout(60_000);
   await signUpWithHousehold(page);
   // D21: a new household's overview starts with the first steps toward FIRE.
   await expect(page.getByRole("heading", { name: "Your road to FIRE" })).toBeVisible();
@@ -141,6 +145,39 @@ test("record a cost, an account with a holding, an asset, a goal and a FIRE plan
   // D21: with a plan, the overview leads with the projected FIRE age from it.
   await expect(page.getByText("Projected FIRE age")).toBeVisible();
   await expect(page.getByRole("progressbar", { name: "Progress to your FIRE number" })).toBeVisible();
+});
+
+test("quick start records the basics and the overview shows the FIRE picture (D22)", async ({ page }) => {
+  await signUpWithHousehold(page);
+  await expect(page.getByRole("heading", { name: "Getting started" })).toBeVisible();
+  await expect(page.getByText("0 of 5 steps done", { exact: false })).toBeVisible();
+  await page.getByRole("link", { name: "Open quick start" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Quick start" })).toBeVisible();
+
+  await page.getByLabel("Year you were born").fill("1990");
+  await page.getByLabel("Monthly take-home income (৳)").fill("100000");
+  await page.getByLabel("Rent (৳ a month)").fill("25000");
+  await page.getByLabel("Food and bazar (৳ a month)").fill("20000");
+  await page.getByLabel("Cash and bank balances (৳)").fill("300000");
+  await page.getByRole("button", { name: "Save and see my FIRE picture" }).click();
+
+  // Back on the overview: four of five steps, an estimate from costs, and the savings rate:
+  // 1,00,000 income less 45,000 costs is 55,000 saved, 55%.
+  await expect(page).toHaveURL(/\/en\/personal$/);
+  await expect(page.getByText("4 of 5 steps done", { exact: false })).toBeVisible();
+  await expect(page.getByText("Estimated FIRE number")).toBeVisible();
+  await expect(page.getByText("55%").first()).toBeVisible();
+});
+
+test("income imports from CSV and a bad row says why (FR27.7)", async ({ page }) => {
+  await signUpWithHousehold(page);
+  await page.goto("/en/personal/income");
+  await page
+    .getByLabel("Or paste the CSV here")
+    .fill(["date,amount,kind", "2026-11-01,90000,salary", "2026-11-02,500,LOTTERY"].join("\n"));
+  await page.getByRole("button", { name: "Import" }).click();
+  await expect(page.getByText("Row 3: the kind is not one of the income kinds")).toBeVisible();
+  await expect(page.getByRole("cell", { name: "৳90,000.00" }).first()).toBeVisible();
 });
 
 test("the grouped section menu reaches every section on desktop and phone", async ({ page }) => {

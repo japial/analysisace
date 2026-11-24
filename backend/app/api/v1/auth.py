@@ -16,6 +16,7 @@ from app.schemas.auth import (
     PasswordResetRequestIn,
     RegisterIn,
     UserOut,
+    VerifyEmailConfirmIn,
 )
 from app.services import auth as auth_service
 from app.services.email import EmailSender, get_email_sender
@@ -27,7 +28,11 @@ UserAgent = Annotated[str | None, Header()]
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 def register(
-    body: RegisterIn, db: Db, settings: AppSettings, user_agent: UserAgent = None
+    body: RegisterIn,
+    db: Db,
+    settings: AppSettings,
+    sender: Annotated[EmailSender, Depends(get_email_sender)],
+    user_agent: UserAgent = None,
 ) -> AuthOut:
     user = auth_service.register_user(
         db,
@@ -38,6 +43,8 @@ def register(
         accept_terms=body.accept_terms,
     )
     session, token = auth_service.create_session(db, user, settings, user_agent=user_agent)
+    # D25: a link to confirm the address. Sign-up does not wait for it.
+    auth_service.start_email_verification(db, user, sender, settings)
     db.commit()
     return AuthOut(user=UserOut.model_validate(user), token=token, expires_at=session.expires_at)
 
@@ -75,6 +82,28 @@ def request_password_reset(
     auth_service.request_password_reset(db, body.email, sender, settings)
     db.commit()
     return Response(status_code=status.HTTP_202_ACCEPTED)
+
+
+@router.post("/verify-email/request", status_code=status.HTTP_202_ACCEPTED)
+def request_email_verification(
+    identity: CurrentIdentity,
+    db: Db,
+    settings: AppSettings,
+    sender: Annotated[EmailSender, Depends(get_email_sender)],
+) -> Response:
+    """D25: send a new confirmation link to the signed-in person. Nothing happens when the
+    address is already confirmed."""
+    auth_service.start_email_verification(db, identity.user, sender, settings)
+    db.commit()
+    return Response(status_code=status.HTTP_202_ACCEPTED)
+
+
+@router.post("/verify-email/confirm", status_code=status.HTTP_204_NO_CONTENT)
+def confirm_email_verification(body: VerifyEmailConfirmIn, db: Db) -> Response:
+    """D25: the link from the email. Works without being signed in."""
+    auth_service.confirm_email_verification(db, body.token)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.post("/password-reset/confirm", status_code=status.HTTP_204_NO_CONTENT)

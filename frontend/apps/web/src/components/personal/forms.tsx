@@ -65,6 +65,12 @@ export function ActionForm({
   reset = true,
 }: ActionFormProps) {
   const t = useTranslations("personal");
+  // A bad import row carries a code (BAD_DATE, UNKNOWN_KIND...); show what it means.
+  const rowError = (row: { code?: unknown; error?: unknown }) => {
+    const code = String(row.code ?? row.error ?? "");
+    const key = `import.codes.${code}`;
+    return t.has(key as never) ? t(key as never) : code;
+  };
   const [state, formAction] = useActionState(action, INITIAL_FORM_STATE);
   const [saves, setSaves] = useState(0);
   const [lastState, setLastState] = useState(state);
@@ -89,7 +95,7 @@ export function ActionForm({
             <ul className="mt-1 list-disc ps-5 text-destructive">
               {state.imported.errors.slice(0, 20).map((row, index) => (
                 <li key={index}>
-                  {t("import.rowError", { row: String(row.row ?? "?"), error: String(row.error ?? "") })}
+                  {t("import.rowError", { row: String(row.row ?? "?"), error: rowError(row) })}
                 </li>
               ))}
             </ul>

@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
 import {
+  confirmEmailAction,
   confirmPasswordResetAction,
   requestPasswordResetAction,
   signInAction,
@@ -163,6 +164,34 @@ export function ResetPasswordForm({ token }: { token: string }) {
         className="text-center text-sm font-medium text-primary hover:underline"
       >
         {needsNewLink ? t("requestNewLink") : t("backToSignIn")}
+      </Link>
+    </form>
+  );
+}
+
+/**
+ * D25: the page the emailed link opens. It confirms on a button press, not on load, because
+ * mail scanners open links ahead of the person and would use the link up.
+ */
+export function VerifyEmailForm({ token }: { token: string }) {
+  const t = useTranslations("auth");
+  const [state, action] = useActionState(confirmEmailAction, INITIAL_FORM_STATE);
+
+  return (
+    <form action={action} className="flex flex-col gap-4">
+      <Heading title={t("verifyTitle")} intro={t("verifyIntro")} />
+      <FormMessage state={token ? state : { error: "VERIFY_TOKEN_INVALID" }} success={t("verifyDone")} />
+      {token && !state.ok && state.error !== "VERIFY_TOKEN_INVALID" && (
+        <>
+          <input type="hidden" name="token" value={token} />
+          <SubmitButton>{t("verifySubmit")}</SubmitButton>
+        </>
+      )}
+      <Link
+        href={state.ok ? "/personal" : "/account"}
+        className="text-center text-sm font-medium text-primary hover:underline"
+      >
+        {state.ok ? t("verifyContinue") : t("verifyAccount")}
       </Link>
     </form>
   );

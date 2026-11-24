@@ -14,6 +14,7 @@ from app.api.v1 import (
     me,
     planning,
     portfolio,
+    setup,
     system,
     watchlist,
 )
@@ -32,6 +33,7 @@ api_router.include_router(watchlist.router)
 api_router.include_router(households.router)
 api_router.include_router(costs.router)
 api_router.include_router(income.router)
+api_router.include_router(setup.router)
 api_router.include_router(portfolio.router)
 api_router.include_router(assets.router)
 api_router.include_router(planning.router)

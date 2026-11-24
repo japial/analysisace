@@ -183,6 +183,39 @@ export async function deleteRecurringAction(householdId: string, id: string) {
   return run(() => call("DELETE", hh(householdId, `/recurring/${id}`)));
 }
 
+// --- D22 guided set-up --------------------------------------------------------------
+
+/** Fields named `cost_<category>` and `saving_<kind>` become maps; blanks are left out. */
+function prefixed(form: FormData, prefix: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [name, value] of form.entries()) {
+    if (name.startsWith(prefix) && typeof value === "string" && value.trim() !== "") {
+      out[name.slice(prefix.length)] = value.trim();
+    }
+  }
+  return out;
+}
+
+export async function quickStartAction(
+  householdId: string,
+  locale: string,
+  _: FormState,
+  form: FormData,
+): Promise<FormState> {
+  const year = optional(form, "birth_year");
+  const result = await run(() =>
+    call("POST", hh(householdId, "/setup/quick-start"), {
+      birth_year: year ? Number(year) : undefined,
+      monthly_income: optional(form, "monthly_income"),
+      costs: prefixed(form, "cost_"),
+      savings: prefixed(form, "saving_"),
+      locale: locale === "bn" ? "bn" : "en",
+    }),
+  );
+  if (result.error) return result;
+  return go("/personal");
+}
+
 // --- F27 income -----------------------------------------------------------------------
 
 export async function addIncomeAction(
@@ -199,6 +232,22 @@ export async function addIncomeAction(
       member_id: optional(form, "member_id"),
     }),
   );
+}
+
+export async function importIncomeAction(
+  householdId: string,
+  _: FormState,
+  form: FormData,
+): Promise<FormState> {
+  try {
+    const result = await call<ImportResult>("POST", hh(householdId, "/imports/income"), {
+      csv: await csvFrom(form),
+    });
+    revalidatePath("/", "layout");
+    return { ok: true, imported: result };
+  } catch (error) {
+    return toFormError(error);
+  }
 }
 
 export async function deleteIncomeAction(householdId: string, id: string) {

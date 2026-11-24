@@ -26,6 +26,7 @@ from app.core.security import (
 from app.models import (
     AlertRule,
     AuditLog,
+    EmailVerificationToken,
     FirmSeat,
     Notification,
     PasswordResetToken,
@@ -36,7 +37,12 @@ from app.models import (
     Watchlist,
 )
 from app.services import household_data
-from app.services.email import EmailSender, password_reset_email
+from app.services.email import (
+    EmailSender,
+    password_reset_email,
+    send_safely,
+    verification_email,
+)
 
 
 class AuthError(Exception):
@@ -221,9 +227,58 @@ def request_password_reset(
     )
     db.flush()
     link = f"{settings.web_base_url}/{user.locale}/reset-password?token={token}"
-    sender.send(
-        password_reset_email(user.email, user.locale, link, settings.password_reset_ttl_minutes)
+    # The answer is the same whether or not the email went, so accounts cannot be probed.
+    send_safely(
+        sender,
+        password_reset_email(user.email, user.locale, link, settings.password_reset_ttl_minutes),
     )
+
+
+def start_email_verification(
+    db: Session, user: User, sender: EmailSender, settings: Settings
+) -> bool:
+    """Email a link that confirms the address (D25). Earlier unused links stop working, so
+    only the newest one counts. Returns False when there is nothing to confirm."""
+    if user.email_verified_at is not None or not user.is_active:
+        return False
+    now = utcnow()
+    for old in db.scalars(
+        select(EmailVerificationToken).where(
+            EmailVerificationToken.user_id == user.id, EmailVerificationToken.used_at.is_(None)
+        )
+    ):
+        old.used_at = now
+    token = new_token()
+    db.add(
+        EmailVerificationToken(
+            user_id=user.id,
+            token_hash=hash_token(token),
+            expires_at=now + timedelta(hours=settings.email_verification_ttl_hours),
+        )
+    )
+    db.flush()
+    link = f"{settings.web_base_url}/{user.locale}/verify-email?token={token}"
+    send_safely(
+        sender,
+        verification_email(user.email, user.locale, link, settings.email_verification_ttl_hours),
+    )
+    return True
+
+
+def confirm_email_verification(db: Session, token: str) -> User:
+    record = db.scalar(
+        select(EmailVerificationToken).where(EmailVerificationToken.token_hash == hash_token(token))
+    )
+    if record is None or record.used_at is not None or as_utc(record.expires_at) <= utcnow():
+        raise AuthError("VERIFY_TOKEN_INVALID")
+    user = db.get(User, record.user_id)
+    if user is None or not user.is_active:
+        raise AuthError("VERIFY_TOKEN_INVALID")
+    record.used_at = utcnow()
+    if user.email_verified_at is None:
+        user.email_verified_at = utcnow()
+        audit(db, str(user.id), "EMAIL_VERIFIED", "app_user", str(user.id))
+    return user
 
 
 def confirm_password_reset(db: Session, token: str, new_password: str) -> User:
@@ -330,6 +385,7 @@ def delete_account(db: Session, user: User, password: str) -> None:
         db.execute(delete(model).where(model.user_id == user_id))
     db.execute(delete(UserSession).where(UserSession.user_id == user_id))
     db.execute(delete(PasswordResetToken).where(PasswordResetToken.user_id == user_id))
+    db.execute(delete(EmailVerificationToken).where(EmailVerificationToken.user_id == user_id))
     db.delete(user)
     # The audit entry keeps the id only, never the email or name.
     audit(db, str(user_id), "USER_DELETED", "app_user", str(user_id))

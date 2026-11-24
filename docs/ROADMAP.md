@@ -44,7 +44,7 @@ Next, in this order:
 - [ ] Choose and convert a public EOD dataset for the 5-year backfill
 - [x] Quality checks that span days run daily (`data_quality`); open issues are not repeated
 - [x] Admin review queue for `data_issue` (`/admin/data`)
-- [ ] Alert on failed jobs. Failed runs show on `/admin/audit` (jobs table); an email alert needs the email provider
+- [x] Alert on failed jobs: emails `OPS_ALERT_EMAILS` (D24, 2026-11-24). Failed runs also show on `/admin/audit`
 
 ## Build phases (owner's plan, 2026-11-15)
 
@@ -87,7 +87,7 @@ Last updated 2026-11-21. "Blocked" means a decision or input from the owner is n
 | F24 | Multi-owner household records | R3+ | Built | — |
 | F25 | Alternative investments | R2 basic, R3 full | Built | S3 storage (documents are encrypted on local disk for now) |
 | F26 | Sukuk and Islamic bank investments | R2 / R3 | Built | Real product catalogue and bank flag content (admin screen `/admin/bank-flags` done 2026-11-21) |
-| F27 | Income records and savings | R2 | Built | CSV import and export. Tax line mapping (`income.tax_lines`) is provisional until the tax adviser review (Q2) |
+| F27 | Income records and savings | R2 | Built | Tax line mapping (`income.tax_lines`) is provisional until the tax adviser review (Q2) |
 
 Also built, not a numbered feature: accounts, roles and user management (see below), the data foundation tables, the trading calendar, price adjustment and quality checks.
 
@@ -102,9 +102,9 @@ Also built, not a numbered feature: accounts, roles and user management (see bel
 
 ### Suggested order
 
-1. **Assets and Earnings first.** Nothing here waits on a data licence, and Zakat must ship before Ramadan 2027 (about early February 2027). Start the advisor review of the Zakat rules (Q2) now. Polish the first-run experience: guided set-up of the first household, an ACE summary on the My money overview (net worth, capital at work, monthly savings), and import helpers.
-2. **Capital plans:** FIRE, goals, scenarios and drift are built; finish tuning with real households. Add an ACE trend (how net worth, capital share and savings changed month by month).
-3. **Email provider and reminders**, so dues, maturities, Zakat dates and the monthly report reach people outside the app.
+1. **Assets and Earnings first.** Nothing here waits on a data licence, and Zakat must ship before Ramadan 2027 (about early February 2027). Start the advisor review of the Zakat rules (Q2) now. Polish the first-run experience: guided set-up of the first household (done 2026-11-24, D22), an ACE summary on the My money overview (done), and import helpers (income CSV done 2026-11-24; import errors now say why a row was skipped).
+2. **Capital plans:** FIRE, goals, scenarios and drift are built; finish tuning with real households. Add an ACE trend (how net worth, capital share and savings changed month by month): done 2026-11-24 (D23).
+3. **Email provider and reminders**, so dues, maturities, Zakat dates and the monthly report reach people outside the app. Sending is built (D24) and sign-up verifies the address (D25); the owner picks the provider and verifies the domain. Still open: web push, HTML email templates, bounce handling.
 4. **Stock tools and data adapters** as soon as Q5 is answered (F2, F3, F5, F4, F8), and Shariah screening (F1) once the advisor signs off the method (Q1).
 5. **Firm features and payments** (F9) once the Extended Metronic licence and the BSEC check (Q4) are settled.
 
@@ -116,7 +116,9 @@ Also built, not a numbered feature: accounts, roles and user management (see bel
 - [x] Landing page and coming-soon page refocused on FIRE, with ACE as the levers (D21, 2026-11-23)
 - [x] My money overview leads with FIRE progress (`GET /fire/progress`): projected FIRE age from the newest plan, or an estimated FIRE number from costs, with savings rate. A partial year of costs is now annualised (average month x 12) for the estimate and the FIRE form (2026-11-23)
 - [x] My money overview shows an ACE card (net worth, capital at work, average monthly cost) from `GET /households/{id}/ace/summary`, and the section menu is grouped Assets, Capital, Earnings, Plans (2026-11-23)
-- [x] Income records and savings (F27, 2026-11-23): income entries and recurring income, monthly savings and savings rate, ACE card and FIRE default use them. Linked (2026-11-23): tax statement takes salary and other income from the records (FR27.5), monthly report shows income and savings, "saved each month" goal type, FIRE default, community comparison through the FIRE plan. Open: CSV import and export of income; an in-app (not only email) income line on the monthly report notice
+- [x] Income records and savings (F27, 2026-11-23): income entries and recurring income, monthly savings and savings rate, ACE card and FIRE default use them. Linked (2026-11-23): tax statement takes salary and other income from the records (FR27.5), monthly report shows income and savings, "saved each month" goal type, FIRE default, community comparison through the FIRE plan. CSV import and export of income done (FR27.7, 2026-11-24). Open: an in-app (not only email) income line on the monthly report notice
+- [x] Guided set-up (D22, 2026-11-24): "Getting started" checklist on the overview and a one-form quick start for birth year, monthly income, typical costs and savings held
+- [x] ACE trend on the overview (D23, 2026-11-24): net worth and capital at work by month, change over the period, and monthly income, costs, savings and savings rate. Snapshots now keep capital at work (migration 0005)
 - [ ] Move the stock tools' company page links inside the portfolio holding page so shares are reached from the portfolio first
 - [ ] Bangla text review of the new landing copy (with the existing Bangla review item)
 
@@ -131,8 +133,9 @@ Covers the "Auth, consents, account deletion and export" item of M2 and the role
 - [x] Roles `USER`, `ANALYST`, `ADMIN` with permissions; admin screens for users and roles; audit log entries
 - [x] Web app redesigned on Metronic Layout 9 (header, menu bar, auth pages, cards, tables, light and dark)
 - [x] Browser tests (Playwright) for the account flows at desktop and 360 px width
-- [ ] Choose a transactional email provider. Until then reset emails are only written to the API log
-- [ ] Email verification at sign-up (needs the provider)
+- [x] Email sending over SMTP, provider chosen by settings (D24, 2026-11-24)
+- [ ] Owner: choose the provider and verify analysisace.com with it (SPF, DKIM, DMARC). Until `EMAIL_BACKEND=smtp` is set, mail is only written to the log
+- [x] Email verification at sign-up (D25, 2026-11-24): soft, alert and report emails wait for a confirmed address
 - [ ] Rate limit sign-up and reset requests per IP (needs Redis or a proxy rule)
 - [ ] Run the Playwright tests in CI (needs the stack started inside the workflow)
 - [x] Audit log viewer for admins (`/admin/audit`, with recent job runs)

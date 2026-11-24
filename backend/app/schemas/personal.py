@@ -365,6 +365,7 @@ class NetWorthPointOut(Row):
     assets: Decimal
     liabilities: Decimal
     net_worth: Decimal
+    capital: Decimal | None = None
 
 
 class TargetIn(BaseModel):
@@ -796,3 +797,16 @@ class IncomeRuleOut(Row):
     note: str | None
     member_id: uuid.UUID | None
     is_active: bool
+
+
+# --- D22 guided set-up -------------------------------------------------------------------
+
+
+class QuickStartIn(BaseModel):
+    birth_year: Annotated[int, Field(ge=1900, le=2100)] | None = None
+    monthly_income: Money | None = None
+    # Default expense category key -> amount for a typical month.
+    costs: Annotated[dict[str, Money], Field(max_length=20)] = {}
+    # Savings kind from `setup.savings` in config -> amount held today.
+    savings: Annotated[dict[str, Money], Field(max_length=10)] = {}
+    locale: Literal["en", "bn"] = "en"

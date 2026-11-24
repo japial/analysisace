@@ -391,6 +391,8 @@ class NetWorthSnapshot(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     liabilities: Mapped[Decimal] = mapped_column(MONEY, nullable=False)
     net_worth: Mapped[Decimal] = mapped_column(MONEY, nullable=False)
     breakdown: Mapped[dict[str, Any]] = mapped_column(JSONType, nullable=False)  # by asset class
+    # Capital at work on the day (D23). Empty on snapshots stored before it was kept.
+    capital: Mapped[Decimal | None] = mapped_column(MONEY)
 
 
 class TargetAllocation(UUIDPrimaryKeyMixin, TimestampMixin, Base):

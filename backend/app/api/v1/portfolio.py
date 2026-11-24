@@ -3,9 +3,9 @@
 import datetime as dt
 import uuid
 from decimal import Decimal
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Response, status
+from fastapi import APIRouter, Query, Response, status
 
 from app.api.deps import Db, Editor, Viewer
 from app.api.envelopes import computed
@@ -283,6 +283,15 @@ def ace_summary(access: Viewer, db: Db) -> Envelope[dict[str, Any]]:
     records exist."""
     data, source_ids = ace.ace_summary(db, access.household.id)
     return computed(db, data, source_ids)
+
+
+@router.get("/ace/trend")
+def ace_trend(
+    access: Viewer, db: Db, months: Annotated[int, Query(ge=3, le=36)] = 12
+) -> Envelope[dict[str, Any]]:
+    """Assets, Capital and Earnings month by month (D23): net worth and capital at work from
+    each month's last stored snapshot, and income, costs and savings from the records."""
+    return computed(db, ace.trend(db, access.household.id, months=months), ())
 
 
 @router.get("/portfolio/market-check")

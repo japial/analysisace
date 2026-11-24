@@ -4,7 +4,9 @@ Functions flush; the route commits. Income and costs together give what a househ
 saves (FR27.3): savings = income - costs, rate = savings / income.
 """
 
+import csv
 import datetime as dt
+import io
 import uuid
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -16,6 +18,7 @@ from sqlalchemy.orm import Session
 
 from app.analytics import costs as formulas
 from app.models import Expense, HouseholdMember, IncomeEntry, IncomeRule
+from app.services import costs
 from app.services.auth import AuthError
 from app.services.households import owned
 from app.services.valuation import personal_config, today_dhaka
@@ -261,4 +264,101 @@ def summary(
         {"kind": kind, "total": total.quantize(Q2)}
         for kind, total in sorted(by_kind.items(), key=lambda item: -item[1])
     ]
+    return result
+
+
+# --- CSV (FR27.7) ---------------------------------------------------------------------
+
+CSV_COLUMNS = ["date", "amount", "kind", "note", "member"]
+
+
+def export_csv(db: Session, household_id: uuid.UUID) -> str:
+    """Every income entry as CSV, oldest first, in the columns `import_csv` reads back."""
+    members = dict(
+        db.execute(
+            select(HouseholdMember.id, HouseholdMember.display_name).where(
+                HouseholdMember.household_id == household_id
+            )
+        ).all()
+    )
+    out = io.StringIO()
+    writer = csv.writer(out, lineterminator="\n")
+    writer.writerow(CSV_COLUMNS)
+    for row in db.scalars(
+        select(IncomeEntry)
+        .where(IncomeEntry.household_id == household_id)
+        .order_by(IncomeEntry.date, IncomeEntry.created_at)
+    ):
+        writer.writerow(
+            [
+                row.date.isoformat(),
+                str(row.amount),
+                row.kind,
+                costs.csv_safe(row.note or ""),
+                costs.csv_safe(members.get(row.member_id, "") if row.member_id else ""),
+            ]
+        )
+    return out.getvalue()
+
+
+def _kind_key(text: str) -> str:
+    """ "Salary", "salary " and "SALARY" all read as SALARY."""
+    return text.strip().upper().replace(" ", "_").replace("-", "_")
+
+
+def import_csv(db: Session, household_id: uuid.UUID, text: str) -> costs.ImportResult:
+    """Add income from CSV with the columns date, amount, kind, and (optional) note and
+    member (FR27.7).
+
+    A kind is one of `income.kinds` in any case. A member is matched by name; a name that is
+    not in the household is reported, because the tax statement needs to know whose income
+    it is. Bad rows are reported and skipped; good rows are still imported.
+    """
+    result = costs.ImportResult()
+    reader = csv.DictReader(io.StringIO(text.lstrip("\ufeff")))
+    headers = {(h or "").strip().lower() for h in reader.fieldnames or []}
+    if not {"date", "amount", "kind"} <= headers:
+        raise AuthError("CSV_HEADER_INVALID", 422)
+    allowed = set(kinds())
+    members = {
+        name.strip().lower(): member_id
+        for member_id, name in db.execute(
+            select(HouseholdMember.id, HouseholdMember.display_name).where(
+                HouseholdMember.household_id == household_id
+            )
+        ).all()
+    }
+    max_rows = int(personal_config()["costs"]["import_max_rows"])  # type: ignore[index]
+    for number, raw in enumerate(reader, start=2):
+        if number - 1 > max_rows:
+            result.errors.append({"row": number, "code": "TOO_MANY_ROWS"})
+            break
+        row = {(k or "").strip().lower(): (v or "").strip() for k, v in raw.items()}
+        if not any(row.values()):
+            continue
+        day = costs.parse_day(row.get("date", ""))
+        amount = costs.parse_amount(row.get("amount", ""))
+        kind = _kind_key(row.get("kind", ""))
+        member_name = row.get("member", "").lower()
+        if day is None:
+            result.errors.append({"row": number, "code": "BAD_DATE"})
+        elif amount is None:
+            result.errors.append({"row": number, "code": "BAD_AMOUNT"})
+        elif kind not in allowed:
+            result.errors.append({"row": number, "code": "UNKNOWN_KIND"})
+        elif member_name and member_name not in members:
+            result.errors.append({"row": number, "code": "UNKNOWN_MEMBER"})
+        else:
+            db.add(
+                IncomeEntry(
+                    household_id=household_id,
+                    member_id=members.get(member_name) if member_name else None,
+                    date=day,
+                    amount=amount,
+                    kind=kind,
+                    note=row.get("note", "")[:300] or None,
+                )
+            )
+            result.imported += 1
+    db.flush()
     return result

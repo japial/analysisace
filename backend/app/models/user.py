@@ -29,6 +29,9 @@ class User(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     last_login_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     failed_login_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     locked_until: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    # Set when the person opens the link sent at sign-up (D25). Alert and report emails
+    # wait for it; sign-in does not.
+    email_verified_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class UserSession(UUIDPrimaryKeyMixin, TimestampMixin, Base):
@@ -48,6 +51,19 @@ class UserSession(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
 class PasswordResetToken(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     __tablename__ = "password_reset_token"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("app_user.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    expires_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class EmailVerificationToken(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    """A link sent to confirm an email address (D25). Only the hash is stored."""
+
+    __tablename__ = "email_verification_token"
 
     user_id: Mapped[uuid.UUID] = mapped_column(
         Uuid, ForeignKey("app_user.id", ondelete="CASCADE"), nullable=False, index=True

@@ -129,3 +129,42 @@ The owner asked for the landing page to focus on FIRE-oriented personal finance.
 - **Savings-rate table.** Fixed illustrative text, not data: years from zero to 25× costs at a 5% real return, n = ln(1 + 25(1 − s) × 0.05 / s) / ln 1.05, rounded. It states its assumptions and says it is not a forecast. Figures in the hero illustration are fictional and agree with each other.
 - **Wording.** FIRE ages are always "projected" or "could"; the FAQ says a FIRE age is not a promise. This keeps the no-advice rule.
 - **Main call to action.** Goes to the FIRE plan for signed-in visitors, and to sign-up ("Start your FIRE plan") otherwise.
+
+## D22. Guided set-up: a checklist and one quick-start form (2026-11-24)
+
+A new household had nothing to start from, and every FIRE figure needs income and costs. Set-up has two parts:
+
+- **Checklist** on the My money overview: birth year, income, costs, what you hold, a FIRE plan. Each step's state is read from the household's records (`GET /setup/status`), so it stays true when data is added on the usual pages. It disappears when all five are done.
+- **Quick start** (`/personal/setup`, `POST /setup/quick-start`): one form, one transaction. It calls the same services as the other pages, so what it makes is ordinary data that can be changed or deleted. Income and fixed costs become monthly rules from the 1st of the current month, so this month has entries and a savings rate shows at once. Day-to-day costs are entered once, today, as this month's estimate, because they vary and a rule would invent future spending. Savings become one account and one holding per kind, named in the person's language.
+- **Configuration.** Which categories are fixed or day-to-day, the savings kinds and the note on created records live in `config/personal.yaml` under `setup`.
+- **Left out on purpose.** Shares (better from a broker statement, which carries tickers and costs) and gold and land (they need weights or valuations). The form points to those pages.
+- **Running it twice adds again.** It does not try to merge; each section says when records already exist.
+
+## D23. ACE trend from stored snapshots and records (2026-11-24)
+
+The overview's net-worth chart becomes "Your ACE over time": net worth and capital at work as two lines, the change over the period, and income, costs, savings and savings rate for recent months (`GET /ace/trend`, 3 to 36 months, 12 by default).
+
+- **Capital at work is stored, not rebuilt.** Valuing the portfolio at twelve past month-ends on every request would break the API's speed budget, so the daily snapshot now keeps `capital` (migration 0005) next to net worth, using the same measure as the ACE card. Snapshots stored before this have no capital; their months show a gap, not zero.
+- **Each month uses its last snapshot.** A month with no snapshot shows no net worth. Income, costs and savings come from the records, as on the Income page.
+- **No income means unknown, not zero.** With no income records anywhere in the period, income and savings are left empty, so a household that only records costs is not shown a loss every month. Once any month has income, a month without it is shown as the shortfall it is.
+- **Demo data** stores month-end snapshots for the last 12 months so the demo has a trend.
+
+## D24. Email goes out over SMTP; the provider is a setting (2026-11-24)
+
+No transactional email provider has been chosen. Rather than wait, sending is built against SMTP, which every common provider offers (Amazon SES, Postmark, SendGrid, Mailgun, Resend, Brevo). Choosing one is a matter of `EMAIL_BACKEND=smtp` and the `SMTP_*` environment variables; no code or dependency changes. Python's standard `smtplib` is used, with STARTTLS on 587 or implicit TLS on 465.
+
+- **Default stays "log"**, which development relies on to follow reset links. Outside development, the API and worker log an error at start-up if mail would only reach the log.
+- **A failed send never breaks the caller.** `send_safely` logs the failure (without the address or any credential) and returns False. A password reset answers the same either way, so a provider outage cannot be used to probe for accounts. An alert or monthly report stays in the app with `sent_at` empty.
+- **Failed jobs email operators** listed in `OPS_ALERT_EMAILS` (the M1 "alert on failed jobs" item). The failure is also on `/admin/audit`.
+- **Plain text only** for now, UTF-8, so Bangla arrives intact. HTML templates, bounce handling and web push are later work.
+- **Still the owner's call:** which provider, and verifying the sending domain (SPF, DKIM, DMARC) for analysisace.com with it. Until the domain is verified, mail may land in spam.
+
+## D25. Email verification is soft: nothing is blocked, emails wait (2026-11-24)
+
+Sign-up sends a link to confirm the address (`/verify-email?token=...`, valid 48 hours, `EMAIL_VERIFICATION_TTL_HOURS`). Until it is opened:
+
+- **The person can use everything.** Blocking sign-in on a mail delivery we do not control yet would lose people at the first step.
+- **Alert and monthly-report emails are held back**, so a mistyped address never receives someone's net worth or Zakat figures. The notices still appear in the app. Password-reset emails still go out, because they are how an account is recovered.
+- **A banner under the menu** says so and offers "Send the link again". A new link makes earlier ones stop working.
+- **The link page confirms on a button press**, not on load: mail scanners open links before the person does and would use the link up.
+- Demo users and administrators created with `scripts/create_admin.py` are marked confirmed. Only the token's hash is stored, as for password resets, and deleting an account deletes its tokens.

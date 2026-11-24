@@ -12,8 +12,9 @@ from decimal import Decimal
 from sqlalchemy import insert, select
 from sqlalchemy.orm import Session
 
+from app.analytics.costs import add_months, month_start
 from app.core.permissions import Role
-from app.core.security import hash_token, new_token
+from app.core.security import hash_token, new_token, utcnow
 from app.models import (
     Account,
     AlertRule,
@@ -47,6 +48,7 @@ from app.models import (
 from app.seed.demo_market import END
 from app.seed.reference import seed_reference
 from app.services.auth import ConsentPurpose, get_user_by_email, register_user
+from app.services.portfolio import store_net_worth
 
 D = Decimal
 DEMO_EMAIL = "demo@example.com"
@@ -77,7 +79,7 @@ def _price_on(session: Session, ticker: str, day: date) -> Decimal:
 
 
 def _user(session: Session, email: str, name: str, password: str, role: Role, locale: str) -> User:
-    return register_user(
+    user = register_user(
         session,
         email=email,
         password=password,
@@ -86,6 +88,9 @@ def _user(session: Session, email: str, name: str, password: str, role: Role, lo
         accept_terms=True,
         role=role,
     )
+    # Demo addresses are fictional; mark them confirmed so alert emails behave as in use (D25).
+    user.email_verified_at = utcnow()
+    return user
 
 
 def seed_demo_personal(session: Session, password: str) -> DemoPersonalResult:
@@ -722,5 +727,14 @@ def seed_demo_personal(session: Session, password: str) -> DemoPersonalResult:
         ]
     )
     counts["firms"] = 1
+    session.flush()
+
+    # --- ACE trend (D23): month-end snapshots for the last 12 months ---------------
+    snapshot_days = [
+        add_months(month_start(END), -n) - timedelta(days=1) for n in range(11, -1, -1)
+    ] + [END]
+    for day in snapshot_days:
+        store_net_worth(session, hid, day)
+    counts["net_worth_snapshots"] = len(snapshot_days)
     session.flush()
     return DemoPersonalResult(created=True, counts=counts, firm_api_key=api_key)

@@ -8,20 +8,24 @@ import {
   RECURRING_FREQUENCIES,
 } from "@analysisace/core";
 
+import { Download } from "lucide-react";
+
 import {
   addIncomeAction,
   addIncomeRuleAction,
   deleteIncomeAction,
   deleteIncomeRuleAction,
+  importIncomeAction,
   setIncomeRuleActiveAction,
 } from "@/app/actions/personal";
 import { Field } from "@/components/form/form-parts";
 import { Empty, LoadError, Panel, Stat, StatGrid } from "@/components/personal/display";
-import { ActionForm, DeleteButton, FieldGrid, SelectField, ToggleSwitch } from "@/components/personal/forms";
+import { ActionForm, DeleteButton, FieldGrid, FileField, SelectField, TextareaField, ToggleSwitch } from "@/components/personal/forms";
 import { PersonalShell } from "@/components/personal/shell";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Link } from "@/i18n/navigation";
+import { downloadHref } from "@/lib/download";
 import { hh, load } from "@/lib/personal";
 import {
   type PageProps,
@@ -63,7 +67,19 @@ export default async function IncomePage({ params, searchParams }: Props) {
   const data = summary.ok ? summary.data.data : null;
 
   return (
-    <PersonalShell ctx={ctx} title={title} description={t("personal.income.intro")}>
+    <PersonalShell
+      ctx={ctx}
+      title={title}
+      description={t("personal.income.intro")}
+      actions={
+        <Button variant="outline" size="sm" asChild>
+          <a href={downloadHref(locale, `/households/${hid}/income/export.csv`)} download>
+            <Download />
+            {t("personal.income.export")}
+          </a>
+        </Button>
+      }
+    >
       {data ? (
         <StatGrid>
           <Stat label={t("personal.income.income12")} value={f.compact(data.income_12m)} hint={f.bdt(data.income_12m)} />
@@ -260,6 +276,14 @@ export default async function IncomePage({ params, searchParams }: Props) {
           )}
         </div>
       </Panel>
+      {ctx.canEdit && (
+        <Panel title={t("personal.income.importTitle")} description={t("personal.income.importIntro")}>
+          <ActionForm action={importIncomeAction.bind(null, hid)} submitLabel={t("personal.import.submit")}>
+            <FileField label={t("personal.import.file")} name="file" accept=".csv,text/csv" />
+            <TextareaField label={t("personal.import.paste")} name="csv" rows={4} placeholder={"date,amount,kind,note,member\n2026-11-01,85000,SALARY,November salary,"} />
+          </ActionForm>
+        </Panel>
+      )}
     </PersonalShell>
   );
 }

@@ -11,6 +11,16 @@ x-backend: &backend
     DATABASE_URL: ${DATABASE_URL}
     ENVIRONMENT: ${ENVIRONMENT:-development}
     CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+    WEB_BASE_URL: ${WEB_BASE_URL:-http://localhost:3000}
+    EMAIL_BACKEND: ${EMAIL_BACKEND:-log}
+    EMAIL_FROM: ${EMAIL_FROM:-analysisACE <no-reply@analysisace.com>}
+    EMAIL_REPLY_TO: ${EMAIL_REPLY_TO:-}
+    SMTP_HOST: ${SMTP_HOST:-}
+    SMTP_PORT: ${SMTP_PORT:-587}
+    SMTP_SECURITY: ${SMTP_SECURITY:-starttls}
+    SMTP_USERNAME: ${SMTP_USERNAME:-}
+    SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+    OPS_ALERT_EMAILS: ${OPS_ALERT_EMAILS:-}
 
 services:
   db:

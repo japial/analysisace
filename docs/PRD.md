@@ -264,6 +264,7 @@ Each requirement has acceptance criteria (AC) that tests must cover.
 * FR27.4 The average monthly savings is the starting value of the FIRE form (F17), appears on the ACE card of the My money overview, and is measured by a "saved each month" goal (F19).
 * FR27.5 The tax statement (F13) takes a member's salary and other income for the tax year from the income records unless the person types them in, and says which. Kinds that would double-count income already worked out from holdings and assets (rent, profit, dividends), and exempt remittance, are listed as not counted. The mapping is in `config/personal.yaml` (`income.tax_lines`). Records for the whole household are not counted for one person.
 * FR27.6 The monthly report (F20) shows last month's income and what was left after costs.
+* FR27.7 CSV import and export of income (columns date, amount, kind, note, member). A member is matched by name; an unknown name, kind, date or amount is reported by row and the row is skipped.
 * Zakat (F13) does not read income records: Zakat is due on wealth held, and income already shows there once it sits in an account.
 
 ### F13 Tax and Zakat snapshot

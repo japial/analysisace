@@ -22,7 +22,12 @@ from app.models import JobRun
 from app.seed.reference import seed_reference
 from app.services import alerts, costs, income, macro_notes, market_data, portfolio
 from app.services.config_registry import sync_config_versions
-from app.services.email import get_email_sender
+from app.services.email import (
+    check_email_settings,
+    get_email_sender,
+    job_failed_email,
+    send_safely,
+)
 from app.services.market_pipeline import run_market_analytics
 from app.services.valuation import today_dhaka
 
@@ -120,6 +125,19 @@ def run_job(name: str, fn: JobFn) -> None:
         )
         session.commit()
     logger.info("Job %s finished: %s", name, status)
+    if status == "FAILED":
+        notify_operators(name, str(detail.get("error", "")))
+
+
+def notify_operators(job: str, error: str) -> int:
+    """Email OPS_ALERT_EMAILS that a job failed (M1: alert on failed jobs). Returns how
+    many were sent; the failure is also on /admin/audit whatever happens here."""
+    settings = get_settings()
+    sender = get_email_sender()
+    return sum(
+        send_safely(sender, job_failed_email(to, job, error, settings.environment))
+        for to in settings.ops_alert_email_list
+    )
 
 
 def _config_sync(session: Session) -> dict[str, Any]:
@@ -162,6 +180,7 @@ def build_scheduler() -> BlockingScheduler:
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    check_email_settings(get_settings())
     run_job("config_sync", _config_sync)
     run_job("reference_seed", lambda session: {"added": seed_reference(session)})
     scheduler = build_scheduler()

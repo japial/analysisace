@@ -87,3 +87,25 @@ export async function confirmPasswordResetAction(
   }
   return { ok: true };
 }
+
+/** D25: send a new confirmation link to the signed-in person. */
+export async function resendVerificationAction(): Promise<FormState> {
+  const token = await getSessionToken();
+  if (!token) return { error: "NOT_AUTHENTICATED" };
+  try {
+    await api.requestEmailVerification(token);
+  } catch (error) {
+    return toFormError(error);
+  }
+  return { ok: true };
+}
+
+/** D25: the button on the page the emailed link opens. */
+export async function confirmEmailAction(_: FormState, form: FormData): Promise<FormState> {
+  try {
+    await api.confirmEmailVerification(text(form, "token"));
+  } catch (error) {
+    return toFormError(error);
+  }
+  return { ok: true };
+}

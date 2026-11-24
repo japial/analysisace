@@ -73,6 +73,8 @@ export interface User {
   consents: Partial<Record<OptionalConsent | "TERMS", ConsentRecord>>;
   created_at: string;
   last_login_at: string | null;
+  /** Null until the link sent at sign-up is opened (D25). */
+  email_verified_at: string | null;
   permissions: Permission[];
 }
 

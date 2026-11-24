@@ -68,6 +68,7 @@ class UserOut(BaseModel):
     consents: dict[str, Any]
     created_at: datetime
     last_login_at: datetime | None
+    email_verified_at: datetime | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -96,3 +97,7 @@ class RoleOut(BaseModel):
 class RolesOut(BaseModel):
     roles: list[RoleOut]
     permissions: list[Permission]
+
+
+class VerifyEmailConfirmIn(BaseModel):
+    token: str = Field(min_length=10, max_length=200)

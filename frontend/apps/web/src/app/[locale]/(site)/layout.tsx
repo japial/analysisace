@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteNavbar } from "@/components/layout/site-navbar";
+import { VerifyEmailBanner } from "@/components/layout/verify-email-banner";
 import { navItems } from "@/lib/nav";
 import { getCurrentUser } from "@/lib/session";
 
@@ -34,6 +35,7 @@ export default async function SiteLayout({ children, params }: Props) {
       </a>
       <SiteHeader user={user} items={items} />
       <SiteNavbar items={items} />
+      <VerifyEmailBanner user={user} />
       <main id="main" className="flex grow flex-col">
         <div className="grow">{children}</div>
         <SiteFooter />
