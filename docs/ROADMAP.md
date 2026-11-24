@@ -67,7 +67,7 @@ Last updated 2026-11-21. "Blocked" means a decision or input from the owner is n
 | F4 | Weekly macro note (bn, en) | MVP | Built | Live macro data feeds (Bangladesh Bank, BBS, Brent) |
 | F5 | Shock playbook | R2 | Built | Curate real events and Bangladesh Bank policy-rate changes; confirm the LNG fire date |
 | F6 | Portfolio check | R2 | Built | — |
-| F7 | Alerts (status, regime, shock) | R2 | Partly built | In-app alerts and watchlist work. Missing: email provider, web push |
+| F7 | Alerts (status, regime, shock) | R2 | Built | In-app, email (D24) and browser push (D26). Owner: choose the email provider and generate push keys |
 | F8 | Macro regime dashboard | R3 | Built | Owner to confirm the inflation bands and choose a liquidity series (FR8.1) |
 | F9 | Firm features (white-label, CSV, API, seats) | R3 | Not built | Firm accounts, PDF reports, API keys; legal check (Q4) |
 | F10 | Ownership change layer | Later | Not built | Data source |
@@ -80,7 +80,7 @@ Last updated 2026-11-21. "Blocked" means a decision or input from the owner is n
 | F17 | FIRE calculator | R3 | Built | — |
 | F18 | Scenario planning | R3+ | Built | — |
 | F19 | Goal tracking | R3 | Built | — |
-| F20 | Personal alerts and monthly report | R3 | Built | Email provider; web push (alerts show in the app and log emails until then) |
+| F20 | Personal alerts and monthly report | R3 | Built | Email provider choice; push keys (D24, D26) |
 | F21 | Community benchmarking | Later | Built | Needs 50 opted-in users per age band before a group shows |
 | F22 | News sentiment | Later | Not built | Data source |
 | F23 | Data privacy controls | Every release | Partly built | Done: consents, export, deletion, encryption of passwords and tokens. Missing: field-level encryption of account numbers and documents (needs those tables), breach-notification and retention notices (legal text), confirmation of the Personal Data Protection Ordinance status (Q3) |
@@ -104,7 +104,7 @@ Also built, not a numbered feature: accounts, roles and user management (see bel
 
 1. **Assets and Earnings first.** Nothing here waits on a data licence, and Zakat must ship before Ramadan 2027 (about early February 2027). Start the advisor review of the Zakat rules (Q2) now. Polish the first-run experience: guided set-up of the first household (done 2026-11-24, D22), an ACE summary on the My money overview (done), and import helpers (income CSV done 2026-11-24; import errors now say why a row was skipped).
 2. **Capital plans:** FIRE, goals, scenarios and drift are built; finish tuning with real households. Add an ACE trend (how net worth, capital share and savings changed month by month): done 2026-11-24 (D23).
-3. **Email provider and reminders**, so dues, maturities, Zakat dates and the monthly report reach people outside the app. Sending is built (D24) and sign-up verifies the address (D25); the owner picks the provider and verifies the domain. Still open: web push, HTML email templates, bounce handling.
+3. **Email provider and reminders**, so dues, maturities, Zakat dates and the monthly report reach people outside the app. Sending is built (D24) and sign-up verifies the address (D25); the owner picks the provider and verifies the domain. Browser push built (D26). Still open: HTML email templates, bounce handling.
 4. **Stock tools and data adapters** as soon as Q5 is answered (F2, F3, F5, F4, F8), and Shariah screening (F1) once the advisor signs off the method (Q1).
 5. **Firm features and payments** (F9) once the Extended Metronic licence and the BSEC check (Q4) are settled.
 

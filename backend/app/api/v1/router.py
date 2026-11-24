@@ -14,6 +14,7 @@ from app.api.v1 import (
     me,
     planning,
     portfolio,
+    push,
     setup,
     system,
     watchlist,
@@ -24,6 +25,7 @@ api_router.include_router(system.router)
 api_router.include_router(companies.router)
 api_router.include_router(auth.router)
 api_router.include_router(me.router)
+api_router.include_router(push.router)
 api_router.include_router(admin_users.router)
 # Market layer (F1 to F8).
 api_router.include_router(market.router)

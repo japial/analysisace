@@ -353,6 +353,10 @@ def export_user_data(db: Session, user: User) -> dict[str, Any]:
             for household_id in household_data.households_of(db, user.id)
         ],
         "watchlist": list(db.scalars(select(Watchlist.ticker).where(Watchlist.user_id == user.id))),
+        "push_subscriptions": [
+            {"user_agent": p.user_agent, "created_at": as_utc(p.created_at).isoformat()}
+            for p in db.scalars(select(PushSubscription).where(PushSubscription.user_id == user.id))
+        ],
         "alert_rules": [
             {"type": r.type, "channel": r.channel, "frequency": r.frequency, "params": r.params}
             for r in db.scalars(select(AlertRule).where(AlertRule.user_id == user.id))

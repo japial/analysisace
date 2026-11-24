@@ -183,6 +183,19 @@ export async function deleteRecurringAction(householdId: string, id: string) {
   return run(() => call("DELETE", hh(householdId, `/recurring/${id}`)));
 }
 
+// --- D26 browser push --------------------------------------------------------------
+
+export async function savePushSubscriptionAction(subscription: {
+  endpoint: string;
+  keys: { p256dh: string; auth: string };
+}): Promise<FormState> {
+  return run(() => call("POST", "/push/subscriptions", subscription));
+}
+
+export async function removePushSubscriptionAction(endpoint: string): Promise<FormState> {
+  return run(() => call("POST", "/push/subscriptions/remove", { endpoint }));
+}
+
 // --- D22 guided set-up --------------------------------------------------------------
 
 /** Fields named `cost_<category>` and `saving_<kind>` become maps; blanks are left out. */

@@ -19,6 +19,8 @@ dependencies = [
     # PDF statements (F13). uharfbuzz shapes Bangla text.
     "fpdf2>=2.8",
     "uharfbuzz>=0.39",
+    # Browser notifications (D26).
+    "pywebpush>=2.0",
 ]
 
 [project.optional-dependencies]
@@ -77,5 +79,5 @@ strict = true
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["apscheduler.*"]
+module = ["apscheduler.*", "pywebpush.*"]
 ignore_missing_imports = true

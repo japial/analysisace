@@ -168,3 +168,15 @@ Sign-up sends a link to confirm the address (`/verify-email?token=...`, valid 48
 - **A banner under the menu** says so and offers "Send the link again". A new link makes earlier ones stop working.
 - **The link page confirms on a button press**, not on load: mail scanners open links before the person does and would use the link up.
 - Demo users and administrators created with `scripts/create_admin.py` are marked confirmed. Only the token's hash is stored, as for password resets, and deleting an account deletes its tokens.
+
+## D26. Browser push with VAPID keys; the alert rule decides (2026-11-24)
+
+Alerts can reach a phone or computer as a browser notification (Web Push, `pywebpush`). The existing alert channel choice decides which alerts push: "Browser notification" or "Both". The notice is in the app either way.
+
+- **Off until keys exist.** Push needs a VAPID key pair (`scripts/generate_vapid_keys.py`) in `WEBPUSH_PUBLIC_KEY` and `WEBPUSH_PRIVATE_KEY`. Without them the Alerts page says notifications are not switched on yet, and nothing is sent.
+- **Per device.** A person turns notifications on in each browser on the Alerts page. The browser subscribes with the public key; the subscription is saved through a server action (the browser never calls the API). Turning it off unsubscribes the browser and deletes the row.
+- **Only real push services.** A subscription endpoint must be HTTPS on a browser vendor's push host (Google, Mozilla, Apple, Microsoft), so the server never posts to an address a client made up.
+- **Dead subscriptions are dropped** when the push service answers 404 or 410. Other failures are logged and do not break the alert job.
+- **The service worker** (`/sw.js`) only shows notifications and opens pages on this site; it caches nothing.
+- **Short text.** Title from the alert's email subject, body from its first line (up to 180 characters), and a link to the page the notice points to.
+- **Testing limit.** Headless test browsers always report notifications as blocked, so a real subscribe is not covered by the browser tests; the server side is covered by unit tests with a stand-in sender. iPhones need the site added to the home screen before Safari allows push.

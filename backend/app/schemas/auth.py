@@ -101,3 +101,19 @@ class RolesOut(BaseModel):
 
 class VerifyEmailConfirmIn(BaseModel):
     token: str = Field(min_length=10, max_length=200)
+
+
+class PushKeysIn(BaseModel):
+    p256dh: str = Field(min_length=20, max_length=200)
+    auth: str = Field(min_length=8, max_length=100)
+
+
+class PushSubscriptionIn(BaseModel):
+    """What the browser's PushManager.subscribe() returns (D26)."""
+
+    endpoint: str = Field(min_length=20, max_length=1000)
+    keys: PushKeysIn
+
+
+class PushEndpointIn(BaseModel):
+    endpoint: str = Field(min_length=20, max_length=1000)

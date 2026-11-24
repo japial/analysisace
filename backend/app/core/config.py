@@ -46,6 +46,12 @@ class Settings(BaseSettings):
     smtp_username: str | None = None
     smtp_password: SecretStr | None = None
     smtp_timeout_seconds: float = 15
+    # Browser push (D26). Generate a pair with scripts/generate_vapid_keys.py; without one
+    # push is off. The subject tells push services who to contact about this sender.
+    webpush_public_key: str | None = None
+    webpush_private_key: SecretStr | None = None
+    webpush_subject: str = "mailto:support@analysisace.com"
+
     # Comma-separated addresses told when a scheduled job fails.
     ops_alert_emails: str = ""
 

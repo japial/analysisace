@@ -564,7 +564,9 @@
     "CSV_INVALID": "The file must be UTF-8 CSV with the columns code, date and value.",
     "FIGURE_WITHOUT_SOURCE": "Every figure needs a source before the note can be published.",
     "LIMIT_REACHED": "You have reached the limit for this list.",
-    "VERIFY_TOKEN_INVALID": "This link has expired, was replaced by a newer one, or was already used. If your email is not confirmed yet, sign in and ask for a new link."
+    "VERIFY_TOKEN_INVALID": "This link has expired, was replaced by a newer one, or was already used. If your email is not confirmed yet, sign in and ask for a new link.",
+    "PUSH_NOT_CONFIGURED": "Browser notifications are not switched on for analysisACE yet.",
+    "PUSH_ENDPOINT_INVALID": "This browser's notification service is not supported."
   },
   "personal": {
     "metaTitle": "My money",
@@ -1567,6 +1569,21 @@
       "open": "Open {ticker}",
       "notScreened": "Not screened yet",
       "rateHint": "Typical move in the share price when the 91-day T-bill yield rose one point, from past weekly data. History, not a forecast."
+    },
+    "push": {
+      "title": "Notifications on this device",
+      "intro": "Get a browser notification for alerts set to \"Browser notification\" or \"Both\" above. Turn it on separately on each phone or computer.",
+      "checking": "Checking this browser...",
+      "turnOn": "Turn on notifications",
+      "turnOff": "Turn off on this device",
+      "failed": "Notifications could not be turned on. Try again, or check the browser's site settings.",
+      "notAvailable": "Browser notifications are not switched on for analysisACE yet.",
+      "state": {
+        "unsupported": "This browser cannot show notifications from websites. On an iPhone, add analysisACE to the home screen first.",
+        "blocked": "Notifications are blocked for this site. Allow them in the browser's site settings, then come back.",
+        "off": "Notifications are off on this device.",
+        "on": "Notifications are on for this device."
+      }
     }
   },
   "market": {

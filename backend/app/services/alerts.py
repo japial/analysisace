@@ -19,6 +19,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.analytics.costs import add_months, month_start
+from app.core.config import get_settings
 from app.core.security import utcnow
 from app.models import (
     AlertRule,
@@ -31,7 +32,7 @@ from app.models import (
     User,
 )
 from app.models.enums import AlertFrequency, AlertType, Channel
-from app.services import alt_assets, islamic, performance, planning, zakat_tax
+from app.services import alt_assets, islamic, performance, planning, push, zakat_tax
 from app.services.alert_texts import DISCLAIMER, EMAIL_TEXT, REPORT_TEXT
 from app.services.auth import AuthError, ConsentPurpose
 from app.services.email import Email, EmailSender, send_safely
@@ -189,6 +190,18 @@ def notify(
             ),
         ):
             row.sent_at = utcnow()
+    # D26: a push copy to the person's browsers when the rule asks for one.
+    if rule is not None and rule.channel in ("PUSH", "BOTH") and template is not None:
+        locale = user.locale if user.locale in ("bn", "en") else "en"
+        title, body = template[locale]
+        push.push_to_user(
+            db,
+            push.get_push_sender(),
+            user.id,
+            push.notice_message(
+                title, body.format(**data), link, get_settings().web_base_url, locale
+            ),
+        )
     db.flush()
     return row
 

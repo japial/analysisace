@@ -21,6 +21,9 @@ x-backend: &backend
     SMTP_USERNAME: ${SMTP_USERNAME:-}
     SMTP_PASSWORD: ${SMTP_PASSWORD:-}
     OPS_ALERT_EMAILS: ${OPS_ALERT_EMAILS:-}
+    WEBPUSH_PUBLIC_KEY: ${WEBPUSH_PUBLIC_KEY:-}
+    WEBPUSH_PRIVATE_KEY: ${WEBPUSH_PRIVATE_KEY:-}
+    WEBPUSH_SUBJECT: ${WEBPUSH_SUBJECT:-mailto:support@analysisace.com}
 
 services:
   db:

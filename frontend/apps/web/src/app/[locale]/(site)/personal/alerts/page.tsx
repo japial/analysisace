@@ -5,6 +5,7 @@ import { markNotificationsReadAction, setAlertRuleAction } from "@/app/actions/p
 import { Field } from "@/components/form/form-parts";
 import { Empty, LoadError, Panel } from "@/components/personal/display";
 import { ActionButton, ActionForm, CheckField, SelectField } from "@/components/personal/forms";
+import { PushToggle } from "@/components/personal/push-toggle";
 import { PersonalShell } from "@/components/personal/shell";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
@@ -25,9 +26,10 @@ export default async function AlertsPage({ params }: PageProps) {
   const { ctx, t, f } = await setup(locale, "/personal/alerts");
   const title = t("personal.sections.alerts");
 
-  const [notices, rules] = await Promise.all([
+  const [notices, rules, pushConfig] = await Promise.all([
     load(get<Notifications>(ctx, "/notifications?limit=50")),
     load(get<AlertRule[]>(ctx, "/alerts")),
+    load(get<{ enabled: boolean; public_key: string | null; subscriptions: number }>(ctx, "/push/config")),
   ]);
 
   /** The notice text, filled in from the values the job stored with it. */
@@ -158,6 +160,13 @@ export default async function AlertsPage({ params }: PageProps) {
               );
             })}
           </ul>
+        )}
+      </Panel>
+      <Panel title={t("personal.push.title")} description={t("personal.push.intro")}>
+        {pushConfig.ok && pushConfig.data.enabled && pushConfig.data.public_key ? (
+          <PushToggle publicKey={pushConfig.data.public_key} />
+        ) : (
+          <p className="text-sm text-muted-foreground">{t("personal.push.notAvailable")}</p>
         )}
       </Panel>
     </PersonalShell>
