@@ -14,8 +14,8 @@ Definition of done: `docker compose up` runs API, worker, DB and frontend; CI gr
 - [x] Base config files in `config/` with a versioned loader
 - [x] Frontend scaffold: Next.js app, shared `core` and `i18n` packages, Bangla and English
 - [x] Lint, type check and tests pass locally for backend and frontend
-- [x] Dockerfiles, `docker-compose.yml`, GitHub Actions workflow written
-- [ ] **Confirm `docker compose up` and CI pass.** Neither could be run on the dev machine (no Docker). Push the branch and check the first CI run.
+- [x] Dockerfiles and `docker-compose.yml` written. The GitHub Actions workflow listed here was never committed; it was written on 2026-11-26 (D29)
+- [ ] **Confirm CI passes on GitHub.** The `e2e` job was rehearsed locally on a fresh database with a production build (44 browser tests pass). The `compose` job could not be run here (no Docker). Push `develop` and check the first run.
 
 ## M1 Data foundation
 
@@ -138,7 +138,7 @@ Covers the "Auth, consents, account deletion and export" item of M2 and the role
 - [ ] Owner: on the production server set `EMAIL_BACKEND=smtp`, `SMTP_USERNAME` and `SMTP_PASSWORD` (Gmail app password). Until then mail is only written to the log. Past about 500 emails a day (the monthly report to every user) move to Google Workspace or a transactional provider
 - [x] Email verification at sign-up (D25, 2026-11-24): soft, alert and report emails wait for a confirmed address
 - [x] Rate limits on sign-up, sign-in, password reset and verification emails (D28, 2026-11-26). Production: the reverse proxy in front of the web app must set `X-Forwarded-For`
-- [ ] Run the Playwright tests in CI (needs the stack started inside the workflow)
+- [x] Playwright tests run in CI on every push and pull request, including the admin, analyst and PDF tests (D29, 2026-11-26)
 - [x] Audit log viewer for admins (`/admin/audit`, with recent job runs)
 
 ## M2 MVP: F1, F2, F3, F4, F23 basics

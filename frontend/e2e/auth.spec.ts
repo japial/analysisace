@@ -100,6 +100,8 @@ test("privacy choices are saved and can be withdrawn (FR23.1, FR23.2)", async ({
   await expect(religious).toBeChecked();
   await religious.click();
   await page.getByRole("button", { name: "Save changes" }).nth(1).click();
+  // Wait for the save to finish: reloading at once can cancel it.
+  await expect(page.getByRole("status")).toHaveText("Saved.");
   await page.reload();
   await expect(religious).not.toBeChecked();
 });

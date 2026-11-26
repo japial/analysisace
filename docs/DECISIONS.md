@@ -201,3 +201,14 @@ With real email going out through Gmail (about 500 a day), an open "forgot passw
 - **A table, not Redis** (`rate_limit_hit`, migration 0007): at this volume the database is enough. Keys (IP or email) are stored only as SHA-256 hashes with the bucket name, and a daily job (`rate_limit_cleanup`) deletes attempts older than a day.
 - **Visitor address.** The browser reaches the API only through the web server, which passes the visitor on in `X-Forwarded-For` (taken from the proxy in front of it). The API believes the header only from `TRUSTED_PROXIES` (loopback and private networks by default). In production the reverse proxy in front of the web app must set `X-Forwarded-For`; otherwise every visitor looks like the proxy and shares one limit.
 - **Development** leaves this machine's own address out of the per-visitor limits, because every local browser and test arrives from it. Production exempts no one.
+
+## D29. CI runs every check, the whole stack and every browser test (2026-11-26)
+
+The roadmap and the architecture notes described a CI workflow that was never committed. `.github/workflows/ci.yml` now has four jobs:
+
+- **backend**: ruff, mypy, pytest (in-memory SQLite), then `alembic upgrade head` and `alembic check` against a PostgreSQL 16 service, so a model change without its migration fails.
+- **frontend**: lint, typecheck, unit tests and `next build`.
+- **e2e** (after both pass): PostgreSQL service, migrations, the demo seed, an administrator from `scripts/create_admin.py`, the API under uvicorn and the **production build** of the web app, then every Playwright test at desktop and 360 px. The admin, analyst and PDF tests, skipped locally without credentials, run here with the seeded accounts. Logs and traces are kept when it fails. `ENVIRONMENT=development` lets the API make its own encryption key and leaves the runner's own address out of the per-visitor rate limits (D28).
+- **compose**: `docker compose up --build` from `.env.example`, then the API health check and a web page.
+
+In CI a browser test gets one retry, and failures are annotated on the pull request. The e2e job was rehearsed on the dev machine against a fresh database and a production build: all 44 tests pass. The rehearsal found one race in a test (reloading before a save finished), now fixed. The compose job has not run anywhere yet, because the dev machine has no Docker.
