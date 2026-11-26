@@ -4,9 +4,9 @@ Two senders (D24):
 
 - `LoggingEmailSender` writes the message to the log. It is the default, and what
   development uses: a password reset link can be followed from the API log.
-- `SmtpEmailSender` sends through any SMTP service. Amazon SES, Postmark, SendGrid, Mailgun,
-  Resend and Brevo all offer SMTP, so choosing a provider is a matter of environment
-  variables (`EMAIL_BACKEND=smtp`, `SMTP_HOST`, ...), not code.
+- `SmtpEmailSender` sends through any SMTP service. Production uses Gmail SMTP (D27):
+  `EMAIL_BACKEND=smtp`, `SMTP_USERNAME` (the Gmail address) and `SMTP_PASSWORD` (an app
+  password). Another provider is only a change of the `SMTP_*` variables.
 
 Callers use `send_safely`: a failed send is logged and reported as False, and never breaks
 the request or job that triggered it.
@@ -17,7 +17,7 @@ import smtplib
 import ssl
 from dataclasses import dataclass
 from email.message import EmailMessage
-from email.utils import formatdate, make_msgid, parseaddr
+from email.utils import formataddr, formatdate, make_msgid, parseaddr
 from typing import Protocol
 
 from app.core.config import Settings, get_settings
@@ -109,6 +109,31 @@ class SmtpEmailSender:
             raise EmailSendError(f"{type(exc).__name__}{f' {code}' if code else ''}") from None
 
 
+GMAIL_HOSTS = ("smtp.gmail.com", "smtp.googlemail.com")
+
+
+def is_gmail(settings: Settings) -> bool:
+    return (settings.smtp_host or "").strip().lower() in GMAIL_HOSTS
+
+
+def from_address(settings: Settings) -> str:
+    """EMAIL_FROM if set; otherwise the SMTP account with the display name (D27)."""
+    if settings.email_from:
+        return settings.email_from
+    if settings.smtp_username:
+        return formataddr((settings.email_from_name, settings.smtp_username))
+    return formataddr((settings.email_from_name, "no-reply@analysisace.com"))
+
+
+def smtp_password(settings: Settings) -> str | None:
+    """Google shows an app password as four groups of letters ("abcd efgh ijkl mnop");
+    the spaces are not part of it."""
+    if settings.smtp_password is None:
+        return None
+    value = settings.smtp_password.get_secret_value()
+    return "".join(value.split()) if is_gmail(settings) else value
+
+
 def sender_from_settings(settings: Settings) -> EmailSender:
     if settings.email_backend == "smtp":
         if not settings.smtp_host:
@@ -117,9 +142,9 @@ def sender_from_settings(settings: Settings) -> EmailSender:
             host=settings.smtp_host,
             port=settings.smtp_port,
             security=settings.smtp_security,
-            sender=settings.email_from,
+            sender=from_address(settings),
             username=settings.smtp_username,
-            password=settings.smtp_password.get_secret_value() if settings.smtp_password else None,
+            password=smtp_password(settings),
             reply_to=settings.email_reply_to,
             timeout=settings.smtp_timeout_seconds,
         )
@@ -139,6 +164,25 @@ def check_email_settings(settings: Settings) -> None:
             "delivered. Set EMAIL_BACKEND=smtp and the SMTP_* variables.",
             settings.environment,
         )
+    if settings.email_backend == "smtp":
+        missing = [
+            name
+            for name, value in (
+                ("SMTP_HOST", settings.smtp_host),
+                ("SMTP_USERNAME", settings.smtp_username),
+                ("SMTP_PASSWORD", settings.smtp_password),
+            )
+            if not value
+        ]
+        if missing:
+            logger.error("EMAIL_BACKEND=smtp but %s not set: email will fail.", ", ".join(missing))
+        if is_gmail(settings) and settings.email_from and settings.smtp_username:
+            account = settings.smtp_username.strip().lower()
+            if account not in settings.email_from.lower():
+                logger.warning(
+                    "EMAIL_FROM is not the Gmail account; Gmail sends it from the account "
+                    "unless the address is a verified 'Send mail as' alias."
+                )
 
 
 def send_safely(sender: EmailSender, email: Email) -> bool:

@@ -203,3 +203,51 @@ def test_alert_email_waits_for_a_confirmed_address_d25(demo_session) -> None:  #
         rules={rule.type: rule},
     )
     assert row is not None and row.sent_at is None and sent == []
+
+
+def test_gmail_from_the_account_and_app_password_without_spaces_d27() -> None:
+    """Gmail: From defaults to the account, and the app password's display spaces go."""
+    settings = Settings(
+        email_backend="smtp",
+        smtp_username="analysisace.bd@gmail.com",
+        smtp_password=SecretStr("abcd efgh ijkl mnop"),
+    )
+    sender = mail.sender_from_settings(settings)
+    assert isinstance(sender, SmtpEmailSender)
+    assert sender.host == "smtp.gmail.com" and sender.port == 587
+    assert sender.security == "starttls"
+    assert sender.sender == "analysisACE <analysisace.bd@gmail.com>"
+    assert sender.password == "abcdefghijklmnop"
+
+    sender.send(MESSAGE)
+    sent: EmailMessage = next(m for name, m in FakeSMTP.calls if name == "send")
+    assert sent["From"] == "analysisACE <analysisace.bd@gmail.com>"
+    assert sent["Message-ID"].endswith("@gmail.com>")
+
+
+def test_explicit_from_and_other_hosts_keep_the_password_d27() -> None:
+    settings = Settings(
+        email_backend="smtp",
+        smtp_host="smtp.example.com",
+        email_from="Team <team@analysisace.com>",
+        smtp_username="user",
+        smtp_password=SecretStr("pass with spaces"),
+    )
+    assert mail.from_address(settings) == "Team <team@analysisace.com>"
+    assert mail.smtp_password(settings) == "pass with spaces"
+
+
+def test_missing_gmail_credentials_are_reported_d27(caplog: pytest.LogCaptureFixture) -> None:
+    mail.check_email_settings(Settings(environment="production", email_backend="smtp"))
+    assert "SMTP_USERNAME, SMTP_PASSWORD not set" in caplog.text
+    caplog.clear()
+    mail.check_email_settings(
+        Settings(
+            environment="production",
+            email_backend="smtp",
+            smtp_username="analysisace.bd@gmail.com",
+            smtp_password=SecretStr("x"),
+            email_from="analysisACE <no-reply@analysisace.com>",
+        )
+    )
+    assert "not the Gmail account" in caplog.text

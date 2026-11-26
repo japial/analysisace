@@ -37,9 +37,12 @@ class Settings(BaseSettings):
     # Outgoing email (D24). "log" writes messages to the log (development); "smtp" sends
     # through any SMTP provider (Amazon SES, Postmark, SendGrid, Mailgun, Resend, Brevo).
     email_backend: Literal["log", "smtp"] = "log"
-    email_from: str = "analysisACE <no-reply@analysisace.com>"
+    # Empty: the SMTP account itself, shown as "<email_from_name> <SMTP_USERNAME>". Gmail
+    # rewrites any From that is not the account or one of its verified aliases (D27).
+    email_from: str | None = None
+    email_from_name: str = "analysisACE"
     email_reply_to: str | None = None
-    smtp_host: str | None = None
+    smtp_host: str | None = "smtp.gmail.com"
     # 587 with STARTTLS, or 465 with implicit TLS ("ssl"). "none" only for a local test server.
     smtp_port: int = 587
     smtp_security: Literal["starttls", "ssl", "none"] = "starttls"

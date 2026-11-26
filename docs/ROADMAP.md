@@ -134,7 +134,8 @@ Covers the "Auth, consents, account deletion and export" item of M2 and the role
 - [x] Web app redesigned on Metronic Layout 9 (header, menu bar, auth pages, cards, tables, light and dark)
 - [x] Browser tests (Playwright) for the account flows at desktop and 360 px width
 - [x] Email sending over SMTP, provider chosen by settings (D24, 2026-11-24)
-- [ ] Owner: choose the provider and verify analysisace.com with it (SPF, DKIM, DMARC). Until `EMAIL_BACKEND=smtp` is set, mail is only written to the log
+- [x] Provider: Gmail SMTP (D27, 2026-11-26)
+- [ ] Owner: on the production server set `EMAIL_BACKEND=smtp`, `SMTP_USERNAME` and `SMTP_PASSWORD` (Gmail app password). Until then mail is only written to the log. Past about 500 emails a day (the monthly report to every user) move to Google Workspace or a transactional provider
 - [x] Email verification at sign-up (D25, 2026-11-24): soft, alert and report emails wait for a confirmed address
 - [ ] Rate limit sign-up and reset requests per IP (needs Redis or a proxy rule)
 - [ ] Run the Playwright tests in CI (needs the stack started inside the workflow)

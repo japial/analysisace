@@ -180,3 +180,13 @@ Alerts can reach a phone or computer as a browser notification (Web Push, `pyweb
 - **The service worker** (`/sw.js`) only shows notifications and opens pages on this site; it caches nothing.
 - **Short text.** Title from the alert's email subject, body from its first line (up to 180 characters), and a link to the page the notice points to.
 - **Testing limit.** Headless test browsers always report notifications as blocked, so a real subscribe is not covered by the browser tests; the server side is covered by unit tests with a stand-in sender. iPhones need the site added to the home screen before Safari allows push.
+
+## D27. Production email goes through Gmail SMTP (2026-11-26)
+
+The owner chose Gmail SMTP. Nothing in the code is Gmail-only; the defaults and two details are:
+
+- **Settings** come only from the environment, filled in on the production server: `EMAIL_BACKEND=smtp`, `SMTP_USERNAME` (the Gmail address) and `SMTP_PASSWORD` (a Google app password; the account needs 2-Step Verification). `SMTP_HOST` defaults to `smtp.gmail.com`, port 587 with STARTTLS.
+- **From is the account.** Gmail rewrites any From that is not the account or a verified "Send mail as" alias, and mismatched senders land in spam. With `EMAIL_FROM` empty, mail goes out as `analysisACE <SMTP_USERNAME>` (`EMAIL_FROM_NAME` sets the name). Start-up warns if `EMAIL_FROM` is set to another address.
+- **App password spaces.** Google displays the password in four groups; the spaces are removed for Gmail hosts only.
+- **Start-up check.** With `EMAIL_BACKEND=smtp`, a missing host, username or password is logged as an error.
+- **Limits.** A personal Gmail account sends about 500 messages a day (Google Workspace about 2,000). That is enough for password resets, verification and alerts at launch. The monthly report goes to every user on the 1st, so past a few hundred users it needs a Workspace account or a transactional provider; switching is a change of the `SMTP_*` variables.
