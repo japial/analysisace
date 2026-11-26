@@ -66,7 +66,13 @@ from app.models.platform import (
     Subscription,
     Watchlist,
 )
-from app.models.user import EmailVerificationToken, PasswordResetToken, User, UserSession
+from app.models.user import (
+    EmailVerificationToken,
+    PasswordResetToken,
+    RateLimitHit,
+    User,
+    UserSession,
+)
 
 __all__ = [
     "Account",
@@ -113,6 +119,7 @@ __all__ = [
     "PasswordResetToken",
     "PriceDaily",
     "PushSubscription",
+    "RateLimitHit",
     "RecurringRule",
     "RegimeMonth",
     "RegimeSectorStat",

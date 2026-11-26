@@ -190,3 +190,14 @@ The owner chose Gmail SMTP. Nothing in the code is Gmail-only; the defaults and 
 - **App password spaces.** Google displays the password in four groups; the spaces are removed for Gmail hosts only.
 - **Start-up check.** With `EMAIL_BACKEND=smtp`, a missing host, username or password is logged as an error.
 - **Limits.** A personal Gmail account sends about 500 messages a day (Google Workspace about 2,000). That is enough for password resets, verification and alerts at launch. The monthly report goes to every user on the 1st, so past a few hundred users it needs a Workspace account or a transactional provider; switching is a change of the `SMTP_*` variables.
+
+## D28. Rate limits in the database, per visitor and per address (2026-11-26)
+
+With real email going out through Gmail (about 500 a day), an open "forgot password" or "send the link again" could flood a stranger's inbox, use up the daily quota, or get the account flagged. Sign-up and sign-in had no limit per visitor either.
+
+- **Limits** (settings, like the sign-in lockout; 0 turns one off): sign-up 10 an hour and password-reset requests 10 an hour per visitor; sign-in 30 per 15 minutes per visitor, on top of the per-account lock; reset emails 3 an hour per address; verification resends 3 an hour per person.
+- **A reset flood is silent.** Past the per-address limit the answer is still "if the account exists, we sent a link", and nothing is sent, so it neither floods the inbox nor says whether the account exists. The other limits answer 429 `RATE_LIMITED`.
+- **Attempts count even when they fail.** Each attempt is saved before the request does its work, so wrong passwords and taken addresses still count.
+- **A table, not Redis** (`rate_limit_hit`, migration 0007): at this volume the database is enough. Keys (IP or email) are stored only as SHA-256 hashes with the bucket name, and a daily job (`rate_limit_cleanup`) deletes attempts older than a day.
+- **Visitor address.** The browser reaches the API only through the web server, which passes the visitor on in `X-Forwarded-For` (taken from the proxy in front of it). The API believes the header only from `TRUSTED_PROXIES` (loopback and private networks by default). In production the reverse proxy in front of the web app must set `X-Forwarded-For`; otherwise every visitor looks like the proxy and shares one limit.
+- **Development** leaves this machine's own address out of the per-visitor limits, because every local browser and test arrives from it. Production exempts no one.

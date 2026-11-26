@@ -27,6 +27,15 @@ class Settings(BaseSettings):
     # After this many wrong passwords in a row, sign-in is refused for the lock period.
     login_max_failures: int = 5
     login_lock_minutes: int = 15
+    # Rate limits (D28). 0 turns one off. Per visitor address unless said otherwise.
+    rate_limit_signup_per_hour: int = 10
+    rate_limit_login_per_15_minutes: int = 30
+    rate_limit_reset_per_hour: int = 10
+    rate_limit_reset_per_email_per_hour: int = 3
+    rate_limit_verify_per_user_per_hour: int = 3
+    # Servers whose X-Forwarded-For is believed: the web server, and any proxy in front of
+    # the API. Anyone else could invent the header.
+    trusted_proxies: str = "127.0.0.1/32,::1/128,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
 
     # Fernet key for account numbers and documents (FR23.3). Required outside development;
     # in development a key is created in `backend/.dev-encryption-key` on first use.

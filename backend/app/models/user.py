@@ -7,7 +7,7 @@ import datetime as dt
 import uuid
 from typing import Any
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Uuid
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.permissions import Role
@@ -58,6 +58,18 @@ class PasswordResetToken(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     expires_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     used_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class RateLimitHit(UUIDPrimaryKeyMixin, Base):
+    """One attempt at a limited action (D28). The key (an IP or email address) is stored only
+    as a SHA-256 hash with the bucket name."""
+
+    __tablename__ = "rate_limit_hit"
+    __table_args__ = (Index("ix_rate_limit_hit_lookup", "bucket", "key_hash", "created_at"),)
+
+    bucket: Mapped[str] = mapped_column(String(40), nullable=False)
+    key_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
 
 class EmailVerificationToken(UUIDPrimaryKeyMixin, TimestampMixin, Base):

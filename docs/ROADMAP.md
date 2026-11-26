@@ -83,7 +83,7 @@ Last updated 2026-11-21. "Blocked" means a decision or input from the owner is n
 | F20 | Personal alerts and monthly report | R3 | Built | Email provider choice; push keys (D24, D26) |
 | F21 | Community benchmarking | Later | Built | Needs 50 opted-in users per age band before a group shows |
 | F22 | News sentiment | Later | Not built | Data source |
-| F23 | Data privacy controls | Every release | Partly built | Done: consents, export, deletion, encryption of passwords and tokens. Missing: field-level encryption of account numbers and documents (needs those tables), breach-notification and retention notices (legal text), confirmation of the Personal Data Protection Ordinance status (Q3) |
+| F23 | Data privacy controls | Every release | Partly built | Done: consents, export, deletion, encryption of passwords and tokens. Account numbers and documents are encrypted (FR23.3). Missing: breach-notification and retention notices (legal text), confirmation of the Personal Data Protection Ordinance status (Q3) |
 | F24 | Multi-owner household records | R3+ | Built | — |
 | F25 | Alternative investments | R2 basic, R3 full | Built | S3 storage (documents are encrypted on local disk for now) |
 | F26 | Sukuk and Islamic bank investments | R2 / R3 | Built | Real product catalogue and bank flag content (admin screen `/admin/bank-flags` done 2026-11-21) |
@@ -137,7 +137,7 @@ Covers the "Auth, consents, account deletion and export" item of M2 and the role
 - [x] Provider: Gmail SMTP (D27, 2026-11-26)
 - [ ] Owner: on the production server set `EMAIL_BACKEND=smtp`, `SMTP_USERNAME` and `SMTP_PASSWORD` (Gmail app password). Until then mail is only written to the log. Past about 500 emails a day (the monthly report to every user) move to Google Workspace or a transactional provider
 - [x] Email verification at sign-up (D25, 2026-11-24): soft, alert and report emails wait for a confirmed address
-- [ ] Rate limit sign-up and reset requests per IP (needs Redis or a proxy rule)
+- [x] Rate limits on sign-up, sign-in, password reset and verification emails (D28, 2026-11-26). Production: the reverse proxy in front of the web app must set `X-Forwarded-For`
 - [ ] Run the Playwright tests in CI (needs the stack started inside the workflow)
 - [x] Audit log viewer for admins (`/admin/audit`, with recent job runs)
 

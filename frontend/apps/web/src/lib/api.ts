@@ -41,14 +41,17 @@ interface RequestOptions {
   /** Session token. Requests with a token are never cached. */
   token?: string;
   userAgent?: string | null;
+  /** The visitor's address, passed on so the API can rate-limit per visitor (D28). */
+  forwardedFor?: string | null;
 }
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = "GET", body, token, userAgent } = options;
+  const { method = "GET", body, token, userAgent, forwardedFor } = options;
   const headers: Record<string, string> = { Accept: "application/json" };
   if (body !== undefined) headers["Content-Type"] = "application/json";
   if (token) headers.Authorization = `Bearer ${token}`;
   if (userAgent) headers["User-Agent"] = userAgent;
+  if (forwardedFor) headers["X-Forwarded-For"] = forwardedFor;
 
   let response: Response;
   try {
@@ -117,23 +120,30 @@ export function register(
     accept_terms: boolean;
   },
   userAgent: string | null,
+  forwardedFor: string | null = null,
 ): Promise<AuthResult> {
-  return request("/auth/register", { method: "POST", body, userAgent });
+  return request("/auth/register", { method: "POST", body, userAgent, forwardedFor });
 }
 
 export function login(
   body: { email: string; password: string },
   userAgent: string | null,
+  forwardedFor: string | null = null,
 ): Promise<AuthResult> {
-  return request("/auth/login", { method: "POST", body: { ...body, client: "web" }, userAgent });
+  return request("/auth/login", {
+    method: "POST",
+    body: { ...body, client: "web" },
+    userAgent,
+    forwardedFor,
+  });
 }
 
 export function logout(token: string): Promise<void> {
   return request("/auth/logout", { method: "POST", token });
 }
 
-export function requestPasswordReset(email: string): Promise<void> {
-  return request("/auth/password-reset/request", { method: "POST", body: { email } });
+export function requestPasswordReset(email: string, forwardedFor: string | null = null): Promise<void> {
+  return request("/auth/password-reset/request", { method: "POST", body: { email }, forwardedFor });
 }
 
 export function confirmPasswordReset(token: string, newPassword: string): Promise<void> {

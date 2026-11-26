@@ -18,12 +18,24 @@ async function browserUserAgent(): Promise<string | null> {
   return (await headers()).get("user-agent");
 }
 
+/**
+ * The visitor's address as this server received it (D28): the first X-Forwarded-For entry
+ * set by the proxy in front of the web app, else X-Real-IP. The API believes it only
+ * because it comes from this server.
+ */
+async function visitorAddress(): Promise<string | null> {
+  const incoming = await headers();
+  const forwarded = incoming.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwarded || incoming.get("x-real-ip")?.trim() || null;
+}
+
 export async function signInAction(_: FormState, form: FormData): Promise<FormState> {
   let result: AuthResult;
   try {
     result = await api.login(
       { email: text(form, "email"), password: secret(form, "password") },
       await browserUserAgent(),
+      await visitorAddress(),
     );
   } catch (error) {
     return toFormError(error);
@@ -45,6 +57,7 @@ export async function signUpAction(_: FormState, form: FormData): Promise<FormSt
         accept_terms: form.get("accept_terms") === "on",
       },
       await browserUserAgent(),
+      await visitorAddress(),
     );
   } catch (error) {
     return toFormError(error);
@@ -68,7 +81,7 @@ export async function requestPasswordResetAction(
   form: FormData,
 ): Promise<FormState> {
   try {
-    await api.requestPasswordReset(text(form, "email"));
+    await api.requestPasswordReset(text(form, "email"), await visitorAddress());
   } catch (error) {
     return toFormError(error);
   }

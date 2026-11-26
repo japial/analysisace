@@ -566,7 +566,8 @@
     "LIMIT_REACHED": "You have reached the limit for this list.",
     "VERIFY_TOKEN_INVALID": "This link has expired, was replaced by a newer one, or was already used. If your email is not confirmed yet, sign in and ask for a new link.",
     "PUSH_NOT_CONFIGURED": "Browser notifications are not switched on for analysisACE yet.",
-    "PUSH_ENDPOINT_INVALID": "This browser's notification service is not supported."
+    "PUSH_ENDPOINT_INVALID": "This browser's notification service is not supported.",
+    "RATE_LIMITED": "Too many attempts from here. Please wait a while and try again."
   },
   "personal": {
     "metaTitle": "My money",
