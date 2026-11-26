@@ -707,7 +707,8 @@ def seed_demo_personal(session: Session, password: str) -> DemoPersonalResult:
     )
     session.add(firm)
     session.flush()
-    api_key = f"dn_demo_{new_token()}"
+    # The format the firm API accepts (D30): "aace_" then the secret.
+    api_key = f"aace_{new_token()}"
     session.add_all(
         [
             FirmSeat(firm_id=firm.id, user_id=firm_user.id, role="ADMIN"),

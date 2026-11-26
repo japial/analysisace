@@ -13,6 +13,10 @@ const ALLOWED = [
   /^\/households\/[0-9a-f-]{36}\/tax\/snapshots\/[0-9a-f-]{36}\/export\.csv$/,
   /^\/households\/[0-9a-f-]{36}\/(zakat|tax)\/snapshots\/[0-9a-f-]{36}\/statement\.pdf\?locale=(en|bn)$/,
   /^\/households\/[0-9a-f-]{36}\/alt-assets\/[0-9a-f-]{36}\/documents\/[0-9a-f-]{36}$/,
+  // F9 (D30): a firm's CSV exports, white-label weekly report and logo.
+  /^\/firms\/[0-9a-f-]{36}\/exports\/(shariah|scores)\.csv$/,
+  /^\/firms\/[0-9a-f-]{36}\/reports\/weekly\.pdf\?locale=(en|bn)(&week=\d{4}-\d{2}-\d{2})?$/,
+  /^\/firms\/[0-9a-f-]{36}\/logo$/,
 ];
 
 export async function GET(request: Request): Promise<Response> {

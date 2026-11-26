@@ -21,6 +21,7 @@ class Permission(StrEnum):
     CONFIG_MANAGE = "CONFIG_MANAGE"  # approve rule file versions, bank flags
     USERS_MANAGE = "USERS_MANAGE"  # list users, change roles, deactivate accounts
     AUDIT_VIEW = "AUDIT_VIEW"  # read the audit log
+    FIRMS_MANAGE = "FIRMS_MANAGE"  # create firms, set seat limits (FR9.3)
 
 
 ROLE_PERMISSIONS: dict[Role, frozenset[Permission]] = {

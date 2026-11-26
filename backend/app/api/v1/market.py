@@ -211,25 +211,8 @@ def shariah_list(
 ) -> Envelope[Page[ShariahListItem]]:
     """FR2.1: screened companies with filters and sorting. Sorting is done here because the
     list is small (hundreds of companies) and market cap is derived."""
-    rows = db.execute(
-        select(Company, CompanyShariahStatus)
-        .join(CompanyShariahStatus, CompanyShariahStatus.ticker == Company.ticker)
-        .where(Company.is_active.is_(True))
-    ).all()
-    caps = screening.latest_market_caps(db, [c.ticker for c, _ in rows])
-    items = [
-        ShariahListItem(
-            ticker=c.ticker,
-            name=c.name,
-            sector=c.sector,
-            status=screening.effective_status(s),
-            method_version=s.method_version,
-            screened_at=s.screened_at,
-            market_cap=caps[c.ticker][0] if c.ticker in caps else None,
-            overridden=s.override_status is not None,
-        )
-        for c, s in rows
-    ]
+    rows, newest, sources = screening.list_items(db)
+    items = [ShariahListItem(**row) for row in rows]
     if status:
         items = [i for i in items if i.status == status]
     if sector:
@@ -247,8 +230,7 @@ def shariah_list(
     page = Page[ShariahListItem](
         items=items[offset : offset + limit], total=len(items), limit=limit, offset=offset
     )
-    newest = max((s.screened_at for _, s in rows), default=None)
-    return derived(db, page, newest, {sid for _, sid in caps.values()})
+    return derived(db, page, newest, sources)
 
 
 @router.get("/shariah/basket")

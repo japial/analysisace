@@ -6,8 +6,9 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteNavbar } from "@/components/layout/site-navbar";
 import { VerifyEmailBanner } from "@/components/layout/verify-email-banner";
+import { request } from "@/lib/api";
 import { navItems } from "@/lib/nav";
-import { getCurrentUser } from "@/lib/session";
+import { getCurrentUser, getSessionToken } from "@/lib/session";
 
 interface Props {
   children: ReactNode;
@@ -23,7 +24,13 @@ export default async function SiteLayout({ children, params }: Props) {
   setRequestLocale(locale as Locale);
   const t = await getTranslations("common");
   const user = await getCurrentUser();
-  const items = navItems(user);
+  // F9: the Firm menu item for people with a seat. The API answers 404 while firm features
+  // are switched off, which reads here as "no firm".
+  const token = user ? await getSessionToken() : null;
+  const firms = token
+    ? await request<unknown[]>("/firms/mine", { token }).catch(() => [])
+    : [];
+  const items = navItems(user, firms.length > 0);
 
   return (
     <div className="flex grow flex-col pt-(--header-height) [--header-height:70px]">

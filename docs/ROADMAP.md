@@ -69,7 +69,7 @@ Last updated 2026-11-21. "Blocked" means a decision or input from the owner is n
 | F6 | Portfolio check | R2 | Built | — |
 | F7 | Alerts (status, regime, shock) | R2 | Built | In-app, email (D24) and browser push (D26). Owner: choose the email provider and generate push keys |
 | F8 | Macro regime dashboard | R3 | Built | Owner to confirm the inflation bands and choose a liquidity series (FR8.1) |
-| F9 | Firm features (white-label, CSV, API, seats) | R3 | Not built | Firm accounts, PDF reports, API keys; legal check (Q4) |
+| F9 | Firm features (white-label, CSV, API, seats) | R3 | Built, switched off | `FIRM_FEATURES_ENABLED` stays off until the BSEC check (Q4) and the Extended Metronic licence; payments not built (D30) |
 | F10 | Ownership change layer | Later | Not built | Data source |
 | F11 | Native mobile app | Later | Not built | Web releases first |
 | F12 | Daily cost records | R2 | Built | — |
@@ -106,7 +106,7 @@ Also built, not a numbered feature: accounts, roles and user management (see bel
 2. **Capital plans:** FIRE, goals, scenarios and drift are built; finish tuning with real households. Add an ACE trend (how net worth, capital share and savings changed month by month): done 2026-11-24 (D23).
 3. **Email provider and reminders**, so dues, maturities, Zakat dates and the monthly report reach people outside the app. Sending is built (D24) and sign-up verifies the address (D25); the owner picks the provider and verifies the domain. Browser push built (D26). Still open: HTML email templates, bounce handling.
 4. **Stock tools and data adapters** as soon as Q5 is answered (F2, F3, F5, F4, F8), and Shariah screening (F1) once the advisor signs off the method (Q1).
-5. **Firm features and payments** (F9) once the Extended Metronic licence and the BSEC check (Q4) are settled.
+5. **Firm features and payments** (F9). Firm features are built behind a switch (D30, 2026-11-26); switch them on and add payments once the Extended Metronic licence and the BSEC check (Q4) are settled.
 
 ### Positioning work
 

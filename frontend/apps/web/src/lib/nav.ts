@@ -10,6 +10,7 @@ export type NavKey =
   | "macro"
   | "regime"
   | "personal"
+  | "firm"
   | "admin";
 
 export interface NavItem {
@@ -28,6 +29,7 @@ export const ADMIN_PERMISSIONS: readonly Permission[] = [
   "SHARIAH_OVERRIDE",
   "CONFIG_MANAGE",
   "AUDIT_VIEW",
+  "FIRMS_MANAGE",
 ];
 
 /** The stock tools (F1 to F8), grouped under one menu item so the menu bar stays short. */
@@ -40,7 +42,8 @@ export const MARKET_ITEMS: NavItem[] = [
 ];
 
 /** Main menu for a visitor. The admin entry appears only for people who may use it. */
-export function navItems(user: User | null): NavItem[] {
+/** `hasFirm`: the person has a seat in a firm and firm features are on (F9, D30). */
+export function navItems(user: User | null, hasFirm = false): NavItem[] {
   const items: NavItem[] = [
     { key: "home", href: "/" },
     // Personal finance (F12 to F26) is the product. Signed-out visitors are sent to sign in.
@@ -48,6 +51,7 @@ export function navItems(user: User | null): NavItem[] {
     { key: "markets", href: "/shariah", children: MARKET_ITEMS },
     { key: "companies", href: "/companies" },
   ];
+  if (user && hasFirm) items.push({ key: "firm", href: "/firm" });
   if (user?.permissions.some((p) => ADMIN_PERMISSIONS.includes(p))) {
     items.push({ key: "admin", href: "/admin" });
   }

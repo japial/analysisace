@@ -49,7 +49,8 @@
       "macro": "A weekly summary of yields, inflation, the taka and oil",
       "regime": "This month's macro label and sectors in similar months",
       "companies": "Search every listed company"
-    }
+    },
+    "firm": "Firm"
   },
   "home": {
     "metaTitle": "analysisACE: FIRE planning and personal finance for Bangladesh",
@@ -514,6 +515,10 @@
     "AUDIT_VIEW": {
       "name": "View audit log",
       "description": "Read the record of admin actions."
+    },
+    "FIRMS_MANAGE": {
+      "name": "Manage firms",
+      "description": "Create firm accounts and set their seat limits."
     }
   },
   "errors": {
@@ -528,7 +533,7 @@
     "FORBIDDEN": "You do not have permission to do that.",
     "LAST_ADMIN": "This is the only active administrator. Make another person an administrator first.",
     "CANNOT_CHANGE_SELF": "You cannot change your own role or access.",
-    "USER_NOT_FOUND": "That user no longer exists.",
+    "USER_NOT_FOUND": "No active analysisACE account uses that email. They need to sign up first.",
     "CONSENT_NOT_CHANGEABLE": "That consent cannot be changed here.",
     "VALIDATION": "Check the form: the email must be valid and the password at least 8 characters.",
     "UNAVAILABLE": "The service could not be reached. Please try again in a few minutes.",
@@ -567,7 +572,14 @@
     "VERIFY_TOKEN_INVALID": "This link has expired, was replaced by a newer one, or was already used. If your email is not confirmed yet, sign in and ask for a new link.",
     "PUSH_NOT_CONFIGURED": "Browser notifications are not switched on for analysisACE yet.",
     "PUSH_ENDPOINT_INVALID": "This browser's notification service is not supported.",
-    "RATE_LIMITED": "Too many attempts from here. Please wait a while and try again."
+    "RATE_LIMITED": "Too many attempts from here. Please wait a while and try again.",
+    "FIRM_ADMIN_REQUIRED": "Only the firm's admins can do this.",
+    "SEAT_LIMIT_REACHED": "Every seat is taken. Ask analysisACE for more seats, or remove a member first.",
+    "SEAT_LIMIT_BELOW_SEATS": "The firm already has more members than that.",
+    "LAST_FIRM_ADMIN": "A firm needs at least one admin. Make someone else an admin first.",
+    "LOGO_TOO_LARGE": "The logo is too large. Use a PNG or JPEG under 300 KB.",
+    "LOGO_INVALID": "Use a PNG or JPEG image for the logo.",
+    "NOTE_NOT_PUBLISHED": "No weekly note is published for that week yet."
   },
   "personal": {
     "metaTitle": "My money",
@@ -1877,6 +1889,10 @@
       "bankFlags": {
         "title": "Bank notices",
         "description": "Neutral, sourced notices about banks shown beside deposits."
+      },
+      "firms": {
+        "title": "Firms",
+        "description": "Create firm accounts, set seat limits and switch firms off."
       }
     },
     "data": {
@@ -2069,6 +2085,89 @@
       "edit": "Edit",
       "delete": "Delete notice",
       "deleteBody": "The notice will no longer appear beside deposits at this bank."
+    }
+  },
+  "firm": {
+    "metaTitle": "Firm",
+    "intro": "Weekly reports under your firm's name, data exports and API access for your team.",
+    "switch": "Your firms",
+    "role": {
+      "ADMIN": "Firm admin",
+      "MEMBER": "Member"
+    },
+    "reportTitle": "White-label weekly report",
+    "reportIntro": "The published weekly macro note as a PDF with your firm's logo, name and disclaimer, ready to send to clients.",
+    "latestWeek": "Latest: week of {date}",
+    "reportIn": {
+      "en": "Download in English",
+      "bn": "Download in Bangla"
+    },
+    "noReport": "No weekly note has been published yet.",
+    "exportsTitle": "Data exports",
+    "exportsIntro": "analysisACE's own Shariah screen and the rate-sensitivity scores as CSV, with their date and the disclaimer.",
+    "export": {
+      "shariah": "Shariah screen (CSV)",
+      "scores": "Rate sensitivity (CSV)"
+    },
+    "membersTitle": "Members",
+    "seats": "{used} of {limit} seats used",
+    "name": "Name",
+    "email": "Email",
+    "emailHint": "The person needs an analysisACE account with this email.",
+    "roleLabel": "Role",
+    "roleFor": "Role for {name}",
+    "remove": "Remove",
+    "removeTitle": "Remove {name} from the firm",
+    "addMember": "Add member",
+    "keysTitle": "API keys",
+    "keysIntro": "Read-only access to the same data for your own systems. Each key has its own limit per minute and is logged by day.",
+    "noKeys": "No API keys yet.",
+    "keyName": "Key name",
+    "keyNamePlaceholder": "Research desk",
+    "createKey": "Create key",
+    "keyOnce": "Copy this key now. It will not be shown again; only a fingerprint of it is stored.",
+    "keyFacts": "Created {created} · last used {used} · {limit} calls a minute",
+    "never": "never",
+    "revoked": "Revoked",
+    "revoke": "Revoke",
+    "revokeTitle": "Revoke the key {name}",
+    "apiHowTo": "How to call the API",
+    "apiHowToBody": "Send the key in the X-API-Key header. Every answer includes as_of and sources. These endpoints are read-only:",
+    "usageTitle": "API usage",
+    "usageIntro": "Calls per key and endpoint over the last 30 days.",
+    "noUsage": "No API calls yet.",
+    "date": "Date",
+    "key": "Key",
+    "endpoint": "Endpoint",
+    "calls": "Calls",
+    "brandingTitle": "Report branding",
+    "brandingIntro": "Shown on every page of your weekly report, next to analysisACE's own disclaimer.",
+    "disclaimer": "Firm disclaimer",
+    "disclaimerHint": "Printed at the foot of each page of the report. Up to 1,000 characters.",
+    "logo": "Logo",
+    "logoHint": "PNG or JPEG, under 300 KB. It is resized to fit 600 pixels.",
+    "logoAlt": "{name} logo",
+    "noLogo": "No logo yet; the report shows the firm's name.",
+    "uploadLogo": "Upload logo",
+    "removeLogo": "Remove logo",
+    "ownScreen": "Shariah results come from analysisACE's own screening of company reports, never from the DSE's licensed constituent list.",
+    "admin": {
+      "title": "Firms",
+      "intro": "Firm accounts for brokerages, asset managers and Islamic banks.",
+      "listTitle": "All firms",
+      "none": "No firms yet.",
+      "name": "Firm name",
+      "seats": "Seats",
+      "seatLimit": "Seat limit",
+      "seatLimitFor": "Seat limit for {name} ({used} in use)",
+      "created": "Created",
+      "active": "Active",
+      "activeFor": "{name} is active",
+      "createTitle": "New firm",
+      "createIntro": "The first admin must already have an analysisACE account. They can add the rest of the team.",
+      "adminEmail": "First admin's email",
+      "adminEmailHint": "An existing analysisACE account.",
+      "create": "Create firm"
     }
   }
 }

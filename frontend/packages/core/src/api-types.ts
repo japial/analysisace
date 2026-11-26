@@ -53,7 +53,8 @@ export type Permission =
   | "SHARIAH_OVERRIDE"
   | "CONFIG_MANAGE"
   | "USERS_MANAGE"
-  | "AUDIT_VIEW";
+  | "AUDIT_VIEW"
+  | "FIRMS_MANAGE";
 
 /** Consents a user can grant or withdraw at any time. TERMS is set at sign-up. */
 export type OptionalConsent = "MARKETING" | "RELIGIOUS_PREFERENCES" | "COMMUNITY_BENCHMARKING";

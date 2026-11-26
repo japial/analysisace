@@ -64,6 +64,12 @@ class Settings(BaseSettings):
     webpush_private_key: SecretStr | None = None
     webpush_subject: str = "mailto:support@analysisace.com"
 
+    # Firm features (F9, D30): accounts, seats, API keys, CSV exports and the white-label
+    # weekly report. Off until the BSEC licence question is answered. TODO(owner): Q4
+    firm_features_enabled: bool = False
+    firm_logo_max_bytes: int = 300_000
+    firm_api_rate_per_minute: int = 60
+
     # Comma-separated addresses told when a scheduled job fails.
     ops_alert_emails: str = ""
 

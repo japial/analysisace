@@ -2,7 +2,8 @@
 #   backend   lint, types, unit tests, and migrations against PostgreSQL 16
 #   frontend  lint, types, unit tests and a production build
 #   e2e       the whole stack (Postgres, API, built web app) with demo data, and every
-#             Playwright test at desktop and 360 px, including the admin, analyst and PDF tests
+#             Playwright test at desktop and 360 px, including the admin, analyst, PDF and
+#             firm tests (firm features switched on for this job)
 #   compose   docker compose up --build, then the API health check and a web page
 name: CI
 
@@ -108,6 +109,10 @@ jobs:
       E2E_DEMO_PASSWORD: ci-demo-password-123
       E2E_ANALYST_EMAIL: analyst@example.com
       E2E_ANALYST_PASSWORD: ci-demo-password-123
+      # Firm features (F9, D30) are off by default; CI turns them on to test them.
+      FIRM_FEATURES_ENABLED: "true"
+      E2E_FIRM_EMAIL: firm@example.com
+      E2E_FIRM_PASSWORD: ci-demo-password-123
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
