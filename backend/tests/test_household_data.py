@@ -117,3 +117,5 @@ def test_a_household_shared_with_another_login_survives(
     assert count(session, Holding) == 14
     members = session.scalars(select(HouseholdMember.display_name)).all()
     assert members == ["Ayesha Rahman"]  # the leaver's membership is gone
+    # D33: the household is not left without an owner; Ayesha, the remaining login, owns it.
+    assert session.scalars(select(HouseholdMember.role)).all() == ["OWNER"]

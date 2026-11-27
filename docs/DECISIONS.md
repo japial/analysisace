@@ -243,3 +243,13 @@ FR7.3 asks for a frequency per alert: straight away or a daily digest. The setti
 - **One digest a day** (`alert_digest` job, 08:00 Asia/Dhaka, after the 07:00 personal alerts; the previous evening's market alerts wait for it). Each person gets one email listing every waiting notice with its own sentence and link (at most 20, the rest counted), and one push summary ("3 new notices") when push was chosen. `digested_at` marks a notice as delivered; a second run sends nothing.
 - **Nothing lost on failure.** If the digest email cannot be sent, that person's notices stay queued for the next run, and their push waits too so the two stay together. An unconfirmed address gets no email (D25); its notices leave the queue since email cannot reach it, and stay in the app.
 - **The monthly report is not part of the digest.** It is already a monthly summary and keeps its own schedule.
+
+## D33. Export and deletion cover everything, guarded by the schema (2026-11-27)
+
+FR23.4 promises an export of everything stored about a person and its deletion. An audit of every table found gaps, now closed:
+
+- **Export additions.** In-app notices, firm seats, subscription records, whether the email is confirmed, and an activity list from the audit log (what this person did, and what was done to their account). An activity entry shows its details (before, after) only when it is about the person's own account, such as a consent change; others can name other people and are listed without them.
+- **Left out on purpose.** Password-reset and email-confirmation tokens (only hashes of one-time links are stored) and rate-limit entries (hashes, deleted within a day, D28).
+- **Deletion never strands others.** Deleting an account used to leave a shared household with no owner, or a firm with no admin, when the person was the only one. Now the longest-standing member with a login becomes owner (or admin), and the handover is in the audit log. Deletion is never blocked. The account page says so.
+- **Guard tests** (`tests/test_privacy_coverage.py`) read the database schema: every table a person owns (deleted with the account) and every table under a household must be exported, or listed with the reason it is not. A new table that holds someone's data fails the tests until it is covered.
+- **Delete rules checked.** Every reference to an account either deletes with it or is set to empty (staff fields such as who published a note), so deleting any account works in PostgreSQL. The tests run SQLite with foreign keys on, so a missing rule fails there too.

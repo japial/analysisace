@@ -446,7 +446,7 @@
     "dataIntro": "Download a copy of everything analysisACE holds about you.",
     "export": "Download my data",
     "deleteTitle": "Delete account",
-    "deleteIntro": "Deletes your account and all data tied to it straight away. This cannot be undone.",
+    "deleteIntro": "Deletes your account and your data straight away. A household you share with someone who still signs in stays for them; if you are its only owner, the member who joined first becomes its owner. A firm admin role passes on the same way. This cannot be undone.",
     "deleteButton": "Delete my account",
     "deleteConfirmTitle": "Delete your account?",
     "deleteConfirmBody": "Enter your password to confirm. Your account and data will be removed permanently.",

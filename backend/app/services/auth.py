@@ -9,7 +9,7 @@ from datetime import timedelta
 from enum import StrEnum
 from typing import Any
 
-from sqlalchemy import delete, func, select, update
+from sqlalchemy import and_, delete, func, or_, select, update
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
@@ -27,7 +27,9 @@ from app.models import (
     AlertRule,
     AuditLog,
     EmailVerificationToken,
+    Firm,
     FirmSeat,
+    HouseholdMember,
     Notification,
     PasswordResetToken,
     PushSubscription,
@@ -342,6 +344,9 @@ def export_user_data(db: Session, user: User) -> dict[str, Any]:
             "role": user.role,
             "created_at": as_utc(user.created_at).isoformat(),
             "last_login_at": as_utc(user.last_login_at).isoformat() if user.last_login_at else None,
+            "email_verified_at": as_utc(user.email_verified_at).isoformat()
+            if user.email_verified_at
+            else None,
         },
         "consents": user.consents,
         "households": [
@@ -352,6 +357,63 @@ def export_user_data(db: Session, user: User) -> dict[str, Any]:
         "push_subscriptions": [
             {"user_agent": p.user_agent, "created_at": as_utc(p.created_at).isoformat()}
             for p in db.scalars(select(PushSubscription).where(PushSubscription.user_id == user.id))
+        ],
+        "notifications": [
+            {
+                "type": n.type,
+                "message_key": n.message_key,
+                "data": n.data,
+                "link": n.link,
+                "created_at": as_utc(n.created_at).isoformat(),
+                "read_at": as_utc(n.read_at).isoformat() if n.read_at else None,
+                "emailed_at": as_utc(n.sent_at).isoformat() if n.sent_at else None,
+            }
+            for n in db.scalars(
+                select(Notification)
+                .where(Notification.user_id == user.id)
+                .order_by(Notification.created_at)
+            )
+        ],
+        "firm_seats": [
+            {"firm": firm.name, "role": seat.role, "since": as_utc(seat.created_at).isoformat()}
+            for seat, firm in db.execute(
+                select(FirmSeat, Firm)
+                .join(Firm, Firm.id == FirmSeat.firm_id)
+                .where(FirmSeat.user_id == user.id)
+            ).all()
+        ],
+        "subscriptions": [
+            {
+                "plan": sub.plan,
+                "status": sub.status,
+                "provider": sub.provider,
+                "created_at": as_utc(sub.created_at).isoformat(),
+            }
+            for sub in db.scalars(select(Subscription).where(Subscription.user_id == user.id))
+        ],
+        # What was done by this person or to this account. Details are included only for
+        # changes to the account itself (consents, role), since other entries can name others.
+        "activity": [
+            {
+                "action": row.action,
+                "entity": row.entity,
+                "at": as_utc(row.at).isoformat(),
+                **(
+                    {"before": row.before, "after": row.after}
+                    if row.entity == "app_user" and row.entity_id == str(user.id)
+                    else {}
+                ),
+            }
+            for row in db.scalars(
+                select(AuditLog)
+                .where(
+                    or_(
+                        AuditLog.actor == str(user.id),
+                        and_(AuditLog.entity == "app_user", AuditLog.entity_id == str(user.id)),
+                    )
+                )
+                .order_by(AuditLog.at)
+            )
         ],
         "alert_rules": [
             {"type": r.type, "channel": r.channel, "frequency": r.frequency, "params": r.params}
@@ -370,6 +432,61 @@ def export_user_data(db: Session, user: User) -> dict[str, Any]:
     }
 
 
+def _hand_over(db: Session, user: User) -> None:
+    """Account deletion never strands others (FR23.4, D33). Where this person is the only
+    owner of a household that someone else still signs in to, the longest-standing member
+    with a login becomes owner; where they are the only admin of a firm with other members,
+    the longest-standing member becomes admin. Each handover is in the audit log."""
+    for member in db.scalars(
+        select(HouseholdMember).where(
+            HouseholdMember.user_id == user.id, HouseholdMember.role == "OWNER"
+        )
+    ):
+        others = list(
+            db.scalars(
+                select(HouseholdMember)
+                .where(
+                    HouseholdMember.household_id == member.household_id,
+                    HouseholdMember.user_id.is_not(None),
+                    HouseholdMember.user_id != user.id,
+                )
+                .order_by(HouseholdMember.created_at)
+            )
+        )
+        if others and not any(o.role == "OWNER" for o in others):
+            heir = others[0]
+            heir.role = "OWNER"
+            audit(
+                db,
+                str(user.id),
+                "HOUSEHOLD_OWNER_HANDED_OVER",
+                "household",
+                str(member.household_id),
+                after={"member_id": str(heir.id)},
+            )
+    for seat in db.scalars(
+        select(FirmSeat).where(FirmSeat.user_id == user.id, FirmSeat.role == "ADMIN")
+    ):
+        colleagues = list(
+            db.scalars(
+                select(FirmSeat)
+                .where(FirmSeat.firm_id == seat.firm_id, FirmSeat.user_id != user.id)
+                .order_by(FirmSeat.created_at)
+            )
+        )
+        if colleagues and not any(c.role == "ADMIN" for c in colleagues):
+            colleagues[0].role = "ADMIN"
+            audit(
+                db,
+                str(user.id),
+                "FIRM_ADMIN_HANDED_OVER",
+                "firm",
+                str(seat.firm_id),
+                after={"user_id": str(colleagues[0].user_id)},
+            )
+    db.flush()
+
+
 def delete_account(db: Session, user: User, password: str) -> None:
     """Remove the account and everything tied to it (FR23.4)."""
     if not verify_password(password, user.password_hash):
@@ -377,6 +494,7 @@ def delete_account(db: Session, user: User, password: str) -> None:
     if user.role == Role.ADMIN.value and count_active_admins(db) <= 1:
         raise AuthError("LAST_ADMIN", 409)
     user_id = user.id
+    _hand_over(db, user)
     for household_id in household_data.households_of(db, user_id):
         # A household shared with another login stays; this person just leaves it.
         if not household_data.has_other_login(db, household_id, user_id):
