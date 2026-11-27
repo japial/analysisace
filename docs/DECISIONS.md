@@ -213,6 +213,8 @@ The roadmap and the architecture notes described a CI workflow that was never co
 
 In CI a browser test gets one retry, and failures are annotated on the pull request. The e2e job was rehearsed on the dev machine against a fresh database and a production build: all 44 tests pass. The rehearsal found one race in a test (reloading before a save finished), now fixed. The compose job has not run anywhere yet, because the dev machine has no Docker.
 
+**Update 2026-11-27:** at the owner's request CI no longer runs on pushes to `develop`. It runs on pushes to `main`, on pull requests into `main`, and by hand from the Actions tab (`workflow_dispatch`) for any branch.
+
 ## D30. Firm features are built, behind a switch that stays off (2026-11-26)
 
 F9 is built in full but switched off with `FIRM_FEATURES_ENABLED=false`, the PRD's stated default for Q4 (whether a BSEC licence is needed for Firm plans). While it is off, every firm route answers 404 and the menu shows no Firm item. CI turns it on to test it.
