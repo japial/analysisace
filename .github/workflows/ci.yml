@@ -4,7 +4,8 @@
 #   frontend  lint, types, unit tests and a production build
 #   e2e       the whole stack (Postgres, API, built web app) with demo data, and every
 #             Playwright test at desktop and 360 px, including the admin, analyst, PDF and
-#             firm tests (firm features switched on for this job)
+#             firm tests (firm features switched on for this job) and the accessibility
+#             scans (axe-core, WCAG 2.1 AA, D36)
 #   compose   docker compose up --build, then the API health check and a web page
 name: CI
 

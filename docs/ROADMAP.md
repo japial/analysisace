@@ -140,6 +140,7 @@ Covers the "Auth, consents, account deletion and export" item of M2 and the role
 - [x] Rate limits on sign-up, sign-in, password reset and verification emails (D28, 2026-11-26). Production: the reverse proxy in front of the web app must set `X-Forwarded-For`
 - [x] Playwright tests run in CI on every push and pull request, including the admin, analyst and PDF tests (D29, 2026-11-26)
 - [x] Audit log viewer for admins (`/admin/audit`, with recent job runs)
+- [x] Accessibility check in the browser tests (D36, 2026-11-27): axe-core scans the public and signed-in pages for WCAG 2.1 AA problems, in both languages, at desktop and 360 px, and in the dark theme (`e2e/a11y.spec.ts`). It found and fixed an account button named unlike its text, a phone logo link with no name, tables that scroll but cannot be focused, and dark-theme badges below AA contrast
 
 ## M2 MVP: F1, F2, F3, F4, F23 basics
 

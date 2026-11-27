@@ -19,6 +19,7 @@
     "brand:assets": "node scripts/build-brand-assets.mjs"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.1",
     "@playwright/test": "^1.65.1",
     "@types/node": "^26.6.6",
     "eslint": "^10.15.0",

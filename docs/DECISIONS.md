@@ -273,3 +273,11 @@ Sending to an address that does not work again and again harms the sending accou
 - **How it resumes.** The banner under the menu says emails to the address could not be delivered and offers a new confirmation link. Opening it shows the address works again, and lifts the pause.
 - **Forged reports.** Anyone can send the mailbox something that looks like a bounce. The harm is limited to pausing one person's alert emails, the person is told on every page, and one click undoes it. Accepting only reports that quote a message analysisACE sent would close this, if it is ever abused.
 - **Schedules.** `schedules.yaml` gained `every_hours` for jobs that repeat during the day.
+
+## D36. Accessibility is checked by the browser tests (2026-11-27)
+
+The PRD asks for WCAG 2.1 AA on core pages (section 12). It was checked by hand only. Now `e2e/a11y.spec.ts` scans pages with axe-core (`@axe-core/playwright`) for the WCAG 2.1 A and AA rules, and any violation fails CI with the rule and the elements that break it:
+
+- **What is scanned.** The public pages (landing, sign-in and sign-up, password reset, market pages, the unsubscribe page) in English and Bangla, and a new household's main My money sections and the account page, in both languages; at desktop and 360 px; and the English pages again in the dark theme, whose colours need their own contrast check.
+- **What it found, now fixed.** The account button was named "Account menu" while showing the person's initials, which voice-control users cannot match (WCAG 2.5.3); it is now named by hidden text with the initials hidden. On phones the header logo link showed only the mark and had no name; it has hidden text. Tables that scroll sideways at 360 px could not be reached by keyboard; the table wrapper is focusable with a visible focus ring. In the dark theme, the light and outline badges used 600-shade text on a 950-shade background, below 4.5:1; they use the 400 shade. The last two are fixes in the Metronic files (`components/ui/table.tsx`, `badge.tsx`), marked as such.
+- **Limits.** Automated checks catch roughly a third of accessibility problems. Keyboard order, screen-reader wording in Bangla and zoom to 200 % still need a person, ideally before each release.

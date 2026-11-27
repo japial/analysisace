@@ -58,6 +58,8 @@ export function Logo({
       <Wordmark
         className={cn("text-xl", wordmark === "sm" && "hidden sm:inline", wordmarkClassName)}
       />
+      {/* Phones show the mark only; a link around it still needs a name (WCAG 2.4.4). */}
+      {wordmark === "sm" && <span className="sr-only sm:hidden">analysisACE</span>}
     </span>
   );
 }

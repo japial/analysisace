@@ -27,11 +27,10 @@ export function UserMenu({ user }: { user: User }) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        aria-label={t("nav.userMenu")}
-        className="cursor-pointer rounded-full"
-      >
-        <Avatar className="size-9">
+      <DropdownMenuTrigger className="cursor-pointer rounded-full">
+        {/* Named by hidden text, not aria-label: the initials are decoration (WCAG 2.5.3). */}
+        <span className="sr-only">{t("nav.userMenu")}</span>
+        <Avatar className="size-9" aria-hidden="true">
           <AvatarFallback className="bg-primary text-sm font-medium text-primary-foreground">
             {initials(user.full_name)}
           </AvatarFallback>
