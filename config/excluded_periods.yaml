@@ -1,8 +1,25 @@
-# Date ranges left out of return and regression samples (FR3.2).
+# Date ranges left out of return and regression samples (FR3.2, D37).
 # The DSE imposed floor prices in these periods, so prices did not move freely.
-# PROVISIONAL: dates are approximate and must be checked against DSE/BSEC orders.
-version: "0.1.0"
+# Dates are from BSEC orders as reported by The Financial Express, The Daily Star, TBS,
+# Prothom Alo, BSS and Bonik Barta. Change a date and bump `version`.
+version: "0.2.0"
 
+# Floors on the whole market. `end` is the last day under the floor.
 floor_price_periods:
-  - { start: 2020-03-19, end: 2021-06-17, note: "Covid floor price; lifted in stages" }
-  - { start: 2022-07-28, end: 2024-01-18, note: "Second floor price; lifted for most stocks in January 2024" }
+  # Set on 19 March 2020 from each stock's average price over the previous five days;
+  # lifted for 66 companies on 7 April 2021, 30 more on 3 June, and for all on 17 June 2021.
+  - { start: 2020-03-19, end: 2021-06-17, note: "Covid floor price; lifted in stages, the last on 17 June 2021" }
+  # Set on 28 July 2022 for all listed companies; lifted for all but 35 on 18 January 2024.
+  - { start: 2022-07-28, end: 2024-01-18, note: "Second floor price; lifted for most stocks on 18 January 2024" }
+
+# Stocks that kept a floor after the market-wide one was lifted. Each listed ticker's own
+# samples also leave these dates out.
+ticker_floor_periods:
+  # The last two floors, lifted by a BSEC order of 8 June 2026; free trading from 9 June.
+  - tickers: [BEXIMCO, ISLAMIBANK]
+    start: 2024-01-19
+    end: 2026-06-08
+    note: "Last remaining floor prices"
+  # TODO(owner): Q5. 35 stocks kept a floor after 18 January 2024, 12 after 22 January,
+  # and all but the two above were freed by August 2024. Add their tickers and dates from
+  # the BSEC orders when the price history shows which ones.

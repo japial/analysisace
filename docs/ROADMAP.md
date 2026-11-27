@@ -35,8 +35,10 @@ Done:
 
 Next, in this order:
 
-- [ ] Fill `holidays` in `config/trading_calendar.yaml` from DSE holiday notices (2020 onward)
-- [ ] Confirm the floor-price dates in `config/excluded_periods.yaml` against DSE and BSEC orders
+- [x] Holidays in `config/trading_calendar.yaml` for 2026 (official DSE list) and the 2020 Covid closure (D37, 2026-11-27)
+- [ ] Owner: holidays for 2020 to 2025 once DSE history is loaded: `scripts/check_calendar.py` lists every weekday without trades and every listed holiday that traded
+- [x] Floor-price dates checked against reports of the BSEC orders, with the two stocks that kept a floor until June 2026 (D37, 2026-11-27)
+- [ ] Owner: tickers and dates of the other stocks that kept a floor after 18 January 2024 (35, then 12 from 22 January, freed by August 2024)
 - [x] Job that writes `adj_close` from `corporate_action` (`adjusted_prices`); admin entry of corporate actions rewrites a ticker's adjusted closes at once
 - [x] `GET /indices/{code}/series` and `GET /macro/series/{code}`; admin CSV load for index and macro series (backfill path until live adapters exist)
 - [x] Manual admin entry for gold and silver price (Q9), with a check against typing errors

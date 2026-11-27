@@ -79,6 +79,20 @@ class TradingCalendar:
             return 0
         return len(self.trading_days(start + _ONE_DAY, end))
 
+    def differences(
+        self, traded: Iterable[date], start: date, end: date
+    ) -> tuple[list[date], list[date]]:
+        """Where the calendar and the price history disagree (D37), from `start` to `end`.
+
+        Returns the sessions with no trades (likely holidays missing from the config, or
+        missing data) and the days with trades that the calendar treats as closed (likely
+        special trading days, or a holiday listed by mistake).
+        """
+        seen = {day for day in traded if start <= day <= end}
+        quiet = [day for day in self.trading_days(start, end) if day not in seen]
+        extra = sorted(day for day in seen if not self.is_trading_day(day))
+        return quiet, extra
+
     @staticmethod
     def week_start(day: date) -> date:
         """The Sunday that opens the DSE week containing `day`."""

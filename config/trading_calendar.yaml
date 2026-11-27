@@ -1,13 +1,94 @@
-# DSE trading calendar. Weekdays use Python numbering: Monday = 0 ... Sunday = 6.
-version: "0.1.0"
+# DSE trading calendar (D37). Weekdays use Python numbering: Monday = 0 ... Sunday = 6.
+# Change a date and bump `version`.
+version: "0.2.0"
 timezone: Asia/Dhaka
 
 # Sunday to Thursday.
 trading_weekdays: [6, 0, 1, 2, 3]
 
-# Market holidays that fall on a trading weekday. Admin-maintained; fill from DSE holiday notices.
-# Dates that depend on moon sighting must be confirmed each year.
-holidays: []
+# Years whose holidays are taken from an official DSE list. Other years are incomplete until
+# checked against the price history: `scripts/check_calendar.py` lists every weekday with no
+# trades that is not below, and every listed day that has trades. TODO(owner): confirm
+# 2020 to 2025 that way once DSE history is loaded (Q5).
+confirmed_years: [2026]
+
+# Market holidays that fall on a trading weekday (Friday and Saturday closures are left out:
+# those days are closed anyway). Dates that depend on the moon are the ones the DSE
+# observed; future ones are its forecast and must be checked against its notice.
+holidays:
+  # 2020. Covid-19 general holidays: the bourses closed after the 25 March session and
+  # reopened on 31 May (66 days; The Financial Express, The Daily Star, TBS, May 2020).
+  # Eid-ul-Fitr (24 to 26 May) falls inside it.
+  - 2020-03-26
+  - 2020-03-29
+  - 2020-03-30
+  - 2020-03-31
+  - 2020-04-01
+  - 2020-04-02
+  - 2020-04-05
+  - 2020-04-06
+  - 2020-04-07
+  - 2020-04-08
+  - 2020-04-09
+  - 2020-04-12
+  - 2020-04-13
+  - 2020-04-14
+  - 2020-04-15
+  - 2020-04-16
+  - 2020-04-19
+  - 2020-04-20
+  - 2020-04-21
+  - 2020-04-22
+  - 2020-04-23
+  - 2020-04-26
+  - 2020-04-27
+  - 2020-04-28
+  - 2020-04-29
+  - 2020-04-30
+  - 2020-05-03
+  - 2020-05-04
+  - 2020-05-05
+  - 2020-05-06
+  - 2020-05-07
+  - 2020-05-10
+  - 2020-05-11
+  - 2020-05-12
+  - 2020-05-13
+  - 2020-05-14
+  - 2020-05-17
+  - 2020-05-18
+  - 2020-05-19
+  - 2020-05-20
+  - 2020-05-21
+  - 2020-05-24
+  - 2020-05-25
+  - 2020-05-26
+  - 2020-05-27
+  - 2020-05-28
+  # 2026. From the DSE holiday list for calendar year 2026 (dse.com.bd/holidays).
+  - 2026-02-04 # Shab-e-Barat
+  - 2026-02-11 # national parliamentary election and referendum
+  - 2026-02-12 # national parliamentary election and referendum
+  - 2026-03-17 # Shab-e-Qadar and Eid-ul-Fitr (17 to 23 March)
+  - 2026-03-18 # Eid-ul-Fitr
+  - 2026-03-19 # Eid-ul-Fitr
+  - 2026-03-22 # Eid-ul-Fitr
+  - 2026-03-23 # Eid-ul-Fitr
+  - 2026-03-26 # Independence Day
+  - 2026-04-14 # Bengali New Year
+  - 2026-05-25 # Eid-ul-Azha (25 to 31 May)
+  - 2026-05-26 # Eid-ul-Azha
+  - 2026-05-27 # Eid-ul-Azha
+  - 2026-05-28 # Eid-ul-Azha
+  - 2026-05-31 # Eid-ul-Azha
+  - 2026-07-01 # bank holiday
+  - 2026-08-05 # July Uprising Day
+  - 2026-08-26 # Eid-e-Milad-un-Nabi
+  - 2026-10-20 # Durga Puja (Dashami)
+  - 2026-10-21 # Durga Puja
+  - 2026-10-22 # Durga Puja
+  - 2026-12-16 # Victory Day
+  - 2026-12-31 # bank holiday
 
 # Days the market opened on a normal weekend day.
 special_trading_days: []
