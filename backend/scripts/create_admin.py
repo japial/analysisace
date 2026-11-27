@@ -17,6 +17,7 @@ from pydantic import EmailStr, TypeAdapter, ValidationError
 
 from app.core.db import get_sessionmaker
 from app.core.permissions import Role
+from app.core.security import utcnow
 from app.services.auth import audit, get_user_by_email, register_user
 
 MIN_PASSWORD_LENGTH = 8
@@ -67,6 +68,8 @@ def main() -> int:
             accept_terms=True,
             role=Role.ADMIN,
         )
+        # The operator typed the address in; treat it as confirmed (D25).
+        user.email_verified_at = utcnow()
         db.commit()
         print(f"Administrator {user.email} created.")
     return 0

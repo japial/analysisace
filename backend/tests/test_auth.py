@@ -174,6 +174,7 @@ def test_successful_login_resets_the_failure_count(client: TestClient, session: 
 
 def test_password_reset_flow(client: TestClient, outbox: Outbox) -> None:
     old_token = register(client)["token"]
+    outbox.sent.clear()  # sign-up sent the email confirmation link (D25)
     assert (
         client.post("/api/v1/auth/password-reset/request", json={"email": EMAIL}).status_code == 202
     )
@@ -315,3 +316,61 @@ def test_delete_account_removes_everything_fr23_4(client: TestClient, session: S
     entry = session.scalar(select(AuditLog).where(AuditLog.action == "USER_DELETED"))
     assert entry is not None
     assert EMAIL not in f"{entry.actor}{entry.before}{entry.after}"
+
+
+def test_password_reset_answers_the_same_when_email_fails_d24(client: TestClient) -> None:
+    """A provider outage must not reveal which emails have accounts, or break the request."""
+    from app.services.email import EmailSendError
+
+    class Broken:
+        def send(self, email: Email) -> None:
+            raise EmailSendError("SMTPServerDisconnected")
+
+    app.dependency_overrides[get_email_sender] = lambda: Broken()
+    register(client)
+    known = client.post("/api/v1/auth/password-reset/request", json={"email": EMAIL})
+    unknown = client.post("/api/v1/auth/password-reset/request", json={"email": "no@example.com"})
+    assert known.status_code == unknown.status_code == 202
+
+
+def test_sign_up_sends_a_confirmation_link_that_confirms_once_d25(
+    client: TestClient, outbox: Outbox
+) -> None:
+    body = register(client)
+    assert body["user"]["email_verified_at"] is None
+    assert len(outbox.sent) == 1 and outbox.sent[0].to == EMAIL
+    match = re.search(r"/bn/verify-email\?token=([\w-]+)", outbox.sent[0].body)
+    assert match is not None
+    token = match.group(1)
+
+    assert (
+        client.post("/api/v1/auth/verify-email/confirm", json={"token": token}).status_code == 204
+    )
+    me = client.get("/api/v1/me", headers=bearer(body["token"])).json()
+    assert me["email_verified_at"] is not None
+    again = client.post("/api/v1/auth/verify-email/confirm", json={"token": token})
+    assert again.json()["detail"] == "VERIFY_TOKEN_INVALID"
+
+    # Already confirmed: asking again sends nothing.
+    outbox.sent.clear()
+    resend = client.post("/api/v1/auth/verify-email/request", headers=bearer(body["token"]))
+    assert resend.status_code == 202 and outbox.sent == []
+
+
+def test_a_new_confirmation_link_replaces_the_old_one_d25(
+    client: TestClient, outbox: Outbox
+) -> None:
+    body = register(client)
+    first = re.search(r"token=([\w-]+)", outbox.sent[0].body)
+    assert first is not None
+    assert (
+        client.post("/api/v1/auth/verify-email/request", headers=bearer(body["token"])).status_code
+        == 202
+    )
+    second = re.search(r"token=([\w-]+)", outbox.sent[-1].body)
+    assert second is not None and second.group(1) != first.group(1)
+    old = client.post("/api/v1/auth/verify-email/confirm", json={"token": first.group(1)})
+    assert old.json()["detail"] == "VERIFY_TOKEN_INVALID"
+    new = client.post("/api/v1/auth/verify-email/confirm", json={"token": second.group(1)})
+    assert new.status_code == 204
+    assert client.post("/api/v1/auth/verify-email/request").status_code == 401

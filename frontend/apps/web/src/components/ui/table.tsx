@@ -5,7 +5,13 @@ import { cn } from '@/lib/utils';
 
 function Table({ className, ...props }: React.HTMLAttributes<HTMLTableElement>) {
   return (
-    <div data-slot="table-wrapper" className="relative w-full overflow-auto">
+    // analysisACE fix: a table wider than a phone scrolls, so keyboard users must be able to
+    // focus it to scroll with the arrow keys (WCAG 2.1.1, axe scrollable-region-focusable).
+    <div
+      data-slot="table-wrapper"
+      tabIndex={0}
+      className="relative w-full overflow-auto rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+    >
       <table data-slot="table" className={cn('w-full caption-bottom text-foreground text-sm', className)} {...props} />
     </div>
   );

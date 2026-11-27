@@ -68,6 +68,9 @@ class UserOut(BaseModel):
     consents: dict[str, Any]
     created_at: datetime
     last_login_at: datetime | None
+    email_verified_at: datetime | None = None
+    # D35: email to the address bounced; alert and report emails are paused.
+    email_bounced_at: datetime | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -96,3 +99,47 @@ class RoleOut(BaseModel):
 class RolesOut(BaseModel):
     roles: list[RoleOut]
     permissions: list[Permission]
+
+
+class VerifyEmailConfirmIn(BaseModel):
+    token: str = Field(min_length=10, max_length=200)
+
+
+class PushKeysIn(BaseModel):
+    p256dh: str = Field(min_length=20, max_length=200)
+    auth: str = Field(min_length=8, max_length=100)
+
+
+class PushSubscriptionIn(BaseModel):
+    """What the browser's PushManager.subscribe() returns (D26)."""
+
+    endpoint: str = Field(min_length=20, max_length=1000)
+    keys: PushKeysIn
+
+
+class PushEndpointIn(BaseModel):
+    endpoint: str = Field(min_length=20, max_length=1000)
+
+
+class UnsubscribeIn(BaseModel):
+    """A sealed unsubscribe token from an email link (D34)."""
+
+    token: str = Field(min_length=20, max_length=1000)
+
+
+class EmailChangeIn(BaseModel):
+    """D39: the new sign-in email, with the current password."""
+
+    new_email: EmailStr
+    password: Annotated[str, Field(min_length=1, max_length=128)]
+
+
+class EmailChangeOut(BaseModel):
+    """A change waiting for its link to be opened (D39)."""
+
+    new_email: str
+    expires_at: datetime
+
+
+class EmailChangeConfirmIn(BaseModel):
+    token: str = Field(min_length=10, max_length=200)

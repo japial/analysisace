@@ -1,6 +1,6 @@
 # analysisACE
 
-Bangladesh-first web app: transparent Shariah screening and macro analytics for DSE stocks, plus personal finance (costs, Zakat, tax, portfolio, sukuk, FIRE). A mobile app (Expo) comes later and will reuse `frontend/packages/*`.
+Bangladesh-first personal finance web app that helps a household grow its ACE: **A**ssets (what it owns and owes, Zakat, wealth statement), **C**apital (the part put to work: shares, sukuk, deposits, FIRE and goals) and **E**arnings (income, costs, savings, tax). DSE stocks are one kind of capital; the Shariah screen and macro analytics are an optional tool layer for people who hold shares, not the product's centre. Landing page, menu and roadmap lead with ACE and My money. A mobile app (Expo) comes later and will reuse `frontend/packages/*`.
 
 - Full spec: [docs/PRD.md](docs/PRD.md). Requirement IDs (`FR1.2`, `F13`, `Q4`) refer to it.
 - How the pieces fit: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
@@ -33,6 +33,7 @@ Backend (run from `backend/`, with the virtual environment at `backend/.venv`):
 - First admin: `.venv/Scripts/python scripts/create_admin.py you@example.com "Your Name"` (asks for a password)
 - Demo data for development: `.venv/Scripts/python scripts/seed_demo.py` loads fictional companies with five years of synthetic prices, macro series, events, sukuk, and a demo household, analyst and firm. It prints the demo sign-ins. Never run it in production.
 - New migration: `.venv/Scripts/python -m alembic revision --autogenerate -m "<msg>"` (local Postgres must be running)
+- Email previews: `.venv/Scripts/python scripts/preview_emails.py` writes every email, in English and Bangla, to `backend/.email-previews/` (open `index.html`). Nothing is sent.
 
 Frontend (run from `frontend/`):
 

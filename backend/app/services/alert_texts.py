@@ -1,13 +1,10 @@
 """Subjects and bodies of alert emails, in English and Bangla.
 
-Kept apart from the logic because the lines are long. Every email ends with the disclaimer
-(PRD section 0). Wording is descriptive: it says what happened, never what to do.
+Kept apart from the logic because the lines are long. Placeholders are filled with readable
+values (email_render.readable), and every email ends with the disclaimer (email_render).
+Wording is descriptive: it says what happened, never what to do.
 """
 
-DISCLAIMER = {
-    "en": "Historical analysis for education only. Not investment advice.",
-    "bn": "শুধুমাত্র শিক্ষামূলক ঐতিহাসিক বিশ্লেষণ। এটি বিনিয়োগ পরামর্শ নয়।",
-}
 EMAIL_TEXT: dict[str, dict[str, tuple[str, str]]] = {
     "ALLOCATION_DRIFT": {
         "en": (
@@ -64,7 +61,8 @@ EMAIL_TEXT: dict[str, dict[str, tuple[str, str]]] = {
         ),
         "bn": ("আপনার যাকাতের তারিখ নিকটে", "{name}-এর যাকাতের তারিখ {date} ({days} দিন পর)।"),
     },
-    # Market alerts (F7). Status codes appear as stored (COMPLIANT, NON_COMPLIANT, UNDER_REVIEW).
+    # Market alerts (F7). Status and regime codes are turned into words before they are
+    # filled in (email_render.readable).
     "SHARIAH_STATUS_CHANGED": {
         "en": (
             "Shariah status changed: {ticker}",
@@ -95,20 +93,4 @@ EMAIL_TEXT: dict[str, dict[str, tuple[str, str]]] = {
             "শক প্লেবুকে নতুন একটি ঘটনা যোগ হয়েছে: {title_bn} ({date})।",
         ),
     },
-}
-
-
-REPORT_TEXT = {
-    "en": (
-        "Your analysisACE monthly report for {month}",
-        "Spending in {month}: {spending}\nNet worth: {net_worth}\n{zakat}{fire}\nOpen your dashboard: {link}",
-        "Zakat estimate: {amount}\n",
-        "FIRE progress: {pct}% of your FIRE number\n",
-    ),
-    "bn": (
-        "{month} মাসের analysisACE মাসিক প্রতিবেদন",
-        "{month} মাসের খরচ: {spending}\nনিট সম্পদ: {net_worth}\n{zakat}{fire}\nআপনার ড্যাশবোর্ড খুলুন: {link}",
-        "যাকাতের আনুমানিক হিসাব: {amount}\n",
-        "FIRE অগ্রগতি: আপনার FIRE অঙ্কের {pct}%\n",
-    ),
 }

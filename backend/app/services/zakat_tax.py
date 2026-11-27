@@ -14,7 +14,7 @@ import uuid
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.analytics import zakat as formulas
@@ -24,6 +24,7 @@ from app.models import (
     CashFlow,
     Financials,
     HouseholdMember,
+    IncomeEntry,
     TaxSnapshot,
     Transaction,
     User,
@@ -231,19 +232,70 @@ def _money(value: Decimal) -> str:
     return str(value.quantize(Q2))
 
 
+def recorded_income(
+    db: Session, household_id: uuid.UUID, member: HouseholdMember, start: dt.date, end: dt.date
+) -> dict[str, Any]:
+    """This member's income records in the period, split into the statement lines they fill
+    and the kinds that are not counted (FR27.5). Records for the whole household, with no
+    member, are not counted because they belong to no one person."""
+    lines: dict[str, str] = dict(personal_config()["income"]["tax_lines"])  # type: ignore[index]
+    rows = db.execute(
+        select(IncomeEntry.kind, IncomeEntry.member_id, func.sum(IncomeEntry.amount))
+        .where(
+            IncomeEntry.household_id == household_id,
+            IncomeEntry.date >= start,
+            IncomeEntry.date <= end,
+        )
+        .group_by(IncomeEntry.kind, IncomeEntry.member_id)
+    ).all()
+    counted = {"salary": Decimal(0), "other": Decimal(0)}
+    not_counted: dict[str, Decimal] = {}
+    unassigned = Decimal(0)
+    for kind, member_id, amount in rows:
+        amount = Decimal(amount or 0)
+        if member_id is None:
+            unassigned += amount
+        elif member_id != member.id:
+            continue
+        elif kind in lines:
+            counted[lines[kind]] += amount
+        else:
+            not_counted[kind] = not_counted.get(kind, Decimal(0)) + amount
+    return {
+        "salary": counted["salary"].quantize(Q2),
+        "other": counted["other"].quantize(Q2),
+        "not_counted": [
+            {"kind": kind, "amount": _money(amount)} for kind, amount in sorted(not_counted.items())
+        ],
+        "unassigned": _money(unassigned),
+    }
+
+
 def build_tax_items(
     db: Session,
     household_id: uuid.UUID,
     member: HouseholdMember,
     tax_year: str,
     *,
-    salary_income: Decimal = Decimal(0),
-    other_income: Decimal = Decimal(0),
+    salary_income: Decimal | None = None,
+    other_income: Decimal | None = None,
 ) -> tuple[dict[str, Any], dt.date, set[uuid.UUID]]:
     """The figures a person needs for a return: wealth statement, income, tax deducted at
-    source and rebate-eligible investments, each as this member's share."""
+    source and rebate-eligible investments, each as this member's share.
+
+    Salary and other income come from the income records (FR27.5) unless the person types
+    them in; `income_basis` on the result says which."""
     start, end = tax_year_bounds(tax_year)
     as_of = min(end, today_dhaka())
+    records = recorded_income(db, household_id, member, start, as_of)
+    basis = {
+        "salary": "ENTERED" if salary_income is not None else "RECORDS",
+        "other": "ENTERED" if other_income is not None else "RECORDS",
+        "not_counted": records["not_counted"],
+        "unassigned": records["unassigned"],
+    }
+    salary_income = records["salary"] if salary_income is None else salary_income
+    other_income = records["other"] if other_income is None else other_income
     portfolio = load_portfolio(db, household_id, as_of, active_only=False)
     n = len(portfolio.members)
     eligible = set(personal_config()["tax"]["rebate_eligible"])  # type: ignore[index]
@@ -352,6 +404,7 @@ def build_tax_items(
             "income": _money(sum((Decimal(v) for v in income_lines.values()), Decimal(0))),
         },
         "income": income_lines,
+        "income_basis": basis,
         "tax_deducted": {
             "in_year": _money(tds_year),
             "recorded_on_holdings": _money(tds_recorded),
@@ -364,7 +417,11 @@ def build_tax_items(
 
 
 def create_tax_snapshot(
-    db: Session, household_id: uuid.UUID, member: HouseholdMember, tax_year: str, **inputs: Decimal
+    db: Session,
+    household_id: uuid.UUID,
+    member: HouseholdMember,
+    tax_year: str,
+    **inputs: Decimal | None,
 ) -> tuple[TaxSnapshot, set[uuid.UUID]]:
     items, as_of, sources = build_tax_items(db, household_id, member, tax_year, **inputs)
     snapshot = TaxSnapshot(member_id=member.id, tax_year=tax_year, as_of=as_of, items=items)

@@ -20,9 +20,19 @@ from app.core.db import get_sessionmaker
 from app.core.trading_calendar import get_trading_calendar
 from app.models import JobRun
 from app.seed.reference import seed_reference
-from app.services import alerts, costs, macro_notes, market_data, portfolio
+from app.services import (
+    alerts,
+    bounces,
+    costs,
+    income,
+    macro_notes,
+    market_data,
+    portfolio,
+    ratelimit,
+)
 from app.services.config_registry import sync_config_versions
-from app.services.email import get_email_sender
+from app.services.email import check_email_settings, get_email_sender, send_safely
+from app.services.email_templates import job_failed_email
 from app.services.market_pipeline import run_market_analytics
 from app.services.valuation import today_dhaka
 
@@ -36,6 +46,16 @@ def _recurring_expenses(session: Session) -> dict[str, Any]:
     return {"added": costs.generate_recurring(session, today_dhaka())}
 
 
+def _recurring_income(session: Session) -> dict[str, Any]:
+    """FR27.2: write the income entries that recurring rules have fallen due for."""
+    return {"added": income.generate_recurring(session, today_dhaka())}
+
+
+def _rate_limit_cleanup(session: Session) -> dict[str, Any]:
+    """D28: delete rate-limit attempts past every window."""
+    return {"deleted": ratelimit.purge(session)}
+
+
 def _net_worth_snapshots(session: Session) -> dict[str, Any]:
     """FR14.4: store today's net worth for every household."""
     return {"households": portfolio.store_all_net_worth(session)}
@@ -44,6 +64,20 @@ def _net_worth_snapshots(session: Session) -> dict[str, Any]:
 def _personal_alerts(session: Session) -> dict[str, Any]:
     """FR20.1: drift, volatility, goals, maturities, revaluations and Zakat dates."""
     return {"created": alerts.run_personal_alerts(session, get_email_sender())}
+
+
+def _alert_digest(session: Session) -> dict[str, Any]:
+    """FR7.3: one email or push a day for alerts set to arrive once a day."""
+    return {"people": alerts.send_digests(session, get_email_sender())}
+
+
+def _email_bounces(session: Session) -> dict[str, Any]:
+    """D35: read bounce reports and pause email to addresses that do not work."""
+    settings = get_settings()
+    if not bounces.imap_configured(settings):
+        return {"skipped": "no bounce mailbox (EMAIL_BACKEND=smtp and BOUNCE_IMAP_* needed)"}
+    with bounces.open_mailbox(settings) as mailbox:
+        return bounces.process_mailbox(session, mailbox)
 
 
 def _monthly_report(session: Session) -> dict[str, Any]:
@@ -81,8 +115,12 @@ def _macro_note_draft(session: Session) -> dict[str, Any]:
 # adapter is written (they need outside services).
 JOBS: dict[str, JobFn] = {
     "recurring_expenses": _recurring_expenses,
+    "recurring_income": _recurring_income,
+    "rate_limit_cleanup": _rate_limit_cleanup,
     "net_worth_snapshots": _net_worth_snapshots,
     "personal_alerts": _personal_alerts,
+    "alert_digest": _alert_digest,
+    "email_bounces": _email_bounces,
     "monthly_report": _monthly_report,
     "adjusted_prices": _adjusted_prices,
     "data_quality": _data_quality,
@@ -114,6 +152,22 @@ def run_job(name: str, fn: JobFn) -> None:
         )
         session.commit()
     logger.info("Job %s finished: %s", name, status)
+    if status == "FAILED":
+        notify_operators(name, str(detail.get("error", "")))
+
+
+def notify_operators(job: str, error: str) -> int:
+    """Email OPS_ALERT_EMAILS that a job failed (M1: alert on failed jobs). Returns how
+    many were sent; the failure is also on /admin/audit whatever happens here."""
+    settings = get_settings()
+    sender = get_email_sender()
+    return sum(
+        send_safely(
+            sender,
+            job_failed_email(to, job, error, settings.environment, settings.web_base_url),
+        )
+        for to in settings.ops_alert_email_list
+    )
 
 
 def _config_sync(session: Session) -> dict[str, Any]:
@@ -125,11 +179,13 @@ def cron_trigger(spec: dict[str, Any], timezone: str) -> CronTrigger:
     """Translate one schedules.yaml entry into a cron trigger.
 
     `days: trading` fires Sunday to Thursday; the job itself must skip market holidays by
-    asking the trading calendar.
+    asking the trading calendar. `every_hours: N` repeats it every N hours from `at`.
     """
     hour, minute = (int(part) for part in str(spec["at"]).split(":"))
     days = spec.get("days", "daily")
     fields: dict[str, Any] = {"hour": hour, "minute": minute}
+    if spec.get("every_hours"):
+        fields["hour"] = f"{hour}-23/{int(spec['every_hours'])}"
     if days == "trading":
         fields["day_of_week"] = "sun,mon,tue,wed,thu"
     elif days == "weekly":
@@ -156,6 +212,7 @@ def build_scheduler() -> BlockingScheduler:
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    check_email_settings(get_settings())
     run_job("config_sync", _config_sync)
     run_job("reference_seed", lambda session: {"added": seed_reference(session)})
     scheduler = build_scheduler()

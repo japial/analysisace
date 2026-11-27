@@ -33,23 +33,28 @@ Read this section before writing any code.
 
 ## 1\. Product overview
 
-analysisACE is a web app for Bangladeshi investors and households with two layers:
+analysisACE is a personal finance web app for Bangladeshi households. Its purpose is to help a household grow its **ACE**:
 
-1. **Market intelligence for the DSE.** It shows whether a stock is Shariah-compliant and why, and how stocks react to interest rates, inflation and war or energy shocks.
-2. **Personal finance.** Daily cost records, Tax and Zakat snapshots, a combined portfolio (DSE shares, sukuk, Islamic bank deposits, alternative investments), and FIRE (financial independence, retire early) planning.
+* **Assets:** what the household owns and owes (accounts, savings certificates, gold, land, business stakes, debts), with Zakat and the wealth statement worked out from them.
+* **Capital:** the part of those assets put to work (DSE shares, sukuk, Islamic deposits, alternative investments), its returns and mix, and the plans it funds (FIRE, goals).
+* **Earnings:** income, costs, tax deducted and monthly savings, which feed Capital and the plans.
+
+The goal the product is organised around is **financial independence (FIRE)**: the point at which a household's invested capital could cover its yearly costs. Assets, Capital and Earnings are the three levers that move a household's FIRE date, and the savings rate (Earnings) is presented as the biggest of them.
+
+DSE stocks are one kind of capital. The market tools (Shariah screen, rate sensitivity, shock playbook, macro notes, regime) are an optional layer for households that hold shares. They are not the product's centre and must not lead the landing page, the menu or the roadmap.
 
 **Problem**
 
-* The DSE sells its Shariah index (DSES) constituent list as paid data (Tk 5 lakh once plus Tk 1.2 lakh a year), so most Shariah-minded investors cannot check compliance.
-* No DSE tool links stock behaviour to treasury bill yields or past crises. The DSEX fell 4.42% on 8 March 2026 in the Iran war shock, and the 91-day T-bill yield fell from 11.94% (June 2025) to 7.65% (October 2026).
-* Bangladeshi households track savings certificates, FDRs, DPS, sukuk, gold, land and shares in separate places, and calculate Zakat by hand.
+* Bangladeshi households track bank accounts, savings certificates, FDRs, DPS, sukuk, gold, land and shares in separate places, and calculate Zakat by hand.
+* Few people can say what the household is worth today, what share of it is working for them, or how much they really save each month.
+* Shariah-minded households that do own shares cannot check compliance cheaply: the DSE sells its Shariah index (DSES) constituent list as paid data (Tk 5 lakh once plus Tk 1.2 lakh a year). No DSE tool links stock behaviour to treasury bill yields or past crises (the DSEX fell 4.42% on 8 March 2026 in the Iran war shock).
 
 **Positioning**
 
-* **Transparent Shariah screen:** reasons shown for every pass or fail.
-* **Macro-aware analytics:** sensitivity to rates and shocks.
-* **Holistic household view:** living costs feed FIRE planning; holdings feed Zakat.
-* **Built for Bangladesh:** taka, Bangla, local asset types, local rules.
+* **One picture of the household's money:** assets, capital and earnings together, so each change shows its effect on the others.
+* **Built for Bangladesh:** taka, Bangla, local asset types (sanchayapatra, DPS, Mudaraba deposits), Zakat, the July-to-June tax year.
+* **Transparent and traceable:** every number shows its source and time; rules are published and versioned.
+* **Stock tools with reasons:** for holders of DSE shares, a transparent Shariah screen and macro-aware analytics, as one kind of capital.
 
 \---
 
@@ -57,10 +62,11 @@ analysisACE is a web app for Bangladeshi investors and households with two layer
 
 ### Goals
 
-* G1. Publish a free, transparent Shariah screen for every DSE-listed company.
-* G2. Quantify each stock's sensitivity to T-bill yields and its behaviour in past shocks.
-* G3. Give households one place for expenses, holdings, Zakat, tax figures and FIRE progress.
-* G4. Reach paying individual and firm customers within nine months of build start.
+* G1. Give households one place to see their ACE: assets and net worth, capital at work, and earnings, costs and savings.
+* G2. Make Zakat, the wealth statement and FIRE and goal progress follow from those records with no extra work.
+* G3. Publish a free, transparent Shariah screen for every DSE-listed company, as a tool for households that hold shares.
+* G4. Quantify each stock's sensitivity to T-bill yields and its behaviour in past shocks, as a tool for the same households.
+* G5. Reach paying individual and firm customers within nine months of build start.
 
 ### Non-goals
 
@@ -75,9 +81,9 @@ analysisACE is a web app for Bangladeshi investors and households with two layer
 
 |Metric|Target|When|
 |-|-|-|
-|DSE equities screened with reasons shown|100% of listed equities|MVP launch|
-|Weekly returning visitors|1,000|3 months after MVP|
-|Users with a saved portfolio|300|6 months after MVP|
+|Households with at least one asset, one cost record and one income record|300|6 months after launch|
+|Weekly returning users|1,000|3 months after launch|
+|DSE equities screened with reasons shown|100% of listed equities|Stock tools launch|
 |Paying individual subscribers|100|Month 9|
 |Firm pilots (broker, asset manager, Islamic bank)|3|Month 9|
 |Price data freshness|By 18:00 Asia/Dhaka on trading days|Ongoing|
@@ -89,9 +95,9 @@ analysisACE is a web app for Bangladeshi investors and households with two layer
 
 |Persona|Description|Main job|Plan|
 |-|-|-|-|
-|Shariah retail investor|Salaried or business owner, mobile-first, often prefers Bangla|Know which stocks are halal and why; calculate Zakat|Free, then Pro|
-|Active retail investor|Follows the market daily|Understand how rates and shocks affect holdings|Pro|
-|Household planner|Manages family money|Track costs, holdings, Zakat, FIRE progress|Free, then Pro|
+|Household planner (primary)|Salaried or business-owning family, mobile-first, often prefers Bangla|See net worth, savings and Zakat in one place; plan FIRE and goals|Free, then Pro|
+|Shariah-minded saver|Keeps money in sukuk, Islamic deposits, gold and shares|Calculate Zakat; check which holdings are halal and why|Free, then Pro|
+|Share-holding investor|Holds DSE stocks as part of the portfolio|Understand how rates and shocks affect the shares held|Pro|
 |Broker research desk|Brokerage research team|Ready-made weekly client content|Firm|
 |Shariah fund manager|Asset manager with a Shariah fund|Compliance and macro exposure of holdings|Firm|
 |Islamic bank wealth desk|Advisers for Islamic banking clients|Explainable Shariah list for clients|Firm|
@@ -141,8 +147,22 @@ analysisACE is a web app for Bangladeshi investors and households with two layer
 |F24|Multi-owner household records|Personal|R3+|Should|Pro|
 |F25|Alternative investments|Personal|R2 (basic), R3 (cash flows, XIRR, documents)|Must|Pro|
 |F26|Sukuk and Islamic bank investments|Personal|R2 (holdings, calendar), R3 (comparison, safety panel)|Must|Free basic, Pro full|
+|F27|Income records and savings|Personal|R2|Must|Free|
 
 R2 ships before Ramadan 2027 (around early February 2027), when most users calculate Zakat.
+
+### ACE map
+
+Every feature belongs to a pillar. "Layer" above is a technical grouping; the pillar is how the product, menu and marketing are organised.
+
+|Pillar|Features|
+|-|-|
+|**Assets**|F14 portfolio aggregation (the asset register), F25 alternative investments, F26 sukuk and Islamic bank holdings, F24 multi-owner household, F13 Zakat and wealth statement|
+|**Capital**|F15 performance, F16 allocation and drift, F17 FIRE, F18 scenarios, F19 goals, F6 portfolio check, and the stock tools F1 to F5, F8, F10, F22|
+|**Earnings**|F12 daily costs, F27 income records and savings rate, tax deducted (F13), F20 alerts and monthly report|
+|Platform|F7 alerts, F9 firm features, F11 mobile app, F21 community benchmarking, F23 privacy|
+
+Build priority follows the pillars: Assets and Earnings first (nothing waits on a data licence), then Capital plans, then the stock tools as data licensing (Q5) allows.
 
 \---
 
@@ -235,6 +255,17 @@ Each requirement has acceptance criteria (AC) that tests must cover.
 * FR12.4 Trailing-12-month cost of living feeds F17.
 * FR12.5 CSV import and export.
 * AC: totals match sum of entries; recurring entries generate on schedule without duplicates.
+
+### F27 Income records and savings
+
+* FR27.1 Record income: amount (BDT), kind (salary, business, rent, remittance, profit, dividend, other; the list is in `config/personal.yaml`), date, member, note.
+* FR27.2 Recurring income (monthly salary, quarterly rent). Entries are written on their due dates and never twice for one rule and date.
+* FR27.3 Monthly income, costs and savings (income less costs), the trailing-12-month savings rate (savings / income) and income by kind. Only months with an income or cost record are counted in averages.
+* FR27.4 The average monthly savings is the starting value of the FIRE form (F17), appears on the ACE card of the My money overview, and is measured by a "saved each month" goal (F19).
+* FR27.5 The tax statement (F13) takes a member's salary and other income for the tax year from the income records unless the person types them in, and says which. Kinds that would double-count income already worked out from holdings and assets (rent, profit, dividends), and exempt remittance, are listed as not counted. The mapping is in `config/personal.yaml` (`income.tax_lines`). Records for the whole household are not counted for one person.
+* FR27.6 The monthly report (F20) shows last month's income and what was left after costs.
+* FR27.7 CSV import and export of income (columns date, amount, kind, note, member). A member is matched by name; an unknown name, kind, date or amount is reported by row and the row is skipped.
+* Zakat (F13) does not read income records: Zakat is due on wealth held, and income already shows there once it sits in an account.
 
 ### F13 Tax and Zakat snapshot
 

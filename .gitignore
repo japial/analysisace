@@ -34,5 +34,7 @@ Thumbs.db
 # Local data
 .pgdata/
 .documents/
+# Email previews from backend/scripts/preview_emails.py
+.email-previews/
 .dev-encryption-key
 *.sqlite3

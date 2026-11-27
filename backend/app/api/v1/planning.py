@@ -114,6 +114,22 @@ def current_tax_year(access: Viewer) -> dict[str, str]:
     return {"tax_year": zakat_tax.current_tax_year(today_dhaka())}
 
 
+@router.get(f"{HOUSEHOLD}/tax/recorded-income")
+def tax_recorded_income(
+    member_id: uuid.UUID, tax_year: str, access: Viewer, db: Db
+) -> dict[str, Any]:
+    """FR27.5: the salary and other income a statement would take from the income records,
+    and what it would leave out, so the form can show them before the person decides."""
+    member = households.get_member(db, access.household.id, member_id)
+    start, end = zakat_tax.tax_year_bounds(tax_year)
+    return {
+        "tax_year": tax_year,
+        **zakat_tax.recorded_income(
+            db, access.household.id, member, start, min(end, today_dhaka())
+        ),
+    }
+
+
 @router.post(f"{HOUSEHOLD}/tax/snapshots", status_code=status.HTTP_201_CREATED)
 def create_tax_snapshot(body: TaxIn, access: Editor, db: Db) -> Envelope[TaxSnapshotOut]:
     """Figures for one person's tax return: wealth statement, income summary, tax deducted
@@ -189,6 +205,15 @@ def fire_defaults(
     data, sources = planning.defaults(
         db, access.household.id, member, include_illiquid=include_illiquid
     )
+    return computed(db, data, sources)
+
+
+@router.get(f"{HOUSEHOLD}/fire/progress")
+def fire_progress(access: Viewer, db: Db) -> Envelope[dict[str, Any]]:
+    """Progress toward FIRE for the top of My money: the newest plan against today's
+    investable capital, or an estimated FIRE number from a year of costs when there is no
+    plan yet (FR17.2). A projection of the household's own figures, not a forecast."""
+    data, sources = planning.fire_overview(db, access.household.id)
     return computed(db, data, sources)
 
 

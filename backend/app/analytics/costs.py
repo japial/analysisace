@@ -67,6 +67,19 @@ def trailing_total(
     return sum((amount for day, amount in entries if first <= day <= as_of), Decimal(0))
 
 
+def annualised(total: Decimal, months_recorded: int, months: int = 12) -> Decimal:
+    """A year of spending from the months that have records (FR12.4, D21).
+
+    With records for the whole window the total is returned as it is. With fewer months, the
+    average month is scaled to a year, so one month of 85,000 counts as 10,20,000, not 85,000.
+    """
+    if months_recorded <= 0:
+        return Decimal(0)
+    if months_recorded >= months:
+        return total.quantize(Q2)
+    return (total / months_recorded * months).quantize(Q2)
+
+
 def price_index(yoy_pct_by_month: Mapping[date, Decimal]) -> dict[date, Decimal]:
     """A price index (first month = 100) built from year-on-year inflation.
 

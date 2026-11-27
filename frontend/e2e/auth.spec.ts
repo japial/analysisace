@@ -40,7 +40,8 @@ async function signOut(page: Page): Promise<void> {
 test("sign up, sign out, sign in again", async ({ page }) => {
   const email = uniqueEmail("signup");
   await signUp(page, email);
-  await expect(page).toHaveURL(/\/en$/);
+  // D38: a new account starts in My money.
+  await expect(page).toHaveURL(/\/en\/personal$/);
 
   await page.goto("/en/account");
   await expect(page.getByRole("heading", { name: "My account" })).toBeVisible();
@@ -79,10 +80,42 @@ test("Bangla pages and the forgot-password answer", async ({ page }) => {
   await page.goto("/bn/signin");
   await expect(page.getByRole("heading", { name: "প্রবেশ করুন" })).toBeVisible();
   await page.getByRole("link", { name: "পাসওয়ার্ড ভুলে গেছেন?" }).click();
+  // Both pages have an email field: wait for the forgot-password page before typing.
+  await expect(page).toHaveURL(/\/bn\/forgot-password/);
   await page.getByLabel("ইমেইল").fill(uniqueEmail("unknown"));
   await page.getByRole("button", { name: "লিংক পাঠান" }).click();
   // The same answer for known and unknown emails.
   await expect(page.getByRole("status")).toContainText("লিংক পাঠানো হয়েছে");
+});
+
+test("a new sign-in email waits for its link and can be cancelled (D39)", async ({ page }) => {
+  const email = uniqueEmail("change");
+  const next = uniqueEmail("changed");
+  await signUp(page, email);
+  await page.goto("/en/account");
+  const section = page.getByRole("heading", { name: "Sign-in email" });
+  await expect(section).toBeVisible();
+
+  // The password is asked again.
+  await page.getByLabel("New email").fill(next);
+  await page.getByLabel("Current password").first().fill("not my password");
+  await page.getByRole("button", { name: "Send confirmation link" }).click();
+  await expect(page.getByText("The current password is not correct", { exact: false })).toBeVisible();
+
+  await page.getByLabel("New email").fill(next);
+  await page.getByLabel("Current password").first().fill(PASSWORD);
+  await page.getByRole("button", { name: "Send confirmation link" }).click();
+  await expect(page.getByText("open the link we sent", { exact: false })).toBeVisible();
+  // Waiting for the link; the current email is still in use, and the change can be cancelled.
+  await expect(page.getByText(`Waiting for you to open the link sent to ${next}`)).toBeVisible();
+  await expect(page.getByText(email, { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Cancel the change" }).click();
+  await expect(page.getByText("Waiting for you to open the link")).toHaveCount(0);
+
+  // A link that does not work says so.
+  await page.goto("/en/confirm-email-change?token=not-a-real-token-123");
+  await page.getByRole("button", { name: "Use this email" }).click();
+  await expect(page.getByText("This link no longer works", { exact: false })).toBeVisible();
 });
 
 test("privacy choices are saved and can be withdrawn (FR23.1, FR23.2)", async ({ page }) => {
@@ -98,6 +131,8 @@ test("privacy choices are saved and can be withdrawn (FR23.1, FR23.2)", async ({
   await expect(religious).toBeChecked();
   await religious.click();
   await page.getByRole("button", { name: "Save changes" }).nth(1).click();
+  // Wait for the save to finish: reloading at once can cancel it.
+  await expect(page.getByRole("status")).toHaveText("Saved.");
   await page.reload();
   await expect(religious).not.toBeChecked();
 });
@@ -162,4 +197,21 @@ test("an administrator changes a user's role and access", async ({ page, browser
   await page.goto("/en/admin/roles");
   await expect(page.getByRole("heading", { name: "Roles and permissions" })).toBeVisible();
   await expect(page.getByText("Manage users", { exact: true })).toBeVisible();
+});
+
+test("a new account is asked to confirm its email, and a bad link says so (D25)", async ({ page }) => {
+  await page.goto("/en/signup");
+  await page.getByLabel("Full name").fill("Verify Tester");
+  await page.getByLabel("Email").fill(uniqueEmail("verify"));
+  await page.getByLabel("Password").fill(PASSWORD);
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Create account" }).click();
+  const banner = page.getByRole("region", { name: "Confirm your email" });
+  await expect(banner).toBeVisible();
+  await banner.getByRole("button", { name: "Send the link again" }).click();
+  await expect(banner).toBeVisible();
+
+  await page.goto("/en/verify-email?token=not-a-real-token-123");
+  await page.getByRole("button", { name: "Confirm my email" }).click();
+  await expect(page.getByText(/This link has expired, was replaced/)).toBeVisible();
 });

@@ -19,6 +19,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.analytics.costs import add_months, month_start
+from app.core.config import get_settings
 from app.core.security import utcnow
 from app.models import (
     AlertRule,
@@ -26,36 +27,43 @@ from app.models import (
     FirePlan,
     Household,
     HouseholdMember,
+    IncomeEntry,
     Notification,
     User,
 )
 from app.models.enums import AlertFrequency, AlertType, Channel
-from app.services import alt_assets, islamic, performance, planning, zakat_tax
-from app.services.alert_texts import DISCLAIMER, EMAIL_TEXT, REPORT_TEXT
+from app.services import (
+    alt_assets,
+    bounces,
+    islamic,
+    performance,
+    planning,
+    push,
+    unsubscribe,
+    zakat_tax,
+)
+from app.services.alert_texts import EMAIL_TEXT
 from app.services.auth import AuthError, ConsentPurpose
-from app.services.email import Email, EmailSender
+from app.services.email import EmailSender
+from app.services.email_render import readable
+from app.services.email_templates import (
+    alert_email,
+    digest_email,
+    digest_item,
+    digest_push_title,
+    monthly_report_email,
+)
 from app.services.households import has_consent, list_households
 from app.services.valuation import load_portfolio, personal_config, today_dhaka
 
 Q2 = Decimal("0.01")
-_BN_DIGITS = str.maketrans("0123456789", "০১২৩৪৫৬৭৮৯")
-
-
-def taka(amount: Decimal, locale: str) -> str:
-    """ "Tk 12,34,567.50" with lakh and crore grouping; Bangla digits for Bangla."""
-    whole, _, cents = f"{abs(amount):.2f}".partition(".")
-    head, tail = whole[:-3], whole[-3:]
-    groups: list[str] = []
-    while len(head) > 2:
-        groups.insert(0, head[-2:])
-        head = head[:-2]
-    if head:
-        groups.insert(0, head)
-    text = f"{'-' if amount < 0 else ''}{','.join([*groups, tail])}.{cents}"
-    return f"৳{text.translate(_BN_DIGITS)}" if locale == "bn" else f"Tk {text}"
 
 
 # --- rules (FR20.1, FR7.3) ------------------------------------------------------------
+
+
+def _lang(locale: str | None) -> str:
+    return locale if locale in ("bn", "en") else "en"
 
 
 def list_rules(db: Session, user: User) -> list[AlertRule]:
@@ -169,17 +177,56 @@ def notify(
     )
     db.add(row)
     template = EMAIL_TEXT.get(message_key)
-    if rule is not None and rule.channel in ("EMAIL", "BOTH") and template is not None:
-        locale = user.locale if user.locale in ("bn", "en") else "en"
-        subject, body = template[locale]
-        sender.send(
-            Email(
-                to=user.email,
-                subject=subject,
-                body=f"{body.format(**data)}\n\n{DISCLAIMER[locale]}",
-            )
+    # FR7.3 (D32): "once a day" holds the email and push back for the daily digest. The
+    # notice is in the app at once either way.
+    # An alert set to the app only (D34) has nothing to hold back or send.
+    if (
+        rule is not None
+        and rule.frequency == "DAILY_DIGEST"
+        and rule.channel != "APP"
+        and template is not None
+    ):
+        row.digest_channel = rule.channel
+        db.flush()
+        return row
+    # D25: email only a confirmed address; the notice is in the app either way.
+    if (
+        rule is not None
+        and rule.channel in ("EMAIL", "BOTH")
+        and template is not None
+        and bounces.can_email(user)
+    ):
+        base = get_settings().web_base_url
+        email = alert_email(
+            user.email,
+            user.locale,
+            type,
+            message_key,
+            data,
+            link,
+            base,
+            unsubscribe.links(base, _lang(user.locale), user.id, type),
         )
-        row.sent_at = utcnow()
+        # The notice stays in the app either way; sent_at records that the email went.
+        if email is not None and bounces.send_to(db, sender, user, email):
+            row.sent_at = utcnow()
+    # D26: a push copy to the person's browsers when the rule asks for one.
+    if rule is not None and rule.channel in ("PUSH", "BOTH") and template is not None:
+        locale = user.locale if user.locale in ("bn", "en") else "en"
+        title, body = template[locale]
+        values = readable(data, locale)
+        push.push_to_user(
+            db,
+            push.get_push_sender(),
+            user.id,
+            push.notice_message(
+                title.format(**values),
+                body.format(**values),
+                link,
+                get_settings().web_base_url,
+                locale,
+            ),
+        )
     db.flush()
     return row
 
@@ -340,13 +387,91 @@ def run_personal_alerts(db: Session, sender: EmailSender, today: dt.date | None 
     )
 
 
+# --- daily digest (FR7.3, D32) ----------------------------------------------------------
+
+
+def send_digests(db: Session, sender: EmailSender, now: dt.datetime | None = None) -> int:
+    """Deliver every notice held for the daily digest: one email per person listing them,
+    and one push summary. Returns how many people were sent a digest.
+
+    A notice leaves the queue when its digest is delivered. If the email cannot be sent,
+    the person's notices stay queued for the next run, so nothing is lost; the notices are
+    in the app all along. An address that is not confirmed gets no email (D25), and its
+    notices leave the queue since they cannot be delivered by email.
+    """
+    now = now or utcnow()
+    base = get_settings().web_base_url
+    pending = list(
+        db.scalars(
+            select(Notification)
+            .where(Notification.digest_channel.is_not(None), Notification.digested_at.is_(None))
+            .order_by(Notification.user_id, Notification.created_at)
+        )
+    )
+    by_user: dict[uuid.UUID, list[Notification]] = {}
+    for row in pending:
+        by_user.setdefault(row.user_id, []).append(row)
+
+    delivered = 0
+    push_sender = push.get_push_sender()
+    for user_id, rows in by_user.items():
+        user = db.get(User, user_id)
+        if user is None or not user.is_active:
+            for row in rows:
+                row.digested_at = now
+            continue
+        locale = user.locale if user.locale in ("bn", "en") else "en"
+        by_email = [r for r in rows if r.digest_channel in ("EMAIL", "BOTH")]
+        by_push = [r for r in rows if r.digest_channel in ("PUSH", "BOTH")]
+        if by_email and bounces.can_email(user):
+            items = [
+                item
+                for r in by_email
+                if (
+                    item := digest_item(
+                        locale, r.message_key, r.data, r.link or "/personal/alerts", base
+                    )
+                )
+                is not None
+            ]
+            stop = unsubscribe.links(base, locale, user.id, unsubscribe.DIGEST)
+            email = digest_email(user.email, locale, items, base, stop)
+            if items and not bounces.send_to(db, sender, user, email):
+                # Try again at the next run; push waits too, so the two stay together.
+                continue
+            for row in by_email:
+                row.sent_at = now
+        if by_push:
+            first = digest_item(
+                locale, by_push[0].message_key, by_push[0].data, "/personal/alerts", base
+            )
+            push.push_to_user(
+                db,
+                push_sender,
+                user.id,
+                push.notice_message(
+                    digest_push_title(locale, len(by_push)),
+                    first.title if first else "",
+                    "/personal/alerts",
+                    base,
+                    locale,
+                ),
+            )
+        for row in rows:
+            row.digested_at = now
+        delivered += 1
+    db.flush()
+    return delivered
+
+
 # --- monthly report (FR20.2) ----------------------------------------------------------
 
 
 def monthly_figures(
     db: Session, user: User, household_id: uuid.UUID, member: HouseholdMember, today: dt.date
 ) -> dict[str, Any]:
-    """Last month's spending, net worth now, a Zakat estimate and FIRE progress."""
+    """Last month's spending, income and savings, net worth now, a Zakat estimate and
+    FIRE progress."""
     first = add_months(month_start(today), -1)
     last = month_start(today) - dt.timedelta(days=1)
     spending = db.scalar(
@@ -354,6 +479,15 @@ def monthly_figures(
             Expense.household_id == household_id, Expense.date >= first, Expense.date <= last
         )
     )
+    earned = db.scalar(
+        select(func.coalesce(func.sum(IncomeEntry.amount), 0)).where(
+            IncomeEntry.household_id == household_id,
+            IncomeEntry.date >= first,
+            IncomeEntry.date <= last,
+        )
+    )
+    income = Decimal(earned or 0).quantize(Q2)
+    spent = Decimal(spending or 0).quantize(Q2)
     portfolio = load_portfolio(db, household_id, today)
     zakat_due: Decimal | None = None
     if has_consent(user, ConsentPurpose.RELIGIOUS_PREFERENCES) and member.nisab_basis:
@@ -365,7 +499,10 @@ def monthly_figures(
     progress = planning.fire_progress(db, household_id)
     return {
         "month": first.strftime("%Y-%m"),
-        "spending": Decimal(spending or 0).quantize(Q2),
+        "spending": spent,
+        # FR27.3: None when nothing was recorded, so the report does not show a saving of 0.
+        "income": income if income > 0 else None,
+        "savings": income - spent if income > 0 else None,
         "net_worth": portfolio.net_worth.quantize(Q2),
         "zakat_due": zakat_due,
         "fire_progress_pct": progress["progress_pct"] if progress else None,
@@ -401,28 +538,22 @@ def send_monthly_reports(
             dedupe_key=dedupe,
         )
         db.add(row)
-        if rule is not None and rule.channel in ("EMAIL", "BOTH"):
-            locale = user.locale if user.locale in ("bn", "en") else "en"
-            subject, body, zakat_line, fire_line = REPORT_TEXT[locale]
-            text = body.format(
-                month=figures["month"],
-                spending=taka(figures["spending"], locale),
-                net_worth=taka(figures["net_worth"], locale),
-                zakat=zakat_line.format(amount=taka(figures["zakat_due"], locale))
-                if figures["zakat_due"] is not None
-                else "",
-                fire=fire_line.format(pct=figures["fire_progress_pct"])
-                if figures["fire_progress_pct"] is not None
-                else "",
-                link=f"{web_base_url}/{locale}/personal",
-            )
-            sender.send(
-                Email(
-                    to=user.email,
-                    subject=subject.format(month=figures["month"]),
-                    body=f"{text}\n\n{DISCLAIMER[locale]}",
-                )
-            )
+        # D25: email only a confirmed address; the report is in the app either way.
+        wants_email = (
+            rule is not None and rule.channel in ("EMAIL", "BOTH") and bounces.can_email(user)
+        )
+        if wants_email and bounces.send_to(
+            db,
+            sender,
+            user,
+            monthly_report_email(
+                user.email,
+                user.locale,
+                figures,
+                web_base_url,
+                unsubscribe.links(web_base_url, _lang(user.locale), user.id, "MONTHLY_REPORT"),
+            ),
+        ):
             row.sent_at = utcnow()
         sent += 1
     db.flush()

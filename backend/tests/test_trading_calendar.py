@@ -1,6 +1,6 @@
 """DSE trading calendar: Sunday to Thursday plus holidays in config (PRD sections 7.2, 12)."""
 
-from datetime import date
+from datetime import date, timedelta
 
 import pytest
 
@@ -74,3 +74,39 @@ def test_repo_calendar_config_loads() -> None:
     cal = get_trading_calendar()
     assert cal.is_trading_day(SUN)
     assert not cal.is_trading_day(FRI)
+
+
+def test_differences_list_quiet_sessions_and_closed_days_that_traded_d37(
+    calendar: TradingCalendar,
+) -> None:
+    # MON has no trades (a holiday to add, or missing data); SAT traded (a special day).
+    tue, wed = SUN + timedelta(days=2), SUN + timedelta(days=3)
+    traded = [SUN, tue, wed, THU, SAT]
+    quiet, extra = calendar.differences(traded, SUN, SAT)
+    assert quiet == [MON]
+    assert extra == [SAT]
+
+
+def test_configured_calendar_closes_the_2020_covid_break_and_2026_holidays_d37() -> None:
+    from app.core.app_config import load_config_file
+    from app.core.config import get_settings
+
+    data = load_config_file("trading_calendar", get_settings().config_dir).data
+    cal = TradingCalendar.from_config(data)
+    assert cal.next_trading_day(date(2020, 3, 25)) == date(2020, 5, 31)  # 66-day closure
+    assert not cal.is_trading_day(date(2026, 3, 22))  # Eid-ul-Fitr
+    assert not cal.is_trading_day(date(2026, 12, 16))  # Victory Day
+    assert cal.is_trading_day(date(2026, 12, 17))
+    # Only trading weekdays are listed; a Friday or Saturday entry would do nothing.
+    assert all(d.weekday() in cal.trading_weekdays for d in cal.holidays)
+
+
+def test_a_stock_that_kept_its_floor_has_its_own_excluded_period_d37() -> None:
+    from app.services.market_analytics import excluded_periods
+
+    market = excluded_periods()
+    assert (date(2020, 3, 19), date(2021, 6, 17)) in market
+    beximco = excluded_periods("BEXIMCO")
+    assert (date(2024, 1, 19), date(2026, 6, 8)) in beximco
+    assert len(beximco) == len(market) + 1
+    assert excluded_periods("SQURPHARMA") == market

@@ -3,9 +3,9 @@
 import datetime as dt
 import uuid
 from decimal import Decimal
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Response, status
+from fastapi import APIRouter, Query, Response, status
 
 from app.api.deps import Db, Editor, Viewer
 from app.api.envelopes import computed
@@ -32,7 +32,7 @@ from app.schemas.personal import (
     TransactionIn,
     TransactionOut,
 )
-from app.services import market_check, performance, portfolio
+from app.services import ace, market_check, performance, portfolio
 from app.services.households import OwnerInput, owned
 from app.services.valuation import Portfolio, Position, today_dhaka
 
@@ -274,6 +274,24 @@ def portfolio_summary(access: Viewer, db: Db) -> Envelope[dict[str, Any]]:
     """Everything the household owns and owes, valued today, and its net worth (FR14.4)."""
     result = portfolio.summary(db, access.household.id)
     return computed(db, summary_data(result), result.source_ids)
+
+
+@router.get("/ace/summary")
+def ace_summary(access: Viewer, db: Db) -> Envelope[dict[str, Any]]:
+    """Assets, Capital and Earnings in one view (D19): net worth, the share of assets put to
+    work, and average monthly cost. Earnings has no income or savings figure until income
+    records exist."""
+    data, source_ids = ace.ace_summary(db, access.household.id)
+    return computed(db, data, source_ids)
+
+
+@router.get("/ace/trend")
+def ace_trend(
+    access: Viewer, db: Db, months: Annotated[int, Query(ge=3, le=36)] = 12
+) -> Envelope[dict[str, Any]]:
+    """Assets, Capital and Earnings month by month (D23): net worth and capital at work from
+    each month's last stored snapshot, and income, costs and savings from the records."""
+    return computed(db, ace.trend(db, access.household.id, months=months), ())
 
 
 @router.get("/portfolio/market-check")

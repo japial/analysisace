@@ -99,6 +99,7 @@ export default async function GoalsPage({ params }: PageProps) {
               <Field label={t("personal.goals.targetDate")} name="target_date" type="date" />
               <Field label={t("personal.goals.targetAge")} name="target_age" type="number" min="18" max="100" step="1" hint={t("personal.goals.targetAgeHint")} />
             </FieldGrid>
+            <p className="text-xs text-muted-foreground">{t("personal.goals.savingsHint")}</p>
           </ActionForm>
         </Panel>
       )}

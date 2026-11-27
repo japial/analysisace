@@ -493,3 +493,30 @@ def latest_market_caps(db: Session, tickers: list[str]) -> dict[str, tuple[Decim
         for t, p in prices.items()
         if t in shares
     }
+
+
+def list_items(db: Session) -> tuple[list[dict[str, Any]], dt.datetime | None, set[uuid.UUID]]:
+    """Every screened, listed company with its status as shown (FR2.1), its latest market cap,
+    the newest screening time and the price sources behind the caps. Shared by the Shariah
+    list page, the firm CSV export and the firm API (FR9.2), so they cannot disagree."""
+    rows = db.execute(
+        select(Company, CompanyShariahStatus)
+        .join(CompanyShariahStatus, CompanyShariahStatus.ticker == Company.ticker)
+        .where(Company.is_active.is_(True))
+    ).all()
+    caps = latest_market_caps(db, [c.ticker for c, _ in rows])
+    items = [
+        {
+            "ticker": c.ticker,
+            "name": c.name,
+            "sector": c.sector,
+            "status": effective_status(s),
+            "method_version": s.method_version,
+            "screened_at": s.screened_at,
+            "market_cap": caps[c.ticker][0] if c.ticker in caps else None,
+            "overridden": s.override_status is not None,
+        }
+        for c, s in sorted(rows, key=lambda r: r[0].ticker)
+    ]
+    newest = max((s.screened_at for _, s in rows), default=None)
+    return items, newest, {sid for _, sid in caps.values()}

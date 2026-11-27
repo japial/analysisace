@@ -6,8 +6,10 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 
 import {
+  CancelEmailChange,
   ConsentsForm,
   DeleteAccount,
+  EmailChangeForm,
   PasswordForm,
   ProfileForm,
 } from "@/components/account/account-forms";
@@ -16,7 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { digitsFor } from "@/lib/locale";
-import { requireUser } from "@/lib/session";
+import { getEmailChange } from "@/lib/api";
+import { requireToken, requireUser } from "@/lib/session";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -57,6 +60,8 @@ export default async function AccountPage({ params }: Props) {
   const user = await requireUser(locale, "/account");
   const t = await getTranslations();
   const dates = { language: locale, digits: digitsFor(locale) };
+  // D39: a change still waiting for its link; a failure to read it only hides the notice.
+  const pending = await getEmailChange(await requireToken()).catch(() => null);
 
   return (
     <>
@@ -87,6 +92,21 @@ export default async function AccountPage({ params }: Props) {
             )}
           </dl>
           <ProfileForm user={user} />
+        </Section>
+
+        <Section title={t("account.emailTitle")} intro={t("account.emailIntro")}>
+          {pending && (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-muted/50 p-3 text-sm">
+              <p>
+                {t("account.emailPending", {
+                  email: pending.new_email,
+                  date: formatDate(pending.expires_at, { ...dates, withTime: true }),
+                })}
+              </p>
+              <CancelEmailChange />
+            </div>
+          )}
+          <EmailChangeForm current={user.email} />
         </Section>
 
         <Section title={t("account.passwordTitle")} intro={t("account.passwordIntro")}>

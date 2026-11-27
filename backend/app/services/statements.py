@@ -11,7 +11,6 @@ Noto fonts in app/assets/fonts (SIL Open Font License, see OFL.txt there).
 import datetime as dt
 import uuid
 from collections.abc import Sequence
-from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -22,43 +21,11 @@ from sqlalchemy.orm import Session
 
 from app.core.security import utcnow
 from app.models import HouseholdMember, Source, TaxSnapshot, ZakatSnapshot
-from app.services.alerts import taka
 from app.services.statement_labels import ENUM_LABELS
+from app.services.text_format import date_text, digits, money, pct
 from app.services.valuation import DHAKA, load_portfolio
 
 FONTS = Path(__file__).resolve().parents[1] / "assets" / "fonts"
-_BN_DIGITS = str.maketrans("0123456789", "০১২৩৪৫৬৭৮৯")
-MONTHS = {
-    "en": [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-    ],
-    "bn": [
-        "জানুয়ারি",
-        "ফেব্রুয়ারি",
-        "মার্চ",
-        "এপ্রিল",
-        "মে",
-        "জুন",
-        "জুলাই",
-        "আগস্ট",
-        "সেপ্টেম্বর",
-        "অক্টোবর",
-        "নভেম্বর",
-        "ডিসেম্বর",
-    ],
-}
-
 TEXT: dict[str, dict[str, str]] = {
     "en": {
         "disclaimer": "Historical analysis for education only. Not investment advice.",
@@ -169,31 +136,9 @@ ROW_BG = (248, 250, 252)
 # --- formatting -----------------------------------------------------------------------
 
 
-def _digits(text: str, locale: str) -> str:
-    return text.translate(_BN_DIGITS) if locale == "bn" else text
-
-
-def money(value: Decimal | str | None, locale: str) -> str:
-    if value is None or value == "":
-        return "—"
-    return taka(Decimal(str(value)), locale)
-
-
-def pct(value: Decimal | str | None, locale: str, places: int = 0) -> str:
-    if value is None or value == "":
-        return "—"
-    return _digits(f"{Decimal(str(value)):.{places}f}%", locale)
-
-
-def date_text(day: dt.date | str, locale: str) -> str:
-    if isinstance(day, str):
-        day = dt.date.fromisoformat(day)
-    return _digits(f"{day.day} {MONTHS[locale][day.month - 1]} {day.year}", locale)
-
-
 def time_text(moment: dt.datetime, locale: str) -> str:
     local = (moment if moment.tzinfo else moment.replace(tzinfo=dt.UTC)).astimezone(DHAKA)
-    return f"{date_text(local.date(), locale)}, {_digits(local.strftime('%H:%M'), locale)}"
+    return f"{date_text(local.date(), locale)}, {digits(local.strftime('%H:%M'), locale)}"
 
 
 def label(group: str, value: str | None, locale: str) -> str:
@@ -239,7 +184,7 @@ class Statement(FPDF):
         self.set_font(self.main_font, "", 8)
         self.set_text_color(*MUTED)
         self.cell(0, 4, self.text_["disclaimer"], new_x="LMARGIN", new_y="NEXT")
-        number = _digits(str(self.page_no()), self.locale)
+        number = digits(str(self.page_no()), self.locale)
         self.cell(0, 4, self.text_["page"].format(n=number, total="{nb}"))
 
     # --- building blocks ---------------------------------------------------------------
@@ -461,7 +406,7 @@ def tax_pdf(
     """FR13.5 and FR13.6 as a PDF: wealth statement, income, tax deducted, rebate items."""
     t = TEXT[locale]
     items: dict[str, Any] = snapshot.items
-    year = _digits(snapshot.tax_year, locale)
+    year = digits(snapshot.tax_year, locale)
     doc = Statement(locale, t["tax_title"].format(year=year))
     doc.add_page()
     period = items.get("period", {})

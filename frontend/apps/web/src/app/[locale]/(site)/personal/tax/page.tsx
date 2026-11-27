@@ -1,4 +1,4 @@
-import type { Member, TaxSnapshot } from "@analysisace/core";
+import type { Member, RecordedIncome, TaxSnapshot } from "@analysisace/core";
 
 import { createTaxAction } from "@/app/actions/personal";
 import { Field } from "@/components/form/form-parts";
@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Link } from "@/i18n/navigation";
 import { hh, load } from "@/lib/personal";
-import { type PageProps, memberOptions, sectionMetadata, setup } from "@/lib/personal-page";
+import { type PageProps, enumLabel, memberOptions, sectionMetadata, setup } from "@/lib/personal-page";
 
 export const generateMetadata = sectionMetadata("tax");
 
@@ -28,6 +28,10 @@ export default async function TaxPage({ params }: PageProps) {
   const memberName = (id: string) =>
     (members.ok && members.data.find((m) => m.id === id)?.display_name) || "—";
   const you = members.ok ? members.data.find((m) => m.is_you) : undefined;
+  const recorded =
+    you && year.ok
+      ? await load(hh<RecordedIncome>(ctx, `/tax/recorded-income?member_id=${you.id}&tax_year=${year.data.tax_year}`))
+      : null;
 
   return (
     <PersonalShell ctx={ctx} title={title} description={t("personal.tax.intro")}>
@@ -41,9 +45,37 @@ export default async function TaxPage({ params }: PageProps) {
             <FieldGrid>
               <SelectField label={t("personal.member")} name="member_id" options={memberOptions(members.data)} defaultValue={you?.id} />
               <Field label={t("personal.tax.year")} name="tax_year" defaultValue={year.ok ? year.data.tax_year : ""} pattern="\d{4}-\d{2}" placeholder="2026-27" required hint={t("personal.tax.yearHint")} />
-              <Field label={t("personal.tax.salary")} name="salary_income" type="number" inputMode="decimal" min="0" step="0.01" />
+              <Field label={t("personal.tax.salary")} name="salary_income" type="number" inputMode="decimal" min="0" step="0.01" hint={t("personal.tax.salaryHint")} />
               <Field label={t("personal.tax.otherIncome")} name="other_income" type="number" inputMode="decimal" min="0" step="0.01" hint={t("personal.tax.otherIncomeHint")} />
             </FieldGrid>
+            {recorded?.ok && year.ok && (
+              <div className="rounded-lg border border-border bg-muted/40 p-3 text-sm text-secondary-foreground">
+                <p>
+                  {t("personal.tax.recorded", {
+                    year: year.data.tax_year,
+                    salary: f.bdt(recorded.data.salary),
+                    other: f.bdt(recorded.data.other),
+                  })}
+                </p>
+                {recorded.data.not_counted.length > 0 && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t("personal.tax.notCounted", {
+                      items: recorded.data.not_counted
+                        .map((n) => `${enumLabel(t, "incomeType", n.kind)} ${f.bdt(n.amount)}`)
+                        .join(", "),
+                    })}
+                  </p>
+                )}
+                {recorded.data.unassigned !== "0.00" && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t("personal.tax.unassigned", { amount: f.bdt(recorded.data.unassigned) })}
+                  </p>
+                )}
+                <Link href="/personal/income" className="mt-1 inline-block text-xs text-primary hover:underline">
+                  {t("personal.tax.openIncome")}
+                </Link>
+              </div>
+            )}
           </ActionForm>
         </Panel>
       )}

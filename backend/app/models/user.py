@@ -7,7 +7,7 @@ import datetime as dt
 import uuid
 from typing import Any
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Uuid
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.permissions import Role
@@ -29,6 +29,13 @@ class User(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     last_login_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     failed_login_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     locked_until: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    # Set when the person opens the link sent at sign-up (D25). Alert and report emails
+    # wait for it; sign-in does not.
+    email_verified_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    # Set when email to the address bounced as unusable (D35). Alert and report emails
+    # pause until the person confirms the address again; the status is e.g. "5.1.1".
+    email_bounced_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    email_bounce_status: Mapped[str | None] = mapped_column(String(10))
 
 
 class UserSession(UUIDPrimaryKeyMixin, TimestampMixin, Base):
@@ -52,6 +59,46 @@ class PasswordResetToken(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     user_id: Mapped[uuid.UUID] = mapped_column(
         Uuid, ForeignKey("app_user.id", ondelete="CASCADE"), nullable=False, index=True
     )
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    expires_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class RateLimitHit(UUIDPrimaryKeyMixin, Base):
+    """One attempt at a limited action (D28). The key (an IP or email address) is stored only
+    as a SHA-256 hash with the bucket name."""
+
+    __tablename__ = "rate_limit_hit"
+    __table_args__ = (Index("ix_rate_limit_hit_lookup", "bucket", "key_hash", "created_at"),)
+
+    bucket: Mapped[str] = mapped_column(String(40), nullable=False)
+    key_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class EmailVerificationToken(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    """A link sent to confirm an email address (D25). Only the hash is stored."""
+
+    __tablename__ = "email_verification_token"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("app_user.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    expires_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class EmailChangeToken(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    """A request to change the sign-in email (D39). The link goes to the new address; only
+    its hash is stored. The new address is kept until the link is used or expires."""
+
+    __tablename__ = "email_change_token"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("app_user.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    new_email: Mapped[str] = mapped_column(String(254), nullable=False)
     token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     expires_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     used_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))

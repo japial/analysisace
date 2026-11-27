@@ -5,6 +5,7 @@ import { markNotificationsReadAction, setAlertRuleAction } from "@/app/actions/p
 import { Field } from "@/components/form/form-parts";
 import { Empty, LoadError, Panel } from "@/components/personal/display";
 import { ActionButton, ActionForm, CheckField, SelectField } from "@/components/personal/forms";
+import { PushToggle } from "@/components/personal/push-toggle";
 import { PersonalShell } from "@/components/personal/shell";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
@@ -25,20 +26,23 @@ export default async function AlertsPage({ params }: PageProps) {
   const { ctx, t, f } = await setup(locale, "/personal/alerts");
   const title = t("personal.sections.alerts");
 
-  const [notices, rules] = await Promise.all([
+  const [notices, rules, pushConfig] = await Promise.all([
     load(get<Notifications>(ctx, "/notifications?limit=50")),
     load(get<AlertRule[]>(ctx, "/alerts")),
+    load(get<{ enabled: boolean; public_key: string | null; subscriptions: number }>(ctx, "/push/config")),
   ]);
 
   /** The notice text, filled in from the values the job stored with it. */
   const message = (key: string, data: Record<string, string | number | null>) => {
-    const path = `personal.notice.${key}`;
+    // A monthly report with income recorded (FR27.6) has a fuller text; older ones do not.
+    const variant = key === "MONTHLY_REPORT" && data.income != null ? "MONTHLY_REPORT_INCOME" : key;
+    const path = `personal.notice.${variant}`;
     if (!t.has(path as never)) return enumLabel(t, "alertType", key);
     const values = Object.fromEntries(
       Object.entries(data).map(([k, v]) => {
         if (v === null) return [k, "—"];
         if (k === "date" && typeof v === "string") return [k, f.date(v)];
-        if (/(amount|spending|net_worth|zakat_due)$/.test(k) && typeof v === "string") return [k, f.bdt(v)];
+        if (/(amount|spending|net_worth|zakat_due|income|savings)$/.test(k) && typeof v === "string") return [k, f.bdt(v)];
         if (k === "month" && typeof v === "string") return [k, f.month(v.length === 7 ? `${v}-01` : v)];
         if (k === "asset_class" && typeof v === "string") return [k, enumLabel(t, "assetClass", v)];
         // Market alerts (F7) store codes; show them as words in the reader's language.
@@ -125,7 +129,7 @@ export default async function AlertsPage({ params }: PageProps) {
                       <SelectField
                         label={t("personal.alerts.channel")}
                         name="channel"
-                        options={["EMAIL", "PUSH", "BOTH"].map((v) => ({ value: v, label: enumLabel(t, "channel", v) }))}
+                        options={["EMAIL", "PUSH", "BOTH", "APP"].map((v) => ({ value: v, label: enumLabel(t, "channel", v) }))}
                         defaultValue={rule?.channel ?? "EMAIL"}
                         className="w-40"
                       />
@@ -156,6 +160,13 @@ export default async function AlertsPage({ params }: PageProps) {
               );
             })}
           </ul>
+        )}
+      </Panel>
+      <Panel title={t("personal.push.title")} description={t("personal.push.intro")}>
+        {pushConfig.ok && pushConfig.data.enabled && pushConfig.data.public_key ? (
+          <PushToggle publicKey={pushConfig.data.public_key} />
+        ) : (
+          <p className="text-sm text-muted-foreground">{t("personal.push.notAvailable")}</p>
         )}
       </Panel>
     </PersonalShell>

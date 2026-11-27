@@ -1,18 +1,24 @@
 import type {
+  AceSummary,
+  AceTrend,
+  SetupStatus,
+  FireProgress,
   Allocation,
   CostSummary,
   Envelope,
   GoalProgress,
-  NetWorthPoint,
   Notifications,
   PortfolioSummary,
 } from "@analysisace/core";
 import { ArrowRight } from "lucide-react";
 
 import { recordNetWorthAction } from "@/app/actions/personal";
+import { AceSummaryPanel } from "@/components/personal/ace-summary";
+import { AceTrendPanel } from "@/components/personal/ace-trend";
+import { FireProgressPanel } from "@/components/personal/fire-progress";
+import { GettingStarted } from "@/components/personal/getting-started";
 import { Empty, LoadError, Panel, ShareBars, Stat, StatGrid } from "@/components/personal/display";
 import { ActionButton } from "@/components/personal/forms";
-import { LineChart } from "@/components/personal/line-chart";
 import { SectionShortcuts } from "@/components/personal/section-shortcuts";
 import { PersonalShell } from "@/components/personal/shell";
 import { Button } from "@/components/ui/button";
@@ -22,7 +28,13 @@ import { type PageProps, enumLabel, sectionMetadata, setup } from "@/lib/persona
 
 export const generateMetadata = sectionMetadata("overview");
 
-/** "My money" overview: net worth, who owns what, goals and new notices (F14, F19, F20, F24). */
+/** A decimal string from the API that is zero ("0", "0.00"); money is never parsed. */
+const isZero = (value: string) => /^-?0+(\.0+)?$/.test(value);
+
+/**
+ * "My money" overview: progress toward FIRE first (F17, D21), then the ACE summary, net
+ * worth, who owns what, goals and new notices (F14, F19, F20, F24).
+ */
 export default async function PersonalOverviewPage({ params }: PageProps) {
   const { locale } = await params;
   const { ctx, t, f } = await setup(locale, "/personal");
@@ -30,14 +42,38 @@ export default async function PersonalOverviewPage({ params }: PageProps) {
     return <PersonalShell ctx={ctx} title={t("personal.sections.overview")} root>{null}</PersonalShell>;
   }
 
-  const [summary, allocation, history, goals, costs, notices] = await Promise.all([
+  const [setupStatus, fire, ace, summary, allocation, trend, goals, costs, notices] = await Promise.all([
+    load(hh<SetupStatus>(ctx, "/setup/status")),
+    load(hh<Envelope<FireProgress>>(ctx, "/fire/progress")),
+    load(hh<Envelope<AceSummary>>(ctx, "/ace/summary")),
     load(hh<Envelope<PortfolioSummary>>(ctx, "/portfolio/summary")),
     load(hh<Envelope<Allocation>>(ctx, "/portfolio/allocation")),
-    load(hh<NetWorthPoint[]>(ctx, "/portfolio/history")),
+    load(hh<Envelope<AceTrend>>(ctx, "/ace/trend?months=12")),
     load(hh<Envelope<GoalProgress[]>>(ctx, "/goals")),
     load(hh<Envelope<CostSummary>>(ctx, "/costs/summary?months=12")),
     load(get<Notifications>(ctx, "/notifications?unread_only=true&limit=5")),
   ]);
+
+  // D38: until anything is recorded (beyond a birth year), the figures below would all be
+  // zero and every list empty, so a new household sees only what to do first.
+  const fresh =
+    setupStatus.ok &&
+    setupStatus.data.steps.every((step) => step.key === "you" || !step.done) &&
+    summary.ok &&
+    isZero(summary.data.data.assets) &&
+    isZero(summary.data.data.liabilities) &&
+    goals.ok &&
+    goals.data.data.length === 0;
+
+  if (fresh && setupStatus.ok) {
+    return (
+      <PersonalShell ctx={ctx} root title={t("personal.sections.overview")} description={t("personal.overview.intro")}>
+        <GettingStarted status={setupStatus.data} locale={locale} canEdit={ctx.canEdit} />
+        <p className="text-sm text-muted-foreground">{t("personal.overview.freshNote")}</p>
+        <SectionShortcuts />
+      </PersonalShell>
+    );
+  }
 
   return (
     <PersonalShell
@@ -46,6 +82,12 @@ export default async function PersonalOverviewPage({ params }: PageProps) {
       title={t("personal.sections.overview")}
       description={t("personal.overview.intro")}
     >
+      {setupStatus.ok && <GettingStarted status={setupStatus.data} locale={locale} canEdit={ctx.canEdit} />}
+
+      {fire.ok ? <FireProgressPanel progress={fire.data} locale={locale} /> : <LoadError code={fire.code} />}
+
+      {ace.ok ? <AceSummaryPanel summary={ace.data} locale={locale} /> : <LoadError code={ace.code} />}
+
       {!summary.ok ? (
         <LoadError code={summary.code} />
       ) : (
@@ -113,30 +155,21 @@ export default async function PersonalOverviewPage({ params }: PageProps) {
         </>
       )}
 
-      <Panel
-        title={t("personal.overview.history")}
-        description={t("personal.overview.historyIntro")}
-        actions={
-          ctx.canEdit && (
-            <ActionButton action={recordNetWorthAction.bind(null, ctx.household.id)}>
-              {t("personal.overview.recordToday")}
-            </ActionButton>
-          )
-        }
-      >
-        {!history.ok ? (
-          <LoadError code={history.code} />
-        ) : history.data.length < 2 ? (
-          <Empty>{t("personal.overview.historyEmpty")}</Empty>
-        ) : (
-          <LineChart
-            title={t("personal.overview.history")}
-            kind="bdt"
-            series={[{ key: "net_worth", label: t("personal.overview.netWorth") }]}
-            points={history.data.map((p) => ({ label: f.date(p.date), values: { net_worth: p.net_worth } }))}
-          />
-        )}
-      </Panel>
+      {trend.ok ? (
+        <AceTrendPanel
+          trend={trend.data}
+          locale={locale}
+          actions={
+            ctx.canEdit && (
+              <ActionButton action={recordNetWorthAction.bind(null, ctx.household.id)}>
+                {t("personal.overview.recordToday")}
+              </ActionButton>
+            )
+          }
+        />
+      ) : (
+        <LoadError code={trend.code} />
+      )}
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-7.5">
         <Panel

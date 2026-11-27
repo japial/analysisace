@@ -42,6 +42,8 @@ from app.models.personal import (
     Holding,
     Household,
     HouseholdMember,
+    IncomeEntry,
+    IncomeRule,
     Liability,
     NetWorthSnapshot,
     OwnerShare,
@@ -64,7 +66,14 @@ from app.models.platform import (
     Subscription,
     Watchlist,
 )
-from app.models.user import PasswordResetToken, User, UserSession
+from app.models.user import (
+    EmailChangeToken,
+    EmailVerificationToken,
+    PasswordResetToken,
+    RateLimitHit,
+    User,
+    UserSession,
+)
 
 __all__ = [
     "Account",
@@ -84,6 +93,8 @@ __all__ = [
     "CorporateActionType",
     "DataIssue",
     "Document",
+    "EmailChangeToken",
+    "EmailVerificationToken",
     "Event",
     "EventMetric",
     "Expense",
@@ -96,6 +107,8 @@ __all__ = [
     "Holding",
     "Household",
     "HouseholdMember",
+    "IncomeEntry",
+    "IncomeRule",
     "IndexDaily",
     "IslamicProduct",
     "JobRun",
@@ -108,6 +121,7 @@ __all__ = [
     "PasswordResetToken",
     "PriceDaily",
     "PushSubscription",
+    "RateLimitHit",
     "RecurringRule",
     "RegimeMonth",
     "RegimeSectorStat",

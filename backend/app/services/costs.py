@@ -267,15 +267,27 @@ class CostSummary:
     source_ids: set[uuid.UUID] = field(default_factory=set)
 
 
-def trailing_cost_of_living(db: Session, household_id: uuid.UUID, as_of: dt.date) -> Decimal:
-    """Spending in the 12 months to `as_of`. Feeds the FIRE calculator (FR12.4)."""
+def cost_of_living(db: Session, household_id: uuid.UUID, as_of: dt.date) -> tuple[Decimal, int]:
+    """(A year of spending, months with records), from the 12 months to `as_of`.
+
+    Feeds the FIRE calculator (FR12.4). When fewer than 12 months have records, the average
+    recorded month is scaled to a year, so a new household is not shown a FIRE number built
+    on one month of costs.
+    """
     first = formulas.add_months(as_of, -12) + dt.timedelta(days=1)
-    total = db.scalar(
-        select(func.coalesce(func.sum(Expense.amount), 0)).where(
+    rows = db.execute(
+        select(Expense.date, Expense.amount).where(
             Expense.household_id == household_id, Expense.date >= first, Expense.date <= as_of
         )
-    )
-    return Decimal(total or 0).quantize(Q2)
+    ).all()
+    total = sum((amount for _, amount in rows), Decimal(0))
+    months = min(len({formulas.month_start(day) for day, _ in rows}), 12)
+    return formulas.annualised(total, months), months
+
+
+def trailing_cost_of_living(db: Session, household_id: uuid.UUID, as_of: dt.date) -> Decimal:
+    """A year of spending for the FIRE calculator (FR12.4); see `cost_of_living`."""
+    return cost_of_living(db, household_id, as_of)[0]
 
 
 def summary(

@@ -4,10 +4,13 @@ import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
 import {
+  confirmEmailAction,
+  confirmEmailChangeAction,
   confirmPasswordResetAction,
   requestPasswordResetAction,
   signInAction,
   signUpAction,
+  unsubscribeAction,
 } from "@/app/actions/auth";
 import { Field, FormMessage, SubmitButton } from "@/components/form/form-parts";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -163,6 +166,89 @@ export function ResetPasswordForm({ token }: { token: string }) {
         className="text-center text-sm font-medium text-primary hover:underline"
       >
         {needsNewLink ? t("requestNewLink") : t("backToSignIn")}
+      </Link>
+    </form>
+  );
+}
+
+/**
+ * D25: the page the emailed link opens. It confirms on a button press, not on load, because
+ * mail scanners open links ahead of the person and would use the link up.
+ */
+export function VerifyEmailForm({ token }: { token: string }) {
+  const t = useTranslations("auth");
+  const [state, action] = useActionState(confirmEmailAction, INITIAL_FORM_STATE);
+
+  return (
+    <form action={action} className="flex flex-col gap-4">
+      <Heading title={t("verifyTitle")} intro={t("verifyIntro")} />
+      <FormMessage state={token ? state : { error: "VERIFY_TOKEN_INVALID" }} success={t("verifyDone")} />
+      {token && !state.ok && state.error !== "VERIFY_TOKEN_INVALID" && (
+        <>
+          <input type="hidden" name="token" value={token} />
+          <SubmitButton>{t("verifySubmit")}</SubmitButton>
+        </>
+      )}
+      <Link
+        href={state.ok ? "/personal" : "/account"}
+        className="text-center text-sm font-medium text-primary hover:underline"
+      >
+        {state.ok ? t("verifyContinue") : t("verifyAccount")}
+      </Link>
+    </form>
+  );
+}
+
+/**
+ * D34: the page an email's "stop these emails" link opens. It asks before changing anything,
+ * because mail scanners open links; mail apps use the one-click address instead.
+ */
+export function UnsubscribeForm({
+  token,
+  question,
+  emailing,
+}: {
+  token: string;
+  question: string;
+  emailing: boolean;
+}) {
+  const t = useTranslations("auth");
+  const [state, action] = useActionState(unsubscribeAction, INITIAL_FORM_STATE);
+
+  return (
+    <form action={action} className="flex flex-col gap-4">
+      <Heading title={t("unsubscribeTitle")} intro={emailing ? question : t("unsubscribeAlready")} />
+      <FormMessage state={state} success={t("unsubscribeDone")} />
+      {emailing && !state.ok && (
+        <>
+          <input type="hidden" name="token" value={token} />
+          <SubmitButton>{t("unsubscribeSubmit")}</SubmitButton>
+        </>
+      )}
+      <Link href="/personal/alerts" className="text-center text-sm font-medium text-primary hover:underline">
+        {t("unsubscribeSettings")}
+      </Link>
+    </form>
+  );
+}
+
+/** D39: the page the link sent to a new sign-in email opens. It asks before changing. */
+export function ConfirmEmailChangeForm({ token }: { token: string }) {
+  const t = useTranslations("auth");
+  const [state, action] = useActionState(confirmEmailChangeAction, INITIAL_FORM_STATE);
+
+  return (
+    <form action={action} className="flex flex-col gap-4">
+      <Heading title={t("changeTitle")} intro={t("changeIntro")} />
+      <FormMessage state={token ? state : { error: "EMAIL_CHANGE_TOKEN_INVALID" }} success={t("changeDone")} />
+      {token && !state.ok && state.error !== "EMAIL_CHANGE_TOKEN_INVALID" && (
+        <>
+          <input type="hidden" name="token" value={token} />
+          <SubmitButton>{t("changeSubmit")}</SubmitButton>
+        </>
+      )}
+      <Link href="/account" className="text-center text-sm font-medium text-primary hover:underline">
+        {t("verifyAccount")}
       </Link>
     </form>
   );

@@ -1,5 +1,5 @@
 # Ingestion schedules (PRD section 8). Times are Asia/Dhaka.
-version: "0.3.0"
+version: "0.7.0"
 timezone: Asia/Dhaka
 
 jobs:
@@ -18,9 +18,18 @@ jobs:
   sukuk: { days: weekly, weekday: SAT, at: "09:00" }
   # Personal finance (F12, F14, F20).
   recurring_expenses: { days: daily, at: "00:30" }
+  recurring_income: { days: daily, at: "00:35" }
+  # Security (D28): forget rate-limit attempts older than a day.
+  rate_limit_cleanup: { days: daily, at: "03:00" }
   net_worth_snapshots: { days: daily, at: "18:30" }
   personal_alerts: { days: daily, at: "07:00" }
+  # FR7.3 (D32): one email or push a day for alerts set to "once a day". After the
+  # morning's personal alerts; the previous evening's market alerts wait for it.
+  alert_digest: { days: daily, at: "08:00" }
   monthly_report: { days: monthly, day: 1, at: "08:00" }
+  # D35: read bounce reports every hour, so an address that does not work stops
+  # getting alert emails before the next digest.
+  email_bounces: { days: daily, at: "00:10", every_hours: 1 }
   # Market analytics (F1 to F8). They read stored data only, so they need no outside service.
   adjusted_prices: { days: daily, at: "19:30" }
   data_quality: { days: trading, at: "18:15" }

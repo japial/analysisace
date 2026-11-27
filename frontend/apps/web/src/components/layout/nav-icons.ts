@@ -2,6 +2,7 @@
  * server components as props. */
 import {
   BadgeCheck,
+  Briefcase,
   Building2,
   Compass,
   House,
@@ -24,5 +25,6 @@ export const NAV_ICONS: Partial<Record<NavKey, LucideIcon>> = {
   macro: Newspaper,
   regime: Compass,
   personal: Wallet,
+  firm: Briefcase,
   admin: ShieldUser,
 };

@@ -28,6 +28,8 @@ from app.models import (
     Holding,
     Household,
     HouseholdMember,
+    IncomeEntry,
+    IncomeRule,
     Liability,
     NetWorthSnapshot,
     OwnerShare,
@@ -49,6 +51,8 @@ _HOUSEHOLD_TABLES: list[type[Base]] = [
     ExpenseCategory,
     RecurringRule,
     Expense,
+    IncomeRule,
+    IncomeEntry,
     Goal,
     TargetAllocation,
     FirePlan,
@@ -126,6 +130,8 @@ def delete_household(db: Session, household_id: uuid.UUID) -> None:
     # Costs reference categories without a cascade, so they go first.
     db.execute(delete(Expense).where(Expense.household_id == household_id))
     db.execute(delete(RecurringRule).where(RecurringRule.household_id == household_id))
+    db.execute(delete(IncomeEntry).where(IncomeEntry.household_id == household_id))
+    db.execute(delete(IncomeRule).where(IncomeRule.household_id == household_id))
     db.execute(delete(Household).where(Household.id == household_id))
     db.flush()
 

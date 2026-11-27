@@ -22,6 +22,7 @@ const SCREENS = [
   { key: "notes", href: "/admin/notes", permission: "CONTENT_PUBLISH" },
   { key: "bankFlags", href: "/admin/bank-flags", permission: "CONFIG_MANAGE" },
   { key: "audit", href: "/admin/audit", permission: "AUDIT_VIEW" },
+  { key: "firms", href: "/admin/firms", permission: "FIRMS_MANAGE" },
 ] as const satisfies readonly { key: string; href: string; permission: Permission }[];
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

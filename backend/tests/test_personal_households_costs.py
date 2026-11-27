@@ -48,6 +48,14 @@ def test_owner_sees_their_household_fr24(demo_client: TestClient, demo_session: 
         "/fire/plans",
         "/goals",
         "/costs/export.csv",
+        "/income",
+        "/income-rules",
+        "/income/summary",
+        "/ace/summary",
+        "/fire/progress",
+        "/setup/status",
+        "/income/export.csv",
+        "/ace/trend",
     ],
 )
 def test_no_access_to_another_household(

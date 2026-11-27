@@ -53,7 +53,8 @@ export type Permission =
   | "SHARIAH_OVERRIDE"
   | "CONFIG_MANAGE"
   | "USERS_MANAGE"
-  | "AUDIT_VIEW";
+  | "AUDIT_VIEW"
+  | "FIRMS_MANAGE";
 
 /** Consents a user can grant or withdraw at any time. TERMS is set at sign-up. */
 export type OptionalConsent = "MARKETING" | "RELIGIOUS_PREFERENCES" | "COMMUNITY_BENCHMARKING";
@@ -73,6 +74,10 @@ export interface User {
   consents: Partial<Record<OptionalConsent | "TERMS", ConsentRecord>>;
   created_at: string;
   last_login_at: string | null;
+  /** Null until the link sent at sign-up is opened (D25). */
+  email_verified_at: string | null;
+  /** Set when email to the address bounced (D35); alert and report emails are paused. */
+  email_bounced_at?: string | null;
   permissions: Permission[];
 }
 

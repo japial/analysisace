@@ -64,7 +64,10 @@ async function csvFrom(form: FormData): Promise<string> {
 // --- F24 households and members --------------------------------------------------------
 
 export async function createHouseholdAction(_: FormState, form: FormData): Promise<FormState> {
-  return run(() => call("POST", "/households", { name: text(form, "name") }));
+  const result = await run(() => call("POST", "/households", { name: text(form, "name") }));
+  if (result.error) return result;
+  // D38: the next useful step is the basics, all in one form.
+  return go("/personal/setup");
 }
 
 export async function renameHouseholdAction(
@@ -181,6 +184,116 @@ export async function setRecurringActiveAction(householdId: string, id: string, 
 
 export async function deleteRecurringAction(householdId: string, id: string) {
   return run(() => call("DELETE", hh(householdId, `/recurring/${id}`)));
+}
+
+// --- D26 browser push --------------------------------------------------------------
+
+export async function savePushSubscriptionAction(subscription: {
+  endpoint: string;
+  keys: { p256dh: string; auth: string };
+}): Promise<FormState> {
+  return run(() => call("POST", "/push/subscriptions", subscription));
+}
+
+export async function removePushSubscriptionAction(endpoint: string): Promise<FormState> {
+  return run(() => call("POST", "/push/subscriptions/remove", { endpoint }));
+}
+
+// --- D22 guided set-up --------------------------------------------------------------
+
+/** Fields named `cost_<category>` and `saving_<kind>` become maps; blanks are left out. */
+function prefixed(form: FormData, prefix: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [name, value] of form.entries()) {
+    if (name.startsWith(prefix) && typeof value === "string" && value.trim() !== "") {
+      out[name.slice(prefix.length)] = value.trim();
+    }
+  }
+  return out;
+}
+
+export async function quickStartAction(
+  householdId: string,
+  locale: string,
+  _: FormState,
+  form: FormData,
+): Promise<FormState> {
+  const year = optional(form, "birth_year");
+  const result = await run(() =>
+    call("POST", hh(householdId, "/setup/quick-start"), {
+      birth_year: year ? Number(year) : undefined,
+      monthly_income: optional(form, "monthly_income"),
+      costs: prefixed(form, "cost_"),
+      savings: prefixed(form, "saving_"),
+      locale: locale === "bn" ? "bn" : "en",
+    }),
+  );
+  if (result.error) return result;
+  return go("/personal");
+}
+
+// --- F27 income -----------------------------------------------------------------------
+
+export async function addIncomeAction(
+  householdId: string,
+  _: FormState,
+  form: FormData,
+): Promise<FormState> {
+  return run(() =>
+    call("POST", hh(householdId, "/income"), {
+      date: text(form, "date"),
+      amount: text(form, "amount"),
+      kind: text(form, "kind"),
+      note: optional(form, "note"),
+      member_id: optional(form, "member_id"),
+    }),
+  );
+}
+
+export async function importIncomeAction(
+  householdId: string,
+  _: FormState,
+  form: FormData,
+): Promise<FormState> {
+  try {
+    const result = await call<ImportResult>("POST", hh(householdId, "/imports/income"), {
+      csv: await csvFrom(form),
+    });
+    revalidatePath("/", "layout");
+    return { ok: true, imported: result };
+  } catch (error) {
+    return toFormError(error);
+  }
+}
+
+export async function deleteIncomeAction(householdId: string, id: string) {
+  return run(() => call("DELETE", hh(householdId, `/income/${id}`)));
+}
+
+export async function addIncomeRuleAction(
+  householdId: string,
+  _: FormState,
+  form: FormData,
+): Promise<FormState> {
+  return run(() =>
+    call("POST", hh(householdId, "/income-rules"), {
+      kind: text(form, "kind"),
+      amount: text(form, "amount"),
+      frequency: text(form, "frequency"),
+      start_date: text(form, "start_date"),
+      end_date: optional(form, "end_date"),
+      note: optional(form, "note"),
+      member_id: optional(form, "member_id"),
+    }),
+  );
+}
+
+export async function setIncomeRuleActiveAction(householdId: string, id: string, active: boolean) {
+  return run(() => call("PATCH", hh(householdId, `/income-rules/${id}`), { is_active: active }));
+}
+
+export async function deleteIncomeRuleAction(householdId: string, id: string) {
+  return run(() => call("DELETE", hh(householdId, `/income-rules/${id}`)));
 }
 
 export async function addCategoryAction(

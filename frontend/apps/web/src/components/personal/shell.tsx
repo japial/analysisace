@@ -11,6 +11,7 @@ import { Disclaimer } from "@/components/disclaimer";
 import { Toolbar } from "@/components/layout/toolbar";
 import { Badge } from "@/components/ui/badge";
 import type { PersonalContext } from "@/lib/personal";
+import { getCurrentUser } from "@/lib/session";
 
 import { ActionButton, ActionForm } from "./forms";
 import { Panel } from "./display";
@@ -73,10 +74,21 @@ export async function PersonalShell({
 
 async function NoHousehold() {
   const t = await getTranslations("personal.household");
+  // D38: suggest "<family name> family" from the account name; it can be changed here or later.
+  const user = await getCurrentUser();
+  const family = user?.full_name.trim().split(/\s+/).at(-1);
+  const suggested = family ? t("suggestedName", { name: family }).slice(0, 120) : undefined;
   return (
     <Panel title={t("createTitle")} description={t("createIntro")}>
       <ActionForm action={createHouseholdAction} submitLabel={t("create")} className="max-w-md">
-        <Field label={t("name")} name="name" maxLength={120} required placeholder={t("namePlaceholder")} />
+        <Field
+          label={t("name")}
+          name="name"
+          maxLength={120}
+          required
+          placeholder={t("namePlaceholder")}
+          defaultValue={suggested}
+        />
       </ActionForm>
     </Panel>
   );

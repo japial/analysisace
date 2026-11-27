@@ -47,6 +47,30 @@ export async function changePasswordAction(_: FormState, form: FormData): Promis
   return { ok: true };
 }
 
+/** D39: send a link to the new address; the change waits for it. */
+export async function requestEmailChangeAction(_: FormState, form: FormData): Promise<FormState> {
+  try {
+    await api.requestEmailChange(await requireToken(), {
+      new_email: text(form, "new_email"),
+      password: secret(form, "password"),
+    });
+  } catch (error) {
+    return toFormError(error);
+  }
+  revalidatePath("/account");
+  return { ok: true };
+}
+
+export async function cancelEmailChangeAction(): Promise<FormState> {
+  try {
+    await api.cancelEmailChange(await requireToken());
+  } catch (error) {
+    return toFormError(error);
+  }
+  revalidatePath("/account");
+  return { ok: true };
+}
+
 export async function updateConsentsAction(_: FormState, form: FormData): Promise<FormState> {
   const consents = Object.fromEntries(
     OPTIONAL_CONSENTS.map((purpose) => [purpose, form.get(purpose) === "on"]),

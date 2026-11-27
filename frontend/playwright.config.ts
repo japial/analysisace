@@ -9,7 +9,9 @@ export default defineConfig({
   outputDir: "./test-results",
   fullyParallel: false,
   workers: 1,
-  reporter: [["list"]],
+  // In CI (D29) a test gets one more try, and failures are annotated on the pull request.
+  retries: process.env.CI ? 1 : 0,
+  reporter: process.env.CI ? [["list"], ["github"]] : [["list"]],
   use: {
     baseURL: process.env.E2E_BASE_URL ?? "http://localhost:3000",
     trace: "retain-on-failure",

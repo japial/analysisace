@@ -43,17 +43,21 @@ def market_config() -> dict[str, Any]:
     return get_config("market").data
 
 
-def excluded_periods() -> list[tuple[dt.date, dt.date]]:
+def _day(value: Any) -> dt.date:
+    return value if isinstance(value, dt.date) else dt.date.fromisoformat(str(value))
+
+
+def excluded_periods(ticker: str | None = None) -> list[tuple[dt.date, dt.date]]:
+    """FR3.2 (D37): floor-price periods left out of samples. With a ticker, also the periods
+    when that stock alone still had a floor."""
     data = get_config("excluded_periods").data
-    out = []
-    for row in data.get("floor_price_periods") or []:
-        start, end = row["start"], row["end"]
-        out.append(
-            (
-                start if isinstance(start, dt.date) else dt.date.fromisoformat(str(start)),
-                end if isinstance(end, dt.date) else dt.date.fromisoformat(str(end)),
-            )
-        )
+    out = [(_day(r["start"]), _day(r["end"])) for r in data.get("floor_price_periods") or []]
+    if ticker is not None:
+        out += [
+            (_day(r["start"]), _day(r["end"]))
+            for r in data.get("ticker_floor_periods") or []
+            if ticker in (r.get("tickers") or [])
+        ]
     return out
 
 
@@ -144,7 +148,7 @@ def compute_rate_scores(
             market,
             yields,
             TradingCalendar.week_start,
-            excluded,
+            excluded_periods(subject) if subject_type == SubjectType.TICKER.value else excluded,
             start,
             end,
         )

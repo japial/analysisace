@@ -184,6 +184,7 @@ class GoalType(StrEnum):
     NET_WORTH = "NET_WORTH"
     INVESTED_AMOUNT = "INVESTED_AMOUNT"
     FIRE_AGE = "FIRE_AGE"  # FR19.1
+    MONTHLY_SAVINGS = "MONTHLY_SAVINGS"  # FR27.4: average saved a month, last 12 months
 
 
 class AlertType(StrEnum):
@@ -203,6 +204,7 @@ class Channel(StrEnum):
     EMAIL = "EMAIL"
     PUSH = "PUSH"
     BOTH = "BOTH"
+    APP = "APP"  # in the app only: no email, no push (D34)
 
 
 class AlertFrequency(StrEnum):

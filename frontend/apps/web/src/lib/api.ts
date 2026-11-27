@@ -41,14 +41,17 @@ interface RequestOptions {
   /** Session token. Requests with a token are never cached. */
   token?: string;
   userAgent?: string | null;
+  /** The visitor's address, passed on so the API can rate-limit per visitor (D28). */
+  forwardedFor?: string | null;
 }
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = "GET", body, token, userAgent } = options;
+  const { method = "GET", body, token, userAgent, forwardedFor } = options;
   const headers: Record<string, string> = { Accept: "application/json" };
   if (body !== undefined) headers["Content-Type"] = "application/json";
   if (token) headers.Authorization = `Bearer ${token}`;
   if (userAgent) headers["User-Agent"] = userAgent;
+  if (forwardedFor) headers["X-Forwarded-For"] = forwardedFor;
 
   let response: Response;
   try {
@@ -117,23 +120,30 @@ export function register(
     accept_terms: boolean;
   },
   userAgent: string | null,
+  forwardedFor: string | null = null,
 ): Promise<AuthResult> {
-  return request("/auth/register", { method: "POST", body, userAgent });
+  return request("/auth/register", { method: "POST", body, userAgent, forwardedFor });
 }
 
 export function login(
   body: { email: string; password: string },
   userAgent: string | null,
+  forwardedFor: string | null = null,
 ): Promise<AuthResult> {
-  return request("/auth/login", { method: "POST", body: { ...body, client: "web" }, userAgent });
+  return request("/auth/login", {
+    method: "POST",
+    body: { ...body, client: "web" },
+    userAgent,
+    forwardedFor,
+  });
 }
 
 export function logout(token: string): Promise<void> {
   return request("/auth/logout", { method: "POST", token });
 }
 
-export function requestPasswordReset(email: string): Promise<void> {
-  return request("/auth/password-reset/request", { method: "POST", body: { email } });
+export function requestPasswordReset(email: string, forwardedFor: string | null = null): Promise<void> {
+  return request("/auth/password-reset/request", { method: "POST", body: { email }, forwardedFor });
 }
 
 export function confirmPasswordReset(token: string, newPassword: string): Promise<void> {
@@ -141,6 +151,30 @@ export function confirmPasswordReset(token: string, newPassword: string): Promis
     method: "POST",
     body: { token, new_password: newPassword },
   });
+}
+
+export function requestEmailVerification(token: string): Promise<void> {
+  return request("/auth/verify-email/request", { method: "POST", token });
+}
+
+export function confirmEmailVerification(token: string): Promise<void> {
+  return request("/auth/verify-email/confirm", { method: "POST", body: { token } });
+}
+
+/** What an email's unsubscribe link would stop (D34). No sign-in: the token says whose. */
+export interface UnsubscribeScope {
+  /** An alert type, or "DIGEST" for every alert that arrives once a day. */
+  scope: string;
+  /** Whether any of it is still emailed. */
+  emailing: boolean;
+}
+
+export function checkUnsubscribe(token: string): Promise<UnsubscribeScope> {
+  return request("/email/unsubscribe/check", { method: "POST", body: { token } });
+}
+
+export function unsubscribeByLink(token: string): Promise<{ scope: string; changed: number }> {
+  return request("/email/unsubscribe", { method: "POST", body: { token } });
 }
 
 export function getMe(token: string): Promise<User> {
@@ -152,6 +186,31 @@ export function updateMe(
   body: { full_name?: string; locale?: string },
 ): Promise<User> {
   return request("/me", { method: "PATCH", body, token });
+}
+
+/** A sign-in email change waiting for its link to be opened (D39). */
+export interface EmailChange {
+  new_email: string;
+  expires_at: string;
+}
+
+export function getEmailChange(token: string): Promise<EmailChange | null> {
+  return request("/auth/email-change", { token });
+}
+
+export function requestEmailChange(
+  token: string,
+  body: { new_email: string; password: string },
+): Promise<EmailChange> {
+  return request("/auth/email-change", { method: "POST", body, token });
+}
+
+export function cancelEmailChange(token: string): Promise<void> {
+  return request("/auth/email-change", { method: "DELETE", token });
+}
+
+export function confirmEmailChange(token: string): Promise<void> {
+  return request("/auth/email-change/confirm", { method: "POST", body: { token } });
 }
 
 export function changePassword(

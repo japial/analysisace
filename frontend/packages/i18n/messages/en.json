@@ -40,8 +40,8 @@
     "macro": "Macro notes",
     "regime": "Regime",
     "admin": "Admin",
-    "markets": "Markets",
-    "marketsIntro": "analysisACE's own screening and history-based analytics for DSE stocks.",
+    "markets": "Stock tools",
+    "marketsIntro": "For the DSE shares in your portfolio: analysisACE's own screening and history-based analytics.",
     "describe": {
       "shariah": "Every screened company and the Shariah basket against DSES and DSEX",
       "rates": "T-bill yields and how stocks moved when rates rose",
@@ -49,18 +49,19 @@
       "macro": "A weekly summary of yields, inflation, the taka and oil",
       "regime": "This month's macro label and sectors in similar months",
       "companies": "Search every listed company"
-    }
+    },
+    "firm": "Firm"
   },
   "home": {
-    "metaTitle": "analysisACE: Shariah screening, market history and household money for Bangladesh",
-    "subtitle": "Clear Shariah screening and market history for DSE stocks, and every part of your household's money in one place: costs, holdings, Zakat, tax and plans. In Bangla and English.",
+    "metaTitle": "analysisACE: FIRE planning and personal finance for Bangladesh",
+    "subtitle": "Plan financial independence in Bangla and English: your FIRE number, savings rate and projected FIRE age, built on your Assets, Capital and Earnings, with Zakat, tax and halal choices included.",
     "hero": {
-      "eyebrow": "Made for investors and families in Bangladesh",
-      "title": "Invest with clarity. Manage money by your values.",
-      "lead": "See why a DSE stock passes or fails a Shariah screen, how it moved when rates rose or a crisis hit, and where your household stands on Zakat, tax and long-term plans. Every number shows where it came from.",
-      "ctaSignUp": "Create your account",
-      "ctaExplore": "Explore the Shariah list",
-      "ctaMyMoney": "Open My money",
+      "eyebrow": "FIRE planning for families in Bangladesh",
+      "title": "Find the year work becomes optional.",
+      "lead": "analysisACE turns your household's income, costs and savings into a FIRE plan: your FIRE number, your savings rate and the year your capital could cover your costs. Grow your Assets, Capital and Earnings, with Zakat, tax and halal choices built in. Every number shows where it came from.",
+      "ctaSignUp": "Start your FIRE plan",
+      "ctaPlan": "Open my FIRE plan",
+      "ctaExplore": "How FIRE works",
       "trust": {
         "sources": "Every number shows its source",
         "bilingual": "Bangla and English",
@@ -68,53 +69,183 @@
       }
     },
     "preview": {
-      "label": "Illustration with a fictional company",
-      "company": "Demo Pharma Ltd.",
-      "status": "Shariah compliant",
-      "debt": "Interest-bearing debt",
-      "cash": "Cash and interest securities",
-      "income": "Non-permissible income",
-      "limit": "limit {value}",
-      "pass": "Pass",
-      "rate": "Rate sensitivity",
-      "rateValue": "−1.0% per 1-point yield rise",
-      "zakat": "Zakat due",
-      "source": "Source: annual report, page 64"
+      "label": "Illustration with fictional figures",
+      "title": "A sample FIRE plan",
+      "subtitle": "Household of four, age 38",
+      "fireAge": "FIRE at {age}",
+      "progress": "Progress to the FIRE number",
+      "invested": "{amount} invested",
+      "fireNumber": "FIRE number {amount}",
+      "assets": "Assets",
+      "assetsNote": "Net worth",
+      "capital": "Capital",
+      "capitalNote": "Can be lived from",
+      "earnings": "Earnings",
+      "earningsNote": "Saved a month",
+      "savingsRate": "Savings rate",
+      "zakat": "Zakat due this year",
+      "source": "Source: the household's own records"
+    },
+    "fire": {
+      "eyebrow": "FIRE, explained",
+      "title": "Financial independence in three ideas",
+      "lead": "FIRE means Financial Independence, Retire Early. You are financially independent when your invested capital could pay your family's yearly costs. Retiring early is optional; the freedom is the point.",
+      "steps": {
+        "number": {
+          "title": "Your FIRE number",
+          "body": "Add up a year of your household's real costs and multiply by 25. That is roughly the invested capital that could pay for those costs every year at a 4% withdrawal rate."
+        },
+        "rate": {
+          "title": "Your savings rate",
+          "body": "The share of income you keep. It works twice: it builds capital faster, and it lowers the costs your capital has to cover."
+        },
+        "date": {
+          "title": "Your FIRE date",
+          "body": "The age at which your investable capital is projected to reach your FIRE number, from your own savings, returns and inflation. Progress updates as your records grow."
+        }
+      },
+      "formula": "FIRE number = a year of costs × 25",
+      "formulaNote": "25 is 100 ÷ 4, the 4% withdrawal rate. You can change the rate in your plan. It is a rule of thumb from past markets, not a guarantee."
+    },
+    "rate": {
+      "eyebrow": "The biggest lever",
+      "title": "Your savings rate decides more than your returns",
+      "lead": "Returns are mostly outside your control. What you keep from each month's income is not.",
+      "body": "In this illustration, moving from saving 20% to 40% of income shortens the wait by about 15 years. analysisACE works out your savings rate from your income and cost records every month.",
+      "cta": "Record income and costs",
+      "chartTitle": "Years from zero to FIRE, by savings rate",
+      "colRate": "Savings rate",
+      "colYears": "Years to FIRE",
+      "saving": "Save {rate}",
+      "years": "{years} yrs",
+      "assumptions": "Illustration, not a forecast. Starts from zero savings and assumes a 5% yearly return after inflation and a 4% withdrawal rate. Your own plan uses your figures."
+    },
+    "ace": {
+      "eyebrow": "Three levers",
+      "title": "Assets, Capital and Earnings move your FIRE date",
+      "lead": "ACE is how analysisACE organises your money. Each part brings your FIRE date closer in its own way.",
+      "pillars": {
+        "earnings": {
+          "title": "Earnings",
+          "tagline": "What comes in and what goes out",
+          "lever": "Raises your savings rate and lowers your FIRE number",
+          "items": {
+            "a": "Income and recurring salary, with savings worked out each month",
+            "b": "Daily costs in today's taka, recurring bills added for you",
+            "c": "Tax deducted at source and a statement for your return"
+          },
+          "cta": "See your income"
+        },
+        "capital": {
+          "title": "Capital",
+          "tagline": "Money put to work",
+          "lever": "Grows toward your FIRE number",
+          "items": {
+            "a": "One portfolio for sukuk, Islamic deposits, savings certificates, shares and alternative investments",
+            "b": "Returns over time, your target mix and drift from it",
+            "c": "A FIRE plan, goals and stress tests"
+          },
+          "cta": "See your portfolio"
+        },
+        "assets": {
+          "title": "Assets",
+          "tagline": "What you own, and what you owe",
+          "lever": "Shows where you stand and keeps your duties in view",
+          "items": {
+            "a": "Net worth across accounts, gold, land and business stakes, at each owner's share",
+            "b": "Debts in one list, so you see what slows the plan",
+            "c": "Zakat line by line and a wealth statement for tax"
+          },
+          "cta": "See your assets"
+        }
+      }
+    },
+    "local": {
+      "eyebrow": "FIRE in Bangladesh",
+      "title": "A FIRE plan made for life here",
+      "lead": "Most FIRE calculators assume low inflation and an index fund. Families here face different facts, and the plan handles them.",
+      "items": {
+        "inflation": {
+          "title": "Inflation from BBS figures",
+          "body": "Your plan starts from the last 12 months of the BBS consumer price index, and your costs are shown in today's prices."
+        },
+        "halal": {
+          "title": "Returns from halal choices",
+          "body": "The starting return comes from your own sukuk and Islamic deposits. Shares can be checked against a Shariah screen with reasons."
+        },
+        "family": {
+          "title": "The people you look after",
+          "body": "Money sent to parents and family support is recorded as a cost, so your FIRE number includes everyone you provide for."
+        },
+        "home": {
+          "title": "Land and home kept apart",
+          "body": "Land and the family home are left out of the money you can live from by default, because they cannot be sold a piece at a time. You can include them."
+        },
+        "zakat": {
+          "title": "Zakat inside the plan",
+          "body": "Zakat is worked out line by line each year, and the Zakat and sadaqah you record as costs are part of your FIRE number."
+        },
+        "stress": {
+          "title": "Tested against bad years",
+          "body": "See your plan after a market fall in year one, higher costs, higher inflation, stopping work five years sooner, or a replay of a past DSE event."
+        }
+      }
     },
     "questions": {
-      "title": "Answers to the questions you actually ask",
-      "lead": "analysisACE starts from the decisions people in Bangladesh make about their money, not from a list of charts.",
+      "title": "Questions on the way to independence",
+      "lead": "Each one opens the part of analysisACE that answers it.",
       "items": {
-        "halal": {
-          "q": "Is this stock Shariah compliant, and why?",
-          "a": "Every rule, the company's own figure, the limit and the report page it came from."
+        "when": {
+          "q": "When could we stop needing a salary?",
+          "a": "A projected FIRE age from your savings, returns and inflation."
         },
-        "rates": {
-          "q": "What happened to stocks like mine when rates rose?",
-          "a": "A sensitivity score for each stock and sector, from five years of weekly data."
+        "enough": {
+          "q": "How much is enough for our family?",
+          "a": "Your FIRE number, from a year of your real costs."
         },
-        "shock": {
-          "q": "How did the market behave in past crises?",
-          "a": "Moves after wars, energy shocks and policy changes, and how long recovery took."
+        "crash": {
+          "q": "What if the market falls in our first year?",
+          "a": "Stress tests for a market fall, higher costs and higher inflation."
+        },
+        "savings": {
+          "q": "How much are we really saving?",
+          "a": "Income less costs every month, and your savings rate."
         },
         "zakat": {
           "q": "How much Zakat do I owe this year?",
           "a": "A line-by-line calculation from your records, with a PDF in Bangla or English."
         },
-        "tax": {
-          "q": "What goes in my wealth statement?",
-          "a": "Assets, debts, income and tax already deducted, ready for your return."
-        },
-        "fire": {
-          "q": "When could our savings cover our costs?",
-          "a": "A FIRE plan with what-ifs for a market fall, higher costs or higher inflation."
+        "halal": {
+          "q": "Is our money growing in halal ways?",
+          "a": "The Shariah share of your holdings by value, with sukuk and Islamic deposits in one place."
         }
       }
     },
-    "markets": {
-      "eyebrow": "Markets, explained",
-      "title": "Understand DSE stocks before you decide",
-      "lead": "Open methods, published rules and history you can check. analysisACE describes what happened; the decision stays yours.",
+    "steps": {
+      "title": "Your FIRE plan in three steps",
+      "items": {
+        "one": {
+          "title": "Create your account",
+          "body": "Sign up in a minute and choose Bangla or English."
+        },
+        "two": {
+          "title": "Record income, costs and what you own",
+          "body": "Add salaries and bills once; recurring ones repeat by themselves. Import a broker CSV for shares."
+        },
+        "three": {
+          "title": "See your FIRE date",
+          "body": "Your FIRE number, savings rate and projected FIRE age, with progress as your records grow."
+        }
+      }
+    },
+    "final": {
+      "title": "Find your FIRE date",
+      "lead": "Create an account, record your income and costs, and see the year your capital could cover your family's needs."
+    },
+    "tools": {
+      "eyebrow": "For the shares in your portfolio",
+      "title": "Holding DSE shares? Understand them better",
+      "lead": "Stocks are one kind of capital among many. If you hold some, these tools describe what happened in the past. Open methods, published rules and history you can check. The decision stays yours.",
       "features": {
         "shariah": {
           "title": "Shariah screen with reasons",
@@ -149,62 +280,6 @@
       },
       "watch": "Watch any company and get a notice if its Shariah status changes."
     },
-    "money": {
-      "eyebrow": "My money",
-      "title": "Your whole household's money, organised",
-      "lead": "Everything a Bangladeshi family owns and owes, from BO accounts to gold, land and sanchayapatra, with Zakat and tax worked out for you.",
-      "features": {
-        "zakat": {
-          "title": "Zakat, line by line",
-          "body": "Choose gold or silver nisab and the date. Every asset is counted at each member's share, with interest-bearing items flagged. Download a PDF statement in Bangla or English."
-        },
-        "wealth": {
-          "title": "Everything you own",
-          "body": "Bank, BO and fund accounts, sukuk and Islamic deposits, land, flats, gold and business stakes. Import your broker statement in one step."
-        },
-        "check": {
-          "title": "Shariah check of your portfolio",
-          "body": "Your compliant share by value, rate and shock exposure, and an estimate of dividends to purify."
-        },
-        "tax": {
-          "title": "Tax statement",
-          "body": "Wealth statement, income by kind, tax deducted at source and rebate-eligible purchases for the tax year, as PDF or CSV."
-        },
-        "plans": {
-          "title": "FIRE plan and goals",
-          "body": "See when savings could cover your costs, test what-ifs, and track goals for net worth or a target age."
-        },
-        "costs": {
-          "title": "Costs and performance",
-          "body": "Monthly spending in today's taka, recurring bills added for you, and returns beside the DSE indices."
-        },
-        "family": {
-          "title": "Built for families",
-          "body": "Add members with their own roles and Zakat dates, split shared assets by owner, and keep parents' money in a separate household."
-        },
-        "alerts": {
-          "title": "Gentle reminders",
-          "body": "Notices for maturities, sukuk auctions, Zakat dates, drift from your target mix and goals reached."
-        }
-      }
-    },
-    "steps": {
-      "title": "Up and running in three steps",
-      "items": {
-        "one": {
-          "title": "Create your account",
-          "body": "Sign up in a minute and choose Bangla or English."
-        },
-        "two": {
-          "title": "Add your household",
-          "body": "Record accounts, holdings, gold and land, or import a broker CSV."
-        },
-        "three": {
-          "title": "See the full picture",
-          "body": "Net worth, Shariah share, Zakat due and your plans, kept up to date."
-        }
-      }
-    },
     "trust": {
       "title": "Built on trust, not tips",
       "lead": "Money decisions deserve evidence you can check. These principles are part of how analysisACE is built.",
@@ -215,11 +290,11 @@
         },
         "rules": {
           "title": "Rules are published",
-          "body": "Screening and Zakat rules are versioned, shown on every result and sent to a Shariah advisor for approval."
+          "body": "Zakat and screening rules are versioned, shown on every result and sent to a Shariah advisor for approval."
         },
         "advice": {
-          "title": "History, never tips",
-          "body": "We describe how markets moved in the past. We never tell you to buy, sell or hold."
+          "title": "Projections, never tips",
+          "body": "We show projections from your own figures and what happened in the past. We never tell you to buy, sell or hold."
         },
         "privacy": {
           "title": "Your data, your control",
@@ -227,7 +302,7 @@
         },
         "local": {
           "title": "Made for Bangladesh",
-          "body": "DSE trading days, lakh and crore, Bangla digits, sanchayapatra, Mudaraba deposits and the July-to-June tax year."
+          "body": "Lakh and crore, Bangla digits, sanchayapatra, Mudaraba deposits, DSE trading days and the July-to-June tax year."
         },
         "own": {
           "title": "Our own screen",
@@ -238,17 +313,33 @@
     "faq": {
       "title": "Common questions",
       "items": {
+        "fire": {
+          "q": "What is FIRE?",
+          "a": "Financial Independence, Retire Early. It means having enough invested that its returns could pay your yearly costs, so paid work becomes a choice. Many people keep working after they reach it."
+        },
+        "retire": {
+          "q": "Do I have to retire early?",
+          "a": "No. Most people use FIRE as a target for freedom: to change careers, start a business, care for family or work less. The plan shows when that choice could open up."
+        },
+        "promise": {
+          "q": "Is my FIRE age a promise?",
+          "a": "No. It is a projection from the figures you enter and assumptions about returns and inflation. Markets and costs change, so the plan includes stress tests and you can update it at any time."
+        },
+        "what": {
+          "q": "What does ACE mean?",
+          "a": "Assets, Capital and Earnings. Assets are what you own and owe. Capital is the part of your money that is invested or put to work. Earnings are your income, costs and savings. Together they decide how soon you could reach FIRE."
+        },
+        "shares": {
+          "q": "Do I need to own shares?",
+          "a": "No. A FIRE plan can be built on savings certificates, sukuk, Islamic deposits, gold and other assets. Share tools are an extra for people who hold DSE stocks."
+        },
         "advice": {
           "q": "Is this investment advice?",
           "a": "No. analysisACE shows historical analysis for education. It never recommends buying, selling or holding anything, and the decision is always yours."
         },
-        "method": {
-          "q": "Which Shariah method do you use?",
-          "a": "Two: an AAOIFI-style and an S&P-style method, shown side by side. The thresholds are published and versioned, and they stay provisional until a Shariah advisor approves them."
-        },
         "data": {
           "q": "Where does the data come from?",
-          "a": "Prices and indices from the stock exchange, rates and macro figures from Bangladesh Bank and other public sources, and company figures from annual and quarterly reports. Every figure names its source. While analysisACE is in development, market pages run on clearly labelled demo data."
+          "a": "Your household figures come from what you enter or import. Market figures come from the stock exchange, Bangladesh Bank and other public sources, and company reports. Every figure names its source. While analysisACE is in development, market pages run on clearly labelled demo data."
         },
         "privacy": {
           "q": "Is my household's data private?",
@@ -259,10 +350,6 @@
           "a": "Yes. Every page, notice and PDF statement is available in Bangla and English, with Bangla digits."
         }
       }
-    },
-    "final": {
-      "title": "Start seeing your money clearly",
-      "lead": "Create an account, add your household, and see your Shariah share, Zakat and plans in one place."
     }
   },
   "companies": {
@@ -317,7 +404,27 @@
     "newPassword": "New password",
     "resetSubmit": "Set new password",
     "resetDone": "Your password has been changed. Sign in with the new password.",
-    "requestNewLink": "Ask for a new link"
+    "requestNewLink": "Ask for a new link",
+    "verifyTitle": "Confirm your email",
+    "verifyIntro": "Press the button to confirm this is your email address.",
+    "verifySubmit": "Confirm my email",
+    "verifyDone": "Thank you. Your email is confirmed, and reminders and reports can now be emailed to you.",
+    "verifyContinue": "Go to My money",
+    "verifyAccount": "Open my account",
+    "verifyBanner": "Please confirm {email}. Until you do, reminders and monthly reports are only shown here, not emailed.",
+    "verifyResend": "Send the link again",
+    "unsubscribeTitle": "Stop these emails",
+    "unsubscribeAlert": "Stop emailing the \"{alert}\" alert? It still shows in analysisACE, and browser notifications stay as they are.",
+    "unsubscribeDigest": "Stop the once-a-day email? Alerts set to arrive once a day still show in analysisACE, and browser notifications stay as they are.",
+    "unsubscribeAlready": "These emails are already off. You can turn them back on in your alert settings.",
+    "unsubscribeSubmit": "Stop these emails",
+    "unsubscribeDone": "Done. These emails are stopped. The notices still show in analysisACE.",
+    "unsubscribeSettings": "Open alert settings",
+    "bounceBanner": "Emails to {email} could not be delivered, so alert and report emails are paused. If the address is right, send a new link and open it to resume them.",
+    "changeTitle": "Confirm your new email",
+    "changeIntro": "Press the button to make this address your sign-in email.",
+    "changeSubmit": "Use this email",
+    "changeDone": "Done. Sign in with your new email from now on; reminders and reports go there too."
   },
   "account": {
     "metaTitle": "My account",
@@ -351,11 +458,19 @@
     "dataIntro": "Download a copy of everything analysisACE holds about you.",
     "export": "Download my data",
     "deleteTitle": "Delete account",
-    "deleteIntro": "Deletes your account and all data tied to it straight away. This cannot be undone.",
+    "deleteIntro": "Deletes your account and your data straight away. A household you share with someone who still signs in stays for them; if you are its only owner, the member who joined first becomes its owner. A firm admin role passes on the same way. This cannot be undone.",
     "deleteButton": "Delete my account",
     "deleteConfirmTitle": "Delete your account?",
     "deleteConfirmBody": "Enter your password to confirm. Your account and data will be removed permanently.",
-    "deleteConfirm": "Delete permanently"
+    "deleteConfirm": "Delete permanently",
+    "emailTitle": "Sign-in email",
+    "emailIntro": "You sign in with this address, and reminders and reports are sent to it. A new one is used only once you open the link we send to it.",
+    "emailCurrent": "Current email",
+    "emailNew": "New email",
+    "emailSubmit": "Send confirmation link",
+    "emailSent": "Check the new address and open the link we sent. Until then, your current email stays in use.",
+    "emailPending": "Waiting for you to open the link sent to {email}. It works until {date}.",
+    "emailCancel": "Cancel the change"
   },
   "admin": {
     "usersMetaTitle": "Users",
@@ -420,6 +535,10 @@
     "AUDIT_VIEW": {
       "name": "View audit log",
       "description": "Read the record of admin actions."
+    },
+    "FIRMS_MANAGE": {
+      "name": "Manage firms",
+      "description": "Create firm accounts and set their seat limits."
     }
   },
   "errors": {
@@ -434,7 +553,7 @@
     "FORBIDDEN": "You do not have permission to do that.",
     "LAST_ADMIN": "This is the only active administrator. Make another person an administrator first.",
     "CANNOT_CHANGE_SELF": "You cannot change your own role or access.",
-    "USER_NOT_FOUND": "That user no longer exists.",
+    "USER_NOT_FOUND": "No active analysisACE account uses that email. They need to sign up first.",
     "CONSENT_NOT_CHANGEABLE": "That consent cannot be changed here.",
     "VALIDATION": "Check the form: the email must be valid and the password at least 8 characters.",
     "UNAVAILABLE": "The service could not be reached. Please try again in a few minutes.",
@@ -469,7 +588,21 @@
     "PRICE_CHANGE_TOO_LARGE": "That price is far from the previous day's. Check it for a typing error.",
     "CSV_INVALID": "The file must be UTF-8 CSV with the columns code, date and value.",
     "FIGURE_WITHOUT_SOURCE": "Every figure needs a source before the note can be published.",
-    "LIMIT_REACHED": "You have reached the limit for this list."
+    "LIMIT_REACHED": "You have reached the limit for this list.",
+    "VERIFY_TOKEN_INVALID": "This link has expired, was replaced by a newer one, or was already used. If your email is not confirmed yet, sign in and ask for a new link.",
+    "PUSH_NOT_CONFIGURED": "Browser notifications are not switched on for analysisACE yet.",
+    "PUSH_ENDPOINT_INVALID": "This browser's notification service is not supported.",
+    "RATE_LIMITED": "Too many attempts from here. Please wait a while and try again.",
+    "FIRM_ADMIN_REQUIRED": "Only the firm's admins can do this.",
+    "SEAT_LIMIT_REACHED": "Every seat is taken. Ask analysisACE for more seats, or remove a member first.",
+    "SEAT_LIMIT_BELOW_SEATS": "The firm already has more members than that.",
+    "LAST_FIRM_ADMIN": "A firm needs at least one admin. Make someone else an admin first.",
+    "LOGO_TOO_LARGE": "The logo is too large. Use a PNG or JPEG under 300 KB.",
+    "LOGO_INVALID": "Use a PNG or JPEG image for the logo.",
+    "NOTE_NOT_PUBLISHED": "No weekly note is published for that week yet.",
+    "UNSUBSCRIBE_LINK_INVALID": "This unsubscribe link does not work. Sign in and change your alert settings instead.",
+    "EMAIL_UNCHANGED": "That is already your sign-in email.",
+    "EMAIL_CHANGE_TOKEN_INVALID": "This link no longer works: it was used, replaced by a newer one, cancelled or expired. You can ask for a new one on your account page."
   },
   "personal": {
     "metaTitle": "My money",
@@ -513,14 +646,26 @@
       "alerts": "Alerts",
       "community": "Compare with peers",
       "household": "Household",
-      "marketCheck": "Market check"
+      "marketCheck": "Market check",
+      "income": "Income",
+      "setup": "Quick start"
     },
     "import": {
       "file": "CSV file",
       "paste": "Or paste the CSV here",
       "submit": "Import",
       "result": "{imported} rows added, {updated} updated.",
-      "rowError": "Row {row}: {error}"
+      "rowError": "Row {row}: {error}",
+      "codes": {
+        "BAD_DATE": "the date cannot be read (use 2026-11-01 or 01/11/2026)",
+        "BAD_AMOUNT": "the amount is not a positive number",
+        "BAD_QUANTITY": "the quantity is not a positive number",
+        "UNKNOWN_CATEGORY": "no category has that name",
+        "UNKNOWN_KIND": "the kind is not one of the income kinds",
+        "UNKNOWN_MEMBER": "no household member has that name",
+        "UNKNOWN_TICKER": "that DSE ticker is not known",
+        "TOO_MANY_ROWS": "the file has too many rows; the rest were not read"
+      }
     },
     "owners": {
       "title": "Who owns it",
@@ -538,7 +683,7 @@
       "point": "Point"
     },
     "overview": {
-      "intro": "Everything your household owns and owes, valued today, from the records you keep here.",
+      "intro": "Your household's Assets, Capital and Earnings, valued today from the records you keep here.",
       "netWorth": "Net worth",
       "assets": "Assets",
       "liabilities": "Debts",
@@ -548,12 +693,76 @@
       "byMember": "Each person's part",
       "byMemberIntro": "Shared assets and debts are split by each owner's share.",
       "empty": "Nothing recorded yet.",
-      "history": "Net worth over time",
-      "historyIntro": "Stored once a day by the daily job, or when you record it now.",
-      "historyEmpty": "The chart appears once two days have been stored.",
       "recordToday": "Record today",
       "notices": "New notices",
-      "seeAll": "See all"
+      "seeAll": "See all",
+      "ace": {
+        "title": "Your ACE",
+        "intro": "Assets are what you own. Capital is the part put to work. Earnings are what you bring in and spend.",
+        "assets": {
+          "title": "Assets",
+          "label": "Net worth"
+        },
+        "capital": {
+          "title": "Capital",
+          "label": "Capital at work"
+        },
+        "earnings": {
+          "title": "Earnings",
+          "label": "Saved each month"
+        },
+        "assetsHint": "{assets} owned, {debts} owed",
+        "capitalHint": "{pct} of your assets are invested",
+        "capitalEmpty": "Nothing invested recorded yet",
+        "earningsHint": "Average over the {n, plural, one {# month} other {# months}} with records",
+        "earningsEmpty": "Add income and costs to see this",
+        "incomeNote": "Add income records to see what you save.",
+        "earningsRateHint": "{rate} of income, average over the {n, plural, one {# month} other {# months}}",
+        "incomeCosts": "Income {income} a month, costs {costs}"
+      },
+      "fire": {
+        "title": "Your road to FIRE",
+        "planIntro": "From your plan \"{name}\", against what you have invested today.",
+        "estimateIntro": "An estimate from your costs. Make a FIRE plan to see the age you could reach it.",
+        "startIntro": "Record your income and costs to see your FIRE number and savings rate. Recurring salary and bills only need to be added once.",
+        "fireAge": "Projected FIRE age",
+        "yearsToGo": "About {years} years from the age in your plan of {date}",
+        "notReached": "Not reached in this plan. Try the stress tests or update your savings.",
+        "estimatedNumber": "Estimated FIRE number",
+        "estimateHint": "{costs} a year, from {n, plural, one {# month} other {# months}} of cost records, at a {rate} withdrawal rate",
+        "progress": "Progress to your FIRE number",
+        "investedOf": "{invested} invested of {target}",
+        "gap": "{amount} to go",
+        "savingsRate": "Savings rate",
+        "savedMonth": "Saved a month",
+        "addIncome": "Add income",
+        "openPlan": "Open plan",
+        "updatePlan": "Update plan",
+        "makePlan": "Make your FIRE plan",
+        "recordIncome": "Record income",
+        "recordCosts": "Record costs",
+        "illiquidNote": "Land and the family home are left out of the invested amount. Include them in your plan if you would sell them to live on."
+      },
+      "trend": {
+        "title": "Your ACE over time",
+        "intro": "The last {n} months. Net worth and capital at work are taken from each month's last daily snapshot; income, costs and savings from your records.",
+        "netWorthChange": "Net worth change",
+        "capitalChange": "Capital at work change",
+        "savedTotal": "Saved in these months",
+        "netWorth": "Net worth",
+        "capital": "Capital at work",
+        "chartEmpty": "The chart appears once two months have a stored snapshot. One is stored every day, or press \"Record today\".",
+        "tableTitle": "Earnings by month",
+        "tableEmpty": "No income or costs recorded in these months yet.",
+        "month": "Month",
+        "income": "Income",
+        "costs": "Costs",
+        "saved": "Saved",
+        "rate": "Savings rate",
+        "noIncome": "Savings show once income is recorded.",
+        "addIncome": "Add income"
+      },
+      "freshNote": "Your net worth, ACE figures and trend appear here as soon as you record income, costs or something you own."
     },
     "costs": {
       "intro": "Record what the household spends. Totals and the inflation view are worked out for you.",
@@ -834,13 +1043,13 @@
       "intro": "A wealth statement and income summary for a tax year, to help fill in the return. It is not a tax return.",
       "notAdvice": "Check figures and rebate rules with a tax adviser before filing. The rebate list is provisional.",
       "newTitle": "New statement",
-      "newIntro": "Profit, dividends and rent are taken from your records. Add salary and other income here.",
+      "newIntro": "Profit, dividends and rent come from your holdings and assets. Salary and other income come from your income records unless you type them in.",
       "prepare": "Prepare statement",
       "year": "Tax year",
       "yearHint": "1 July to 30 June, written as 2026-27.",
       "salary": "Salary for the year (৳)",
       "otherIncome": "Other income (৳)",
-      "otherIncomeHint": "Anything not recorded here.",
+      "otherIncomeHint": "Leave blank to use your income records.",
       "history": "Earlier statements",
       "empty": "No statements yet.",
       "netWealth": "Net wealth at cost",
@@ -858,7 +1067,14 @@
       "deductedOnHoldings": "Recorded on holdings",
       "rebateEligible": "Purchases that may qualify for rebate",
       "assets": "Assets",
-      "assetsIntro": "At this person's share, at cost as the return asks."
+      "assetsIntro": "At this person's share, at cost as the return asks.",
+      "salaryHint": "Leave blank to use your income records.",
+      "recorded": "Your income records for {year}: salary {salary}, other income {other}.",
+      "notCounted": "Not counted, because they come from your holdings and assets or are treated as exempt: {items}.",
+      "unassigned": "{amount} is recorded for the whole household and is not counted for one person. Give those records a member to include them.",
+      "openIncome": "Open income records",
+      "fromRecords": "from income records",
+      "typedIn": "typed in"
     },
     "fire": {
       "intro": "See when your savings could cover your costs, using your own assumptions. A projection, not a forecast.",
@@ -879,7 +1095,7 @@
       "netWorthHint": "What you could draw on.",
       "monthlySavings": "Saved each month (৳)",
       "yearlyExpenses": "Costs a year (৳)",
-      "yearlyExpensesHint": "Your last 12 months of recorded costs.",
+      "yearlyExpensesHint": "From your recorded costs: the last 12 months, or the average month times 12 if you have less.",
       "return": "Return a year (%)",
       "inflation": "Inflation a year (%)",
       "inflationHint": "Average CPI inflation over the last {months} months.",
@@ -918,7 +1134,8 @@
         "EXPENSES_UP": "Rise in costs (%)",
         "RETIRE_EARLIER": "Years earlier",
         "INFLATION_SHOCK": "Extra inflation (points)"
-      }
+      },
+      "monthlySavingsHint": "From your income less costs, averaged over the last 12 months. Change it if it is not right."
     },
     "goals": {
       "intro": "Targets for net worth, money invested or FIRE age, and how close you are.",
@@ -938,7 +1155,8 @@
       "targetAmountHint": "For net worth and invested-amount goals.",
       "targetDate": "Target date",
       "targetAge": "Target age",
-      "targetAgeHint": "For a FIRE-age goal."
+      "targetAgeHint": "For a FIRE-age goal.",
+      "savingsHint": "For \"Saved each month\", the target is a monthly amount. Progress uses the average over the last 12 months of income less costs."
     },
     "alerts": {
       "intro": "Notices about your money, and how you want to receive them. Until an email provider is set up, emails are not sent.",
@@ -950,7 +1168,7 @@
       "markRead": "Mark as read",
       "markAllRead": "Mark all as read",
       "settings": "Alert settings",
-      "settingsIntro": "Each alert also shows here in the app.",
+      "settingsIntro": "Each alert also shows here in the app. \"Once a day\" collects that alert into one email or notification each morning; \"Straight away\" sends each one as it happens.",
       "on": "On",
       "channel": "Send by",
       "frequency": "When",
@@ -981,7 +1199,8 @@
       "MONTHLY_REPORT": "Spending in {month}: {spending}. Net worth: {net_worth}.",
       "SHARIAH_STATUS_CHANGED": "The Shariah status of {ticker} changed from {from_status} to {to_status}.",
       "REGIME_CHANGED": "The macro regime label changed from {previous} to {label}.",
-      "SHOCK_EVENT_PUBLISHED": "A new event was added to the shock playbook: {title_en} ({date})."
+      "SHOCK_EVENT_PUBLISHED": "A new event was added to the shock playbook: {title_en} ({date}).",
+      "MONTHLY_REPORT_INCOME": "Spending in {month}: {spending}. Income: {income}, left after costs: {savings}. Net worth: {net_worth}."
     },
     "community": {
       "intro": "See how your savings rate and FIRE progress compare with people of a similar age. Anonymous and opt-in.",
@@ -1025,7 +1244,8 @@
       "add": "Add member",
       "emailHint": "Only to share with an existing account.",
       "anotherTitle": "Another household",
-      "anotherIntro": "For example, your parents' money kept separately. Switch between households at the top of each page."
+      "anotherIntro": "For example, your parents' money kept separately. Switch between households at the top of each page.",
+      "suggestedName": "{name} family"
     },
     "enum": {
       "householdRole": {
@@ -1198,7 +1418,8 @@
       "goalType": {
         "NET_WORTH": "Net worth",
         "INVESTED_AMOUNT": "Amount invested",
-        "FIRE_AGE": "FIRE by an age"
+        "FIRE_AGE": "FIRE by an age",
+        "MONTHLY_SAVINGS": "Saved each month"
       },
       "scenario": {
         "MARKET_CRASH": "Market fall in year one",
@@ -1226,11 +1447,21 @@
       "channel": {
         "EMAIL": "Email",
         "PUSH": "Browser notification",
-        "BOTH": "Both"
+        "BOTH": "Both",
+        "APP": "In the app only"
       },
       "alertFrequency": {
         "INSTANT": "Straight away",
         "DAILY_DIGEST": "Once a day"
+      },
+      "incomeType": {
+        "SALARY": "Salary",
+        "BUSINESS": "Business income",
+        "RENT": "Rent received",
+        "REMITTANCE": "Remittance",
+        "PROFIT": "Profit and interest",
+        "DIVIDEND": "Dividends",
+        "OTHER": "Other"
       }
     },
     "marketCheck": {
@@ -1259,16 +1490,14 @@
       "unread": "{n, plural, one {# new notice} other {# new notices}}",
       "groups": {
         "overview": "Overview",
-        "costs": "Costs",
-        "wealth": "What you own",
-        "insights": "How it's doing",
-        "duties": "Zakat and tax",
         "plans": "Plans",
-        "everyday": "Day to day",
-        "settings": "Notices and settings"
+        "settings": "Notices and settings",
+        "assets": "Assets",
+        "capital": "Capital",
+        "earnings": "Earnings"
       },
       "describe": {
-        "overview": "Net worth, costs and notices at a glance",
+        "overview": "Your road to FIRE, your ACE and notices at a glance",
         "costs": "What the household spends, month by month",
         "portfolio": "Bank, BO, savings and fund accounts",
         "assets": "Land, flats, gold, business stakes, loans",
@@ -1282,9 +1511,119 @@
         "goals": "Targets and how close you are",
         "community": "Anonymous comparison with your age group",
         "alerts": "Notices and how you receive them",
-        "household": "Members, roles and Zakat dates"
+        "household": "Members, roles and Zakat dates",
+        "income": "What comes in, and what is left after costs"
       },
       "shortcutsIntro": "Everything in My money, grouped by what you want to do."
+    },
+    "income": {
+      "intro": "Record what the household earns. Together with your costs it shows what is left to save each month.",
+      "income12": "Income, last 12 months",
+      "costs12": "Costs, last 12 months",
+      "savings12": "Saved, last 12 months",
+      "savingsRate": "Savings rate",
+      "rateHint": "Share of income not spent",
+      "rateEmpty": "Add income to see this",
+      "addTitle": "Add income",
+      "add": "Add income",
+      "added": "Income added.",
+      "kind": "Kind of income",
+      "byMonth": "By month",
+      "byMonthHint": "Income less costs for each month with records.",
+      "earned": "Earned",
+      "spent": "Spent",
+      "left": "Left",
+      "byKind": "By kind",
+      "byKindHint": "Over the last 12 months.",
+      "entries": "Entries",
+      "empty": "No income recorded yet.",
+      "deleteEntry": "Delete this income",
+      "recurringTitle": "Recurring income",
+      "recurringIntro": "A salary or rent is added on its due dates automatically.",
+      "recurringEmpty": "No recurring income.",
+      "deleteRecurring": "Delete this recurring income",
+      "addRecurring": "Add recurring income",
+      "export": "Download CSV",
+      "importTitle": "Import income",
+      "importIntro": "A CSV with the columns date, amount, kind, and optionally note and member. Kind is one of SALARY, BUSINESS, RENT, REMITTANCE, PROFIT, DIVIDEND or OTHER. Member is a name from your household."
+    },
+    "setup": {
+      "checklistTitle": "Getting started",
+      "checklistIntro": "{done} of {total} steps done. Each one makes your FIRE plan more accurate.",
+      "openQuickStart": "Open quick start",
+      "doneLabel": "Done",
+      "steps": {
+        "you": {
+          "title": "Your birth year",
+          "body": "Needed for your FIRE age."
+        },
+        "income": {
+          "title": "Your income",
+          "body": "Salary and other income."
+        },
+        "costs": {
+          "title": "Your costs",
+          "body": "Fixed bills and day-to-day spending."
+        },
+        "savings": {
+          "title": "What you hold",
+          "body": "Bank, certificates, deposits."
+        },
+        "plan": {
+          "title": "Your FIRE plan",
+          "body": "See your projected FIRE age."
+        }
+      },
+      "intro": "The basics in one form. Leave out anything you do not know yet; you can change everything later on the usual pages.",
+      "viewerOnly": "You can view this household but not change it. Ask an owner or editor to fill in the quick start.",
+      "submit": "Save and see my FIRE picture",
+      "youTitle": "You",
+      "youIntro": "Your FIRE age is worked out from this.",
+      "birthYear": "Year you were born",
+      "alreadyDone": "Already recorded. A new value replaces it.",
+      "incomeTitle": "Income",
+      "incomeIntro": "What comes in each month after tax, from salary or other regular work.",
+      "monthlyIncome": "Monthly take-home income (৳)",
+      "monthlyIncomeHint": "Added as monthly income from the 1st of this month. A second earner can be added on the Income page.",
+      "alreadyIncome": "You already have income records. This adds another monthly income.",
+      "costsTitle": "A typical month of costs",
+      "costsIntro": "Fixed costs repeat every month from the 1st of this month. Day-to-day costs are entered once as this month's estimate; keep recording them on the Costs page.",
+      "alreadyCosts": "You already have cost records. Amounts here are added to them.",
+      "fixed": "Fixed every month",
+      "variable": "Day to day, this month's estimate",
+      "perMonth": "{name} (৳ a month)",
+      "savingsTitle": "What you hold today",
+      "savingsIntro": "Totals are enough for now. Each becomes one holding you can split up later.",
+      "alreadySavings": "You already have holdings. Amounts here are added as new holdings.",
+      "savings": {
+        "cash": "Cash and bank balances (৳)",
+        "certificates": "Savings certificates, FDR and DPS (৳)",
+        "islamic": "Islamic deposits and sukuk (৳)"
+      },
+      "savingsLater": "Shares are best imported from your broker statement on the Accounts page. Gold and land go on the Property page.",
+      "skip": "Skip for now: I'll add things one page at a time"
+    },
+    "holdingCompany": {
+      "title": "About this company",
+      "intro": "How the company behind this holding has been screened, and how its price has historically moved with interest rates.",
+      "open": "Open {ticker}",
+      "notScreened": "Not screened yet",
+      "rateHint": "Typical move in the share price when the 91-day T-bill yield rose one point, from past weekly data. History, not a forecast."
+    },
+    "push": {
+      "title": "Notifications on this device",
+      "intro": "Get a browser notification for alerts set to \"Browser notification\" or \"Both\" above. Turn it on separately on each phone or computer.",
+      "checking": "Checking this browser...",
+      "turnOn": "Turn on notifications",
+      "turnOff": "Turn off on this device",
+      "failed": "Notifications could not be turned on. Try again, or check the browser's site settings.",
+      "notAvailable": "Browser notifications are not switched on for analysisACE yet.",
+      "state": {
+        "unsupported": "This browser cannot show notifications from websites. On an iPhone, add analysisACE to the home screen first.",
+        "blocked": "Notifications are blocked for this site. Allow them in the browser's site settings, then come back.",
+        "off": "Notifications are off on this device.",
+        "on": "Notifications are on for this device."
+      }
     }
   },
   "market": {
@@ -1577,6 +1916,10 @@
       "bankFlags": {
         "title": "Bank notices",
         "description": "Neutral, sourced notices about banks shown beside deposits."
+      },
+      "firms": {
+        "title": "Firms",
+        "description": "Create firm accounts, set seat limits and switch firms off."
       }
     },
     "data": {
@@ -1769,6 +2112,89 @@
       "edit": "Edit",
       "delete": "Delete notice",
       "deleteBody": "The notice will no longer appear beside deposits at this bank."
+    }
+  },
+  "firm": {
+    "metaTitle": "Firm",
+    "intro": "Weekly reports under your firm's name, data exports and API access for your team.",
+    "switch": "Your firms",
+    "role": {
+      "ADMIN": "Firm admin",
+      "MEMBER": "Member"
+    },
+    "reportTitle": "White-label weekly report",
+    "reportIntro": "The published weekly macro note as a PDF with your firm's logo, name and disclaimer, ready to send to clients.",
+    "latestWeek": "Latest: week of {date}",
+    "reportIn": {
+      "en": "Download in English",
+      "bn": "Download in Bangla"
+    },
+    "noReport": "No weekly note has been published yet.",
+    "exportsTitle": "Data exports",
+    "exportsIntro": "analysisACE's own Shariah screen and the rate-sensitivity scores as CSV, with their date and the disclaimer.",
+    "export": {
+      "shariah": "Shariah screen (CSV)",
+      "scores": "Rate sensitivity (CSV)"
+    },
+    "membersTitle": "Members",
+    "seats": "{used} of {limit} seats used",
+    "name": "Name",
+    "email": "Email",
+    "emailHint": "The person needs an analysisACE account with this email.",
+    "roleLabel": "Role",
+    "roleFor": "Role for {name}",
+    "remove": "Remove",
+    "removeTitle": "Remove {name} from the firm",
+    "addMember": "Add member",
+    "keysTitle": "API keys",
+    "keysIntro": "Read-only access to the same data for your own systems. Each key has its own limit per minute and is logged by day.",
+    "noKeys": "No API keys yet.",
+    "keyName": "Key name",
+    "keyNamePlaceholder": "Research desk",
+    "createKey": "Create key",
+    "keyOnce": "Copy this key now. It will not be shown again; only a fingerprint of it is stored.",
+    "keyFacts": "Created {created} · last used {used} · {limit} calls a minute",
+    "never": "never",
+    "revoked": "Revoked",
+    "revoke": "Revoke",
+    "revokeTitle": "Revoke the key {name}",
+    "apiHowTo": "How to call the API",
+    "apiHowToBody": "Send the key in the X-API-Key header. Every answer includes as_of and sources. These endpoints are read-only:",
+    "usageTitle": "API usage",
+    "usageIntro": "Calls per key and endpoint over the last 30 days.",
+    "noUsage": "No API calls yet.",
+    "date": "Date",
+    "key": "Key",
+    "endpoint": "Endpoint",
+    "calls": "Calls",
+    "brandingTitle": "Report branding",
+    "brandingIntro": "Shown on every page of your weekly report, next to analysisACE's own disclaimer.",
+    "disclaimer": "Firm disclaimer",
+    "disclaimerHint": "Printed at the foot of each page of the report. Up to 1,000 characters.",
+    "logo": "Logo",
+    "logoHint": "PNG or JPEG, under 300 KB. It is resized to fit 600 pixels.",
+    "logoAlt": "{name} logo",
+    "noLogo": "No logo yet; the report shows the firm's name.",
+    "uploadLogo": "Upload logo",
+    "removeLogo": "Remove logo",
+    "ownScreen": "Shariah results come from analysisACE's own screening of company reports, never from the DSE's licensed constituent list.",
+    "admin": {
+      "title": "Firms",
+      "intro": "Firm accounts for brokerages, asset managers and Islamic banks.",
+      "listTitle": "All firms",
+      "none": "No firms yet.",
+      "name": "Firm name",
+      "seats": "Seats",
+      "seatLimit": "Seat limit",
+      "seatLimitFor": "Seat limit for {name} ({used} in use)",
+      "created": "Created",
+      "active": "Active",
+      "activeFor": "{name} is active",
+      "createTitle": "New firm",
+      "createIntro": "The first admin must already have an analysisACE account. They can add the rest of the team.",
+      "adminEmail": "First admin's email",
+      "adminEmailHint": "An existing analysisACE account.",
+      "create": "Create firm"
     }
   }
 }

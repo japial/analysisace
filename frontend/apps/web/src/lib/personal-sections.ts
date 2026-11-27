@@ -1,14 +1,14 @@
 /**
  * How the "My money" sections are grouped. Fifteen pages are too many for one row of tabs,
- * so they are grouped by the task a person has in mind (card-sorting groups):
- * everyday spending, what the household owns, how it is doing, religious and legal duties,
- * and plans. Alerts and the household settings sit apart, as utilities.
+ * so they follow the ACE idea (D19): Assets (what is owned, Zakat), Capital (money put to
+ * work and how it is doing), Earnings (costs and tax) and Plans (FIRE, goals). Alerts and
+ * the household settings sit apart, as utilities.
  *
  * Used by the section menu (desktop dropdowns, phone sheet) and the overview's shortcuts.
  */
 import {
+  Banknote,
   Bell,
-  ChartColumn,
   ChartPie,
   FileText,
   Flag,
@@ -19,6 +19,7 @@ import {
   Landmark,
   LayoutDashboard,
   type LucideIcon,
+  PiggyBank,
   Receipt,
   Scale,
   ShieldCheck,
@@ -26,11 +27,11 @@ import {
   TrendingUp,
   Users,
   UsersRound,
-  Wallet,
 } from "lucide-react";
 
 export type SectionKey =
   | "overview"
+  | "income"
   | "costs"
   | "portfolio"
   | "assets"
@@ -54,37 +55,38 @@ export interface Section {
 
 export interface SectionGroup {
   /** Message key under `personal.nav.groups`. */
-  key: "overview" | "costs" | "wealth" | "insights" | "duties" | "plans";
+  key: "overview" | "assets" | "capital" | "earnings" | "plans";
   icon: LucideIcon;
   sections: Section[];
 }
 
 export const SECTION_GROUPS: SectionGroup[] = [
   { key: "overview", icon: LayoutDashboard, sections: [{ key: "overview", href: "/personal", icon: LayoutDashboard }] },
-  { key: "costs", icon: Receipt, sections: [{ key: "costs", href: "/personal/costs", icon: Receipt }] },
   {
-    key: "wealth",
-    icon: Wallet,
+    key: "assets",
+    icon: Scale,
     sections: [
-      { key: "portfolio", href: "/personal/portfolio", icon: Landmark },
       { key: "assets", href: "/personal/assets", icon: House },
-      { key: "sukuk", href: "/personal/sukuk", icon: HandCoins },
+      { key: "zakat", href: "/personal/zakat", icon: HandHeart },
     ],
   },
   {
-    key: "insights",
-    icon: ChartColumn,
+    key: "capital",
+    icon: TrendingUp,
     sections: [
+      { key: "portfolio", href: "/personal/portfolio", icon: Landmark },
+      { key: "sukuk", href: "/personal/sukuk", icon: HandCoins },
       { key: "performance", href: "/personal/performance", icon: TrendingUp },
       { key: "allocation", href: "/personal/allocation", icon: ChartPie },
       { key: "marketCheck", href: "/personal/market-check", icon: ShieldCheck },
     ],
   },
   {
-    key: "duties",
-    icon: Scale,
+    key: "earnings",
+    icon: PiggyBank,
     sections: [
-      { key: "zakat", href: "/personal/zakat", icon: HandHeart },
+      { key: "income", href: "/personal/income", icon: Banknote },
+      { key: "costs", href: "/personal/costs", icon: Receipt },
       { key: "tax", href: "/personal/tax", icon: FileText },
     ],
   },

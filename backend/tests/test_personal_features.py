@@ -235,3 +235,24 @@ def test_community_needs_consent_and_a_large_group_fr21(
     owner = login(demo_client)
     refused = demo_client.get(f"{API}/community/benchmarks", headers=owner)
     assert refused.json()["detail"] == "CONSENT_REQUIRED"
+
+
+def test_ace_summary_assets_capital_earnings_d19(
+    demo_client: TestClient, demo_session: Session
+) -> None:
+    owner, root = login(demo_client), base(demo_session)
+    body = demo_client.get(f"{root}/ace/summary", headers=owner).json()
+    data = body["data"]
+    assert body["as_of"] and body["sources"]
+    assets = data["assets"]
+    assert D(assets["net_worth"]) == D(assets["total"]) - D(assets["liabilities"])
+    capital = data["capital"]
+    assert 0 < D(capital["at_work"]) <= D(assets["total"])
+    assert D(capital["share_of_assets_pct"]) == (
+        D(capital["at_work"]) / D(assets["total"]) * 100
+    ).quantize(D("0.01"))
+    earnings = data["earnings"]
+    assert earnings["months_counted"] > 0
+    assert D(earnings["average_monthly_cost"]) == (
+        D(earnings["costs_trailing_12_months"]) / earnings["months_counted"]
+    ).quantize(D("0.01"))

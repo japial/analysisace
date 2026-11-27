@@ -9,7 +9,7 @@ from datetime import timedelta
 from enum import StrEnum
 from typing import Any
 
-from sqlalchemy import delete, func, select, update
+from sqlalchemy import and_, delete, func, or_, select, update
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
@@ -26,7 +26,11 @@ from app.core.security import (
 from app.models import (
     AlertRule,
     AuditLog,
+    EmailChangeToken,
+    EmailVerificationToken,
+    Firm,
     FirmSeat,
+    HouseholdMember,
     Notification,
     PasswordResetToken,
     PushSubscription,
@@ -36,7 +40,13 @@ from app.models import (
     Watchlist,
 )
 from app.services import household_data
-from app.services.email import EmailSender, password_reset_email
+from app.services.email import EmailSender, send_safely
+from app.services.email_templates import (
+    email_change_email,
+    email_changed_notice,
+    password_reset_email,
+    verification_email,
+)
 
 
 class AuthError(Exception):
@@ -221,9 +231,72 @@ def request_password_reset(
     )
     db.flush()
     link = f"{settings.web_base_url}/{user.locale}/reset-password?token={token}"
-    sender.send(
-        password_reset_email(user.email, user.locale, link, settings.password_reset_ttl_minutes)
+    # The answer is the same whether or not the email went, so accounts cannot be probed.
+    send_safely(
+        sender,
+        password_reset_email(user.email, user.locale, link, settings.password_reset_ttl_minutes),
     )
+
+
+def start_email_verification(
+    db: Session, user: User, sender: EmailSender, settings: Settings
+) -> bool:
+    """Email a link that confirms the address (D25). Earlier unused links stop working, so
+    only the newest one counts. Returns False when there is nothing to confirm."""
+    # A confirmed address that bounced (D35) can be confirmed again to resume email.
+    if not user.is_active or (user.email_verified_at is not None and user.email_bounced_at is None):
+        return False
+    now = utcnow()
+    for old in db.scalars(
+        select(EmailVerificationToken).where(
+            EmailVerificationToken.user_id == user.id, EmailVerificationToken.used_at.is_(None)
+        )
+    ):
+        old.used_at = now
+    token = new_token()
+    db.add(
+        EmailVerificationToken(
+            user_id=user.id,
+            token_hash=hash_token(token),
+            expires_at=now + timedelta(hours=settings.email_verification_ttl_hours),
+        )
+    )
+    db.flush()
+    link = f"{settings.web_base_url}/{user.locale}/verify-email?token={token}"
+    send_safely(
+        sender,
+        verification_email(user.email, user.locale, link, settings.email_verification_ttl_hours),
+    )
+    return True
+
+
+def confirm_email_verification(db: Session, token: str) -> User:
+    record = db.scalar(
+        select(EmailVerificationToken).where(EmailVerificationToken.token_hash == hash_token(token))
+    )
+    if record is None or record.used_at is not None or as_utc(record.expires_at) <= utcnow():
+        raise AuthError("VERIFY_TOKEN_INVALID")
+    user = db.get(User, record.user_id)
+    if user is None or not user.is_active:
+        raise AuthError("VERIFY_TOKEN_INVALID")
+    record.used_at = utcnow()
+    if user.email_verified_at is None:
+        user.email_verified_at = utcnow()
+        audit(db, str(user.id), "EMAIL_VERIFIED", "app_user", str(user.id))
+    if user.email_bounced_at is not None:
+        # D35: the link reached the person, so the address works again.
+        audit(
+            db,
+            str(user.id),
+            "EMAIL_BOUNCE_CLEARED",
+            "app_user",
+            str(user.id),
+            before={"status": user.email_bounce_status},
+        )
+        user.email_bounced_at = None
+        user.email_bounce_status = None
+        user.email_verified_at = utcnow()
+    return user
 
 
 def confirm_password_reset(db: Session, token: str, new_password: str) -> User:
@@ -253,6 +326,110 @@ def change_password(
     user.password_hash = hash_password(new_password)
     revoke_all_sessions(db, user.id, keep=keep)
     audit(db, str(user.id), "PASSWORD_CHANGED", "app_user", str(user.id))
+
+
+# --- changing the sign-in email (D39) ---------------------------------------------------
+
+
+def pending_email_change(db: Session, user: User) -> EmailChangeToken | None:
+    """The newest change still waiting for its link to be opened, if any."""
+    return db.scalar(
+        select(EmailChangeToken)
+        .where(
+            EmailChangeToken.user_id == user.id,
+            EmailChangeToken.used_at.is_(None),
+            EmailChangeToken.expires_at > utcnow(),
+        )
+        .order_by(EmailChangeToken.created_at.desc())
+        .limit(1)
+    )
+
+
+def _close_email_changes(db: Session, user_id: uuid.UUID) -> None:
+    db.execute(
+        update(EmailChangeToken)
+        .where(EmailChangeToken.user_id == user_id, EmailChangeToken.used_at.is_(None))
+        .values(used_at=utcnow())
+    )
+
+
+def request_email_change(
+    db: Session,
+    user: User,
+    new_email: str,
+    password: str,
+    sender: EmailSender,
+    settings: Settings,
+) -> EmailChangeToken:
+    """Send a link to the new address (D39). Nothing changes until it is opened, so a typo
+    or someone else's address cannot take over the account. The password is asked again
+    because whoever controls the email controls password resets."""
+    if not verify_password(password, user.password_hash):
+        raise AuthError("WRONG_PASSWORD")
+    new = normalise_email(new_email)
+    if new == user.email:
+        raise AuthError("EMAIL_UNCHANGED", 422)
+    if get_user_by_email(db, new) is not None:
+        raise AuthError("EMAIL_TAKEN", 409)
+    _close_email_changes(db, user.id)
+    token = new_token()
+    record = EmailChangeToken(
+        user_id=user.id,
+        new_email=new,
+        token_hash=hash_token(token),
+        expires_at=utcnow() + timedelta(hours=settings.email_verification_ttl_hours),
+    )
+    db.add(record)
+    db.flush()
+    audit(db, str(user.id), "EMAIL_CHANGE_REQUESTED", "app_user", str(user.id))
+    link = f"{settings.web_base_url}/{user.locale}/confirm-email-change?token={token}"
+    send_safely(
+        sender,
+        email_change_email(new, user.locale, link, settings.email_verification_ttl_hours),
+    )
+    return record
+
+
+def cancel_email_change(db: Session, user: User) -> None:
+    _close_email_changes(db, user.id)
+    db.flush()
+
+
+def confirm_email_change(db: Session, token: str, sender: EmailSender, settings: Settings) -> User:
+    """The link from the new address was opened (D39): switch the sign-in email. The new
+    address is confirmed by this, and a bounce pause (D35) ends. Reset and confirmation
+    links sent to the old address stop working, and the old address is told."""
+    record = db.scalar(
+        select(EmailChangeToken).where(EmailChangeToken.token_hash == hash_token(token))
+    )
+    if record is None or record.used_at is not None or as_utc(record.expires_at) <= utcnow():
+        raise AuthError("EMAIL_CHANGE_TOKEN_INVALID")
+    user = db.get(User, record.user_id)
+    if user is None or not user.is_active:
+        raise AuthError("EMAIL_CHANGE_TOKEN_INVALID")
+    taken = get_user_by_email(db, record.new_email)
+    if taken is not None and taken.id != user.id:
+        raise AuthError("EMAIL_TAKEN", 409)
+    now = utcnow()
+    old = user.email
+    user.email = record.new_email
+    user.email_verified_at = now
+    user.email_bounced_at = None
+    user.email_bounce_status = None
+    _close_email_changes(db, user.id)
+    for model in (PasswordResetToken, EmailVerificationToken):
+        db.execute(
+            update(model)
+            .where(model.user_id == user.id, model.used_at.is_(None))
+            .values(used_at=now)
+        )
+    audit(db, str(user.id), "EMAIL_CHANGED", "app_user", str(user.id))
+    db.flush()
+    send_safely(
+        sender,
+        email_changed_notice(old, user.locale, user.email, settings.web_base_url),
+    )
+    return user
 
 
 def update_consents(db: Session, user: User, changes: dict[ConsentPurpose, bool]) -> None:
@@ -291,6 +468,12 @@ def export_user_data(db: Session, user: User) -> dict[str, Any]:
             "role": user.role,
             "created_at": as_utc(user.created_at).isoformat(),
             "last_login_at": as_utc(user.last_login_at).isoformat() if user.last_login_at else None,
+            "email_verified_at": as_utc(user.email_verified_at).isoformat()
+            if user.email_verified_at
+            else None,
+            "email_bounced_at": as_utc(user.email_bounced_at).isoformat()
+            if user.email_bounced_at
+            else None,
         },
         "consents": user.consents,
         "households": [
@@ -298,6 +481,76 @@ def export_user_data(db: Session, user: User) -> dict[str, Any]:
             for household_id in household_data.households_of(db, user.id)
         ],
         "watchlist": list(db.scalars(select(Watchlist.ticker).where(Watchlist.user_id == user.id))),
+        "push_subscriptions": [
+            {"user_agent": p.user_agent, "created_at": as_utc(p.created_at).isoformat()}
+            for p in db.scalars(select(PushSubscription).where(PushSubscription.user_id == user.id))
+        ],
+        "pending_email_change": (
+            {
+                "new_email": pending.new_email,
+                "requested_at": as_utc(pending.created_at).isoformat(),
+                "expires_at": as_utc(pending.expires_at).isoformat(),
+            }
+            if (pending := pending_email_change(db, user)) is not None
+            else None
+        ),
+        "notifications": [
+            {
+                "type": n.type,
+                "message_key": n.message_key,
+                "data": n.data,
+                "link": n.link,
+                "created_at": as_utc(n.created_at).isoformat(),
+                "read_at": as_utc(n.read_at).isoformat() if n.read_at else None,
+                "emailed_at": as_utc(n.sent_at).isoformat() if n.sent_at else None,
+            }
+            for n in db.scalars(
+                select(Notification)
+                .where(Notification.user_id == user.id)
+                .order_by(Notification.created_at)
+            )
+        ],
+        "firm_seats": [
+            {"firm": firm.name, "role": seat.role, "since": as_utc(seat.created_at).isoformat()}
+            for seat, firm in db.execute(
+                select(FirmSeat, Firm)
+                .join(Firm, Firm.id == FirmSeat.firm_id)
+                .where(FirmSeat.user_id == user.id)
+            ).all()
+        ],
+        "subscriptions": [
+            {
+                "plan": sub.plan,
+                "status": sub.status,
+                "provider": sub.provider,
+                "created_at": as_utc(sub.created_at).isoformat(),
+            }
+            for sub in db.scalars(select(Subscription).where(Subscription.user_id == user.id))
+        ],
+        # What was done by this person or to this account. Details are included only for
+        # changes to the account itself (consents, role), since other entries can name others.
+        "activity": [
+            {
+                "action": row.action,
+                "entity": row.entity,
+                "at": as_utc(row.at).isoformat(),
+                **(
+                    {"before": row.before, "after": row.after}
+                    if row.entity == "app_user" and row.entity_id == str(user.id)
+                    else {}
+                ),
+            }
+            for row in db.scalars(
+                select(AuditLog)
+                .where(
+                    or_(
+                        AuditLog.actor == str(user.id),
+                        and_(AuditLog.entity == "app_user", AuditLog.entity_id == str(user.id)),
+                    )
+                )
+                .order_by(AuditLog.at)
+            )
+        ],
         "alert_rules": [
             {"type": r.type, "channel": r.channel, "frequency": r.frequency, "params": r.params}
             for r in db.scalars(select(AlertRule).where(AlertRule.user_id == user.id))
@@ -315,6 +568,61 @@ def export_user_data(db: Session, user: User) -> dict[str, Any]:
     }
 
 
+def _hand_over(db: Session, user: User) -> None:
+    """Account deletion never strands others (FR23.4, D33). Where this person is the only
+    owner of a household that someone else still signs in to, the longest-standing member
+    with a login becomes owner; where they are the only admin of a firm with other members,
+    the longest-standing member becomes admin. Each handover is in the audit log."""
+    for member in db.scalars(
+        select(HouseholdMember).where(
+            HouseholdMember.user_id == user.id, HouseholdMember.role == "OWNER"
+        )
+    ):
+        others = list(
+            db.scalars(
+                select(HouseholdMember)
+                .where(
+                    HouseholdMember.household_id == member.household_id,
+                    HouseholdMember.user_id.is_not(None),
+                    HouseholdMember.user_id != user.id,
+                )
+                .order_by(HouseholdMember.created_at)
+            )
+        )
+        if others and not any(o.role == "OWNER" for o in others):
+            heir = others[0]
+            heir.role = "OWNER"
+            audit(
+                db,
+                str(user.id),
+                "HOUSEHOLD_OWNER_HANDED_OVER",
+                "household",
+                str(member.household_id),
+                after={"member_id": str(heir.id)},
+            )
+    for seat in db.scalars(
+        select(FirmSeat).where(FirmSeat.user_id == user.id, FirmSeat.role == "ADMIN")
+    ):
+        colleagues = list(
+            db.scalars(
+                select(FirmSeat)
+                .where(FirmSeat.firm_id == seat.firm_id, FirmSeat.user_id != user.id)
+                .order_by(FirmSeat.created_at)
+            )
+        )
+        if colleagues and not any(c.role == "ADMIN" for c in colleagues):
+            colleagues[0].role = "ADMIN"
+            audit(
+                db,
+                str(user.id),
+                "FIRM_ADMIN_HANDED_OVER",
+                "firm",
+                str(seat.firm_id),
+                after={"user_id": str(colleagues[0].user_id)},
+            )
+    db.flush()
+
+
 def delete_account(db: Session, user: User, password: str) -> None:
     """Remove the account and everything tied to it (FR23.4)."""
     if not verify_password(password, user.password_hash):
@@ -322,6 +630,7 @@ def delete_account(db: Session, user: User, password: str) -> None:
     if user.role == Role.ADMIN.value and count_active_admins(db) <= 1:
         raise AuthError("LAST_ADMIN", 409)
     user_id = user.id
+    _hand_over(db, user)
     for household_id in household_data.households_of(db, user_id):
         # A household shared with another login stays; this person just leaves it.
         if not household_data.has_other_login(db, household_id, user_id):
@@ -330,6 +639,8 @@ def delete_account(db: Session, user: User, password: str) -> None:
         db.execute(delete(model).where(model.user_id == user_id))
     db.execute(delete(UserSession).where(UserSession.user_id == user_id))
     db.execute(delete(PasswordResetToken).where(PasswordResetToken.user_id == user_id))
+    db.execute(delete(EmailVerificationToken).where(EmailVerificationToken.user_id == user_id))
+    db.execute(delete(EmailChangeToken).where(EmailChangeToken.user_id == user_id))
     db.delete(user)
     # The audit entry keeps the id only, never the email or name.
     audit(db, str(user_id), "USER_DELETED", "app_user", str(user_id))
