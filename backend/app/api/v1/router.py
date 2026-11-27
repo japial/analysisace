@@ -8,6 +8,7 @@ from app.api.v1 import (
     auth,
     companies,
     costs,
+    email_links,
     firm_api,
     firms,
     households,
@@ -28,6 +29,7 @@ api_router.include_router(companies.router)
 api_router.include_router(auth.router)
 api_router.include_router(me.router)
 api_router.include_router(push.router)
+api_router.include_router(email_links.router)
 # Firm features (F9, D30); every route is 404 while FIRM_FEATURES_ENABLED is off.
 api_router.include_router(firms.router)
 api_router.include_router(firm_api.router)

@@ -100,7 +100,7 @@ def test_once_a_day_alerts_wait_for_one_email_fr7_3(demo_session: Session) -> No
     assert digest.subject == "2 new notices from analysisACE"
     assert "First crore" in digest.body and "1 February 2027" in digest.body
     assert digest.html and "First crore" in digest.html
-    assert digest.headers["List-Unsubscribe"].endswith("/en/personal/alerts>")
+    assert "/en/unsubscribe/one-click?t=" in digest.headers["List-Unsubscribe"]  # D34
     assert first.digested_at is not None and first.sent_at is not None
 
     # A second run has nothing left to send.

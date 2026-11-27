@@ -9,6 +9,7 @@ import {
   requestPasswordResetAction,
   signInAction,
   signUpAction,
+  unsubscribeAction,
 } from "@/app/actions/auth";
 import { Field, FormMessage, SubmitButton } from "@/components/form/form-parts";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -192,6 +193,39 @@ export function VerifyEmailForm({ token }: { token: string }) {
         className="text-center text-sm font-medium text-primary hover:underline"
       >
         {state.ok ? t("verifyContinue") : t("verifyAccount")}
+      </Link>
+    </form>
+  );
+}
+
+/**
+ * D34: the page an email's "stop these emails" link opens. It asks before changing anything,
+ * because mail scanners open links; mail apps use the one-click address instead.
+ */
+export function UnsubscribeForm({
+  token,
+  question,
+  emailing,
+}: {
+  token: string;
+  question: string;
+  emailing: boolean;
+}) {
+  const t = useTranslations("auth");
+  const [state, action] = useActionState(unsubscribeAction, INITIAL_FORM_STATE);
+
+  return (
+    <form action={action} className="flex flex-col gap-4">
+      <Heading title={t("unsubscribeTitle")} intro={emailing ? question : t("unsubscribeAlready")} />
+      <FormMessage state={state} success={t("unsubscribeDone")} />
+      {emailing && !state.ok && (
+        <>
+          <input type="hidden" name="token" value={token} />
+          <SubmitButton>{t("unsubscribeSubmit")}</SubmitButton>
+        </>
+      )}
+      <Link href="/personal/alerts" className="text-center text-sm font-medium text-primary hover:underline">
+        {t("unsubscribeSettings")}
       </Link>
     </form>
   );

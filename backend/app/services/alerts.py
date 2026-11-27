@@ -32,7 +32,15 @@ from app.models import (
     User,
 )
 from app.models.enums import AlertFrequency, AlertType, Channel
-from app.services import alt_assets, islamic, performance, planning, push, zakat_tax
+from app.services import (
+    alt_assets,
+    islamic,
+    performance,
+    planning,
+    push,
+    unsubscribe,
+    zakat_tax,
+)
 from app.services.alert_texts import EMAIL_TEXT
 from app.services.auth import AuthError, ConsentPurpose
 from app.services.email import EmailSender, send_safely
@@ -51,6 +59,10 @@ Q2 = Decimal("0.01")
 
 
 # --- rules (FR20.1, FR7.3) ------------------------------------------------------------
+
+
+def _lang(locale: str | None) -> str:
+    return locale if locale in ("bn", "en") else "en"
 
 
 def list_rules(db: Session, user: User) -> list[AlertRule]:
@@ -166,7 +178,13 @@ def notify(
     template = EMAIL_TEXT.get(message_key)
     # FR7.3 (D32): "once a day" holds the email and push back for the daily digest. The
     # notice is in the app at once either way.
-    if rule is not None and rule.frequency == "DAILY_DIGEST" and template is not None:
+    # An alert set to the app only (D34) has nothing to hold back or send.
+    if (
+        rule is not None
+        and rule.frequency == "DAILY_DIGEST"
+        and rule.channel != "APP"
+        and template is not None
+    ):
         row.digest_channel = rule.channel
         db.flush()
         return row
@@ -177,8 +195,16 @@ def notify(
         and template is not None
         and user.email_verified_at is not None
     ):
+        base = get_settings().web_base_url
         email = alert_email(
-            user.email, user.locale, type, message_key, data, link, get_settings().web_base_url
+            user.email,
+            user.locale,
+            type,
+            message_key,
+            data,
+            link,
+            base,
+            unsubscribe.links(base, _lang(user.locale), user.id, type),
         )
         # The notice stays in the app either way; sent_at records that the email went.
         if email is not None and send_safely(sender, email):
@@ -407,7 +433,9 @@ def send_digests(db: Session, sender: EmailSender, now: dt.datetime | None = Non
                 )
                 is not None
             ]
-            if items and not send_safely(sender, digest_email(user.email, locale, items, base)):
+            stop = unsubscribe.links(base, locale, user.id, unsubscribe.DIGEST)
+            email = digest_email(user.email, locale, items, base, stop)
+            if items and not send_safely(sender, email):
                 # Try again at the next run; push waits too, so the two stay together.
                 continue
             for row in by_email:
@@ -516,7 +544,14 @@ def send_monthly_reports(
             and user.email_verified_at is not None
         )
         if wants_email and send_safely(
-            sender, monthly_report_email(user.email, user.locale, figures, web_base_url)
+            sender,
+            monthly_report_email(
+                user.email,
+                user.locale,
+                figures,
+                web_base_url,
+                unsubscribe.links(web_base_url, _lang(user.locale), user.id, "MONTHLY_REPORT"),
+            ),
         ):
             row.sent_at = utcnow()
         sent += 1

@@ -12,9 +12,17 @@ from pathlib import Path
 
 from app.services import email_templates as templates
 from app.services.email import Email
+from app.services.email_render import Links
 
 BASE = "https://analysisace.com"
 TO = "karim.rahman@example.com"
+
+
+def _stop(locale: str) -> Links:
+    return Links(
+        page=f"{BASE}/{locale}/unsubscribe?t=sample-token",
+        one_click=f"{BASE}/{locale}/unsubscribe/one-click?t=sample-token",
+    )
 
 
 def samples(locale: str) -> dict[str, Email | None]:
@@ -42,6 +50,7 @@ def samples(locale: str) -> dict[str, Email | None]:
             {"name": "First crore"},
             "/personal/goals",
             BASE,
+            _stop(locale),
         ),
         "alert-drift": templates.alert_email(
             TO,
@@ -51,6 +60,7 @@ def samples(locale: str) -> dict[str, Email | None]:
             {"asset_class": "EQUITY", "actual_pct": "38.50", "target_pct": "30", "band_pct": "5"},
             "/personal/allocation",
             BASE,
+            _stop(locale),
         ),
         "alert-shariah": templates.alert_email(
             TO,
@@ -60,6 +70,7 @@ def samples(locale: str) -> dict[str, Email | None]:
             {"ticker": "DMPHARMA", "from_status": "UNDER_REVIEW", "to_status": "COMPLIANT"},
             "/companies/DMPHARMA",
             BASE,
+            _stop(locale),
         ),
         "alert-zakat-date": templates.alert_email(
             TO,
@@ -69,8 +80,9 @@ def samples(locale: str) -> dict[str, Email | None]:
             {"name": "Karim Rahman", "date": "2027-02-01", "days": "30"},
             "/personal/zakat",
             BASE,
+            _stop(locale),
         ),
-        "monthly-report": templates.monthly_report_email(TO, locale, report, BASE),
+        "monthly-report": templates.monthly_report_email(TO, locale, report, BASE, _stop(locale)),
         "daily-digest": templates.digest_email(
             TO,
             locale,
@@ -92,6 +104,7 @@ def samples(locale: str) -> dict[str, Email | None]:
                 if (item := templates.digest_item(locale, key, data, link, BASE)) is not None
             ],
             BASE,
+            _stop(locale),
         ),
     }
 

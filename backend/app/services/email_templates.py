@@ -9,7 +9,15 @@ from typing import Any
 
 from app.services.alert_texts import EMAIL_TEXT
 from app.services.email import Email
-from app.services.email_render import Button, Content, Item, label, readable, render
+from app.services.email_render import (
+    Button,
+    Content,
+    Item,
+    Links,
+    label,
+    readable,
+    render,
+)
 from app.services.text_format import digits, money, month_text, number
 
 _T: dict[str, dict[str, str]] = {
@@ -32,6 +40,7 @@ _T: dict[str, dict[str, str]] = {
         "open": "Open in analysisACE",
         "alert_reason": 'You get this email because the "{alert}" alert is set to email.',
         "manage": "Change alert settings",
+        "unsubscribe": "Stop these emails",
         "report_subject": "Your analysisACE report for {month}",
         "report_preheader": "Spending, savings and net worth for {month}.",
         "report_heading": "Your money in {month}",
@@ -75,6 +84,7 @@ _T: dict[str, dict[str, str]] = {
         "open": "analysisACE-এ খুলুন",
         "alert_reason": '"{alert}" সতর্কবার্তা ইমেইলে পাঠানোর জন্য চালু আছে বলে আপনি এই ইমেইল পাচ্ছেন।',
         "manage": "সতর্কবার্তার সেটিংস বদলান",
+        "unsubscribe": "এই ইমেইল বন্ধ করুন",
         "report_subject": "{month} মাসের analysisACE প্রতিবেদন",
         "report_preheader": "{month} মাসের খরচ, সঞ্চয় ও নিট সম্পদ।",
         "report_heading": "{month} মাসে আপনার অর্থ",
@@ -149,11 +159,24 @@ def verification_email(to: str, locale: str, link: str, hours: int) -> Email:
     )
 
 
-def _manage(base: str, lang: str) -> tuple[Button, dict[str, str]]:
-    """The alert settings page, as a footer link and as the List-Unsubscribe header so mail
-    apps can show their own "unsubscribe" control."""
-    url = _url(base, lang, "/personal/alerts")
-    return Button(_T[lang]["manage"], url), {"List-Unsubscribe": f"<{url}>"}
+def _manage(
+    base: str, lang: str, unsubscribe: Links | None
+) -> tuple[Button, Button | None, dict[str, str]]:
+    """The footer links and the List-Unsubscribe headers (D34). With a person's links, mail
+    apps show their own "unsubscribe" button and post to the one-click address (RFC 8058);
+    without them, the header points to the alert settings page."""
+    settings = _url(base, lang, "/personal/alerts")
+    manage = Button(_T[lang]["manage"], settings)
+    if unsubscribe is None:
+        return manage, None, {"List-Unsubscribe": f"<{settings}>"}
+    return (
+        manage,
+        Button(_T[lang]["unsubscribe"], unsubscribe.page),
+        {
+            "List-Unsubscribe": f"<{unsubscribe.one_click}>",
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
+    )
 
 
 def alert_email(
@@ -164,6 +187,7 @@ def alert_email(
     data: Mapping[str, Any],
     link: str,
     base: str,
+    unsubscribe: Links | None = None,
 ) -> Email | None:
     """An alert notice (FR7, FR20.1) with its values as words and local numbers. None when
     the notice has no email text."""
@@ -175,7 +199,7 @@ def alert_email(
     subject, body = template[lang]
     values = readable(data, lang)
     text = body.format(**values)
-    manage, headers = _manage(base, lang)
+    manage, stop, headers = _manage(base, lang, unsubscribe)
     return render(
         Content(
             locale=lang,
@@ -187,12 +211,19 @@ def alert_email(
             button=Button(t["open"], _url(base, lang, link)),
             reason=t["alert_reason"].format(alert=label("alertType", alert_type, lang)),
             manage=manage,
+            unsubscribe=stop,
             headers=headers,
         )
     )
 
 
-def monthly_report_email(to: str, locale: str, figures: Mapping[str, Any], base: str) -> Email:
+def monthly_report_email(
+    to: str,
+    locale: str,
+    figures: Mapping[str, Any],
+    base: str,
+    unsubscribe: Links | None = None,
+) -> Email:
     """The monthly report (FR20.2): last month's spending, income and savings, today's net
     worth, a Zakat estimate and FIRE progress, each only when there is a figure."""
     lang = _lang(locale)
@@ -208,7 +239,7 @@ def monthly_report_email(to: str, locale: str, figures: Mapping[str, Any], base:
     if figures.get("fire_progress_pct") is not None:
         progress = number(Decimal(str(figures["fire_progress_pct"])), lang, max_places=0)
         facts.append((t["report_fire"], f"{progress}%"))
-    manage, headers = _manage(base, lang)
+    manage, stop, headers = _manage(base, lang, unsubscribe)
     return render(
         Content(
             locale=lang,
@@ -221,6 +252,7 @@ def monthly_report_email(to: str, locale: str, figures: Mapping[str, Any], base:
             button=Button(t["report_button"], _url(base, lang, "/personal")),
             reason=t["report_reason"],
             manage=manage,
+            unsubscribe=stop,
             headers=headers,
         )
     )
@@ -247,7 +279,9 @@ def digest_item(
     )
 
 
-def digest_email(to: str, locale: str, items: list[Item], base: str) -> Email:
+def digest_email(
+    to: str, locale: str, items: list[Item], base: str, unsubscribe: Links | None = None
+) -> Email:
     """The daily digest (FR7.3, D32): every notice waiting since the last one, newest last,
     shown up to DIGEST_LIMIT with the rest counted."""
     lang = _lang(locale)
@@ -264,7 +298,7 @@ def digest_email(to: str, locale: str, items: list[Item], base: str) -> Email:
         if count == 1
         else t["digest_subject"].format(count=digits(str(count), lang))
     )
-    manage, headers = _manage(base, lang)
+    manage, stop, headers = _manage(base, lang, unsubscribe)
     return render(
         Content(
             locale=lang,
@@ -278,6 +312,7 @@ def digest_email(to: str, locale: str, items: list[Item], base: str) -> Email:
             button=Button(t["digest_button"], _url(base, lang, "/personal/alerts")),
             reason=t["digest_reason"],
             manage=manage,
+            unsubscribe=stop,
             headers=headers,
         )
     )

@@ -161,6 +161,22 @@ export function confirmEmailVerification(token: string): Promise<void> {
   return request("/auth/verify-email/confirm", { method: "POST", body: { token } });
 }
 
+/** What an email's unsubscribe link would stop (D34). No sign-in: the token says whose. */
+export interface UnsubscribeScope {
+  /** An alert type, or "DIGEST" for every alert that arrives once a day. */
+  scope: string;
+  /** Whether any of it is still emailed. */
+  emailing: boolean;
+}
+
+export function checkUnsubscribe(token: string): Promise<UnsubscribeScope> {
+  return request("/email/unsubscribe/check", { method: "POST", body: { token } });
+}
+
+export function unsubscribeByLink(token: string): Promise<{ scope: string; changed: number }> {
+  return request("/email/unsubscribe", { method: "POST", body: { token } });
+}
+
 export function getMe(token: string): Promise<User> {
   return request("/me", { token });
 }

@@ -798,7 +798,8 @@ export const ALERT_TYPES = [
 ] as const;
 export type PersonalAlertType = (typeof ALERT_TYPES)[number];
 
-export type AlertChannel = "EMAIL" | "PUSH" | "BOTH";
+/** APP: in the app only, no email or push (D34). */
+export type AlertChannel = "EMAIL" | "PUSH" | "BOTH" | "APP";
 export type AlertFrequency = "INSTANT" | "DAILY_DIGEST";
 
 export interface AlertRule {

@@ -204,6 +204,7 @@ class Channel(StrEnum):
     EMAIL = "EMAIL"
     PUSH = "PUSH"
     BOTH = "BOTH"
+    APP = "APP"  # in the app only: no email, no push (D34)
 
 
 class AlertFrequency(StrEnum):

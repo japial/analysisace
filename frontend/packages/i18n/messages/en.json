@@ -412,7 +412,14 @@
     "verifyContinue": "Go to My money",
     "verifyAccount": "Open my account",
     "verifyBanner": "Please confirm {email}. Until you do, reminders and monthly reports are only shown here, not emailed.",
-    "verifyResend": "Send the link again"
+    "verifyResend": "Send the link again",
+    "unsubscribeTitle": "Stop these emails",
+    "unsubscribeAlert": "Stop emailing the \"{alert}\" alert? It still shows in analysisACE, and browser notifications stay as they are.",
+    "unsubscribeDigest": "Stop the once-a-day email? Alerts set to arrive once a day still show in analysisACE, and browser notifications stay as they are.",
+    "unsubscribeAlready": "These emails are already off. You can turn them back on in your alert settings.",
+    "unsubscribeSubmit": "Stop these emails",
+    "unsubscribeDone": "Done. These emails are stopped. The notices still show in analysisACE.",
+    "unsubscribeSettings": "Open alert settings"
   },
   "account": {
     "metaTitle": "My account",
@@ -579,7 +586,8 @@
     "LAST_FIRM_ADMIN": "A firm needs at least one admin. Make someone else an admin first.",
     "LOGO_TOO_LARGE": "The logo is too large. Use a PNG or JPEG under 300 KB.",
     "LOGO_INVALID": "Use a PNG or JPEG image for the logo.",
-    "NOTE_NOT_PUBLISHED": "No weekly note is published for that week yet."
+    "NOTE_NOT_PUBLISHED": "No weekly note is published for that week yet.",
+    "UNSUBSCRIBE_LINK_INVALID": "This unsubscribe link does not work. Sign in and change your alert settings instead."
   },
   "personal": {
     "metaTitle": "My money",
@@ -1422,7 +1430,8 @@
       "channel": {
         "EMAIL": "Email",
         "PUSH": "Browser notification",
-        "BOTH": "Both"
+        "BOTH": "Both",
+        "APP": "In the app only"
       },
       "alertFrequency": {
         "INSTANT": "Straight away",

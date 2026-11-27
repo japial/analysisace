@@ -129,7 +129,7 @@ export default async function AlertsPage({ params }: PageProps) {
                       <SelectField
                         label={t("personal.alerts.channel")}
                         name="channel"
-                        options={["EMAIL", "PUSH", "BOTH"].map((v) => ({ value: v, label: enumLabel(t, "channel", v) }))}
+                        options={["EMAIL", "PUSH", "BOTH", "APP"].map((v) => ({ value: v, label: enumLabel(t, "channel", v) }))}
                         defaultValue={rule?.channel ?? "EMAIL"}
                         className="w-40"
                       />

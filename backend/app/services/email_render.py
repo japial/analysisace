@@ -59,6 +59,15 @@ class Button:
 
 
 @dataclass(frozen=True)
+class Links:
+    """A person's unsubscribe addresses for one email (D34): a confirmation page for people,
+    and the RFC 8058 address mail apps post to."""
+
+    page: str
+    one_click: str
+
+
+@dataclass(frozen=True)
 class Item:
     """One entry in a list email, such as a notice in the daily digest."""
 
@@ -89,6 +98,8 @@ class Content:
     # Why the person gets this email, and where to change it.
     reason: str | None = None
     manage: Button | None = None
+    # D34: a link that stops this kind of email, shown next to the settings link.
+    unsubscribe: Button | None = None
     headers: Mapping[str, str] = field(default_factory=dict)
 
 
@@ -111,9 +122,10 @@ def _text(content: Content) -> str:
         lines += [note, ""]
     if content.reason:
         lines.append(content.reason)
-    if content.manage:
-        lines += [f"{content.manage.label}: {content.manage.url}"]
-    if content.reason or content.manage:
+    for link in (content.manage, content.unsubscribe):
+        if link:
+            lines += [f"{link.label}: {link.url}"]
+    if content.reason or content.manage or content.unsubscribe:
         lines.append("")
     lines += ["--", DISCLAIMER[content.locale], chrome["footer"]]
     return "\n".join(lines).strip() + "\n"
@@ -176,11 +188,13 @@ def _html(content: Content) -> str:
     footer: list[str] = []
     if content.reason:
         footer.append(_e(content.reason))
-    if content.manage:
-        footer.append(
-            f'<a href="{_e(content.manage.url)}" style="color:{TEAL_DEEP};">'
-            f"{_e(content.manage.label)}</a>"
-        )
+    links = [
+        f'<a href="{_e(link.url)}" style="color:{TEAL_DEEP};">{_e(link.label)}</a>'
+        for link in (content.manage, content.unsubscribe)
+        if link
+    ]
+    if links:
+        footer.append(" &middot; ".join(links))
     reason_block = (
         f'<p style="{base}font-size:13px;line-height:20px;margin:0 0 12px;color:{MUTED};">'
         f"{' '.join(footer)}</p>"

@@ -117,3 +117,9 @@ class PushSubscriptionIn(BaseModel):
 
 class PushEndpointIn(BaseModel):
     endpoint: str = Field(min_length=20, max_length=1000)
+
+
+class UnsubscribeIn(BaseModel):
+    """A sealed unsubscribe token from an email link (D34)."""
+
+    token: str = Field(min_length=20, max_length=1000)
