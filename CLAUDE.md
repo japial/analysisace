@@ -33,6 +33,7 @@ Backend (run from `backend/`, with the virtual environment at `backend/.venv`):
 - First admin: `.venv/Scripts/python scripts/create_admin.py you@example.com "Your Name"` (asks for a password)
 - Demo data for development: `.venv/Scripts/python scripts/seed_demo.py` loads fictional companies with five years of synthetic prices, macro series, events, sukuk, and a demo household, analyst and firm. It prints the demo sign-ins. Never run it in production.
 - New migration: `.venv/Scripts/python -m alembic revision --autogenerate -m "<msg>"` (local Postgres must be running)
+- Email previews: `.venv/Scripts/python scripts/preview_emails.py` writes every email, in English and Bangla, to `backend/.email-previews/` (open `index.html`). Nothing is sent.
 
 Frontend (run from `frontend/`):
 

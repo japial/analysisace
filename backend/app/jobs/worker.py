@@ -22,12 +22,8 @@ from app.models import JobRun
 from app.seed.reference import seed_reference
 from app.services import alerts, costs, income, macro_notes, market_data, portfolio, ratelimit
 from app.services.config_registry import sync_config_versions
-from app.services.email import (
-    check_email_settings,
-    get_email_sender,
-    job_failed_email,
-    send_safely,
-)
+from app.services.email import check_email_settings, get_email_sender, send_safely
+from app.services.email_templates import job_failed_email
 from app.services.market_pipeline import run_market_analytics
 from app.services.valuation import today_dhaka
 
@@ -141,7 +137,10 @@ def notify_operators(job: str, error: str) -> int:
     settings = get_settings()
     sender = get_email_sender()
     return sum(
-        send_safely(sender, job_failed_email(to, job, error, settings.environment))
+        send_safely(
+            sender,
+            job_failed_email(to, job, error, settings.environment, settings.web_base_url),
+        )
         for to in settings.ops_alert_email_list
     )
 

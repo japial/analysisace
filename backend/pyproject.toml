@@ -69,6 +69,13 @@ select = ["E", "F", "I", "UP", "B", "SIM", "DTZ", "RUF"]
 "app/services/macro_notes.py" = ["E501", "RUF001"]
 "app/services/statements.py" = ["E501", "RUF001"]
 "app/services/statement_labels.py" = ["E501", "RUF001"]
+"app/services/email_templates.py" = ["E501", "RUF001"]
+# The HTML email layout is a markup template; its lines read better unwrapped.
+"app/services/email_render.py" = ["E501", "RUF001"]
+"app/services/email_labels.py" = ["E501", "RUF001"]
+"app/services/firm_report.py" = ["E501", "RUF001"]
+# Tests that check Bangla digits and text on purpose.
+"tests/test_email_render.py" = ["RUF001"]
 
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]

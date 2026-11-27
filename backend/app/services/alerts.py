@@ -33,28 +33,15 @@ from app.models import (
 )
 from app.models.enums import AlertFrequency, AlertType, Channel
 from app.services import alt_assets, islamic, performance, planning, push, zakat_tax
-from app.services.alert_texts import DISCLAIMER, EMAIL_TEXT, REPORT_TEXT
+from app.services.alert_texts import EMAIL_TEXT
 from app.services.auth import AuthError, ConsentPurpose
-from app.services.email import Email, EmailSender, send_safely
+from app.services.email import EmailSender, send_safely
+from app.services.email_render import readable
+from app.services.email_templates import alert_email, monthly_report_email
 from app.services.households import has_consent, list_households
 from app.services.valuation import load_portfolio, personal_config, today_dhaka
 
 Q2 = Decimal("0.01")
-_BN_DIGITS = str.maketrans("0123456789", "০১২৩৪৫৬৭৮৯")
-
-
-def taka(amount: Decimal, locale: str) -> str:
-    """ "Tk 12,34,567.50" with lakh and crore grouping; Bangla digits for Bangla."""
-    whole, _, cents = f"{abs(amount):.2f}".partition(".")
-    head, tail = whole[:-3], whole[-3:]
-    groups: list[str] = []
-    while len(head) > 2:
-        groups.insert(0, head[-2:])
-        head = head[:-2]
-    if head:
-        groups.insert(0, head)
-    text = f"{'-' if amount < 0 else ''}{','.join([*groups, tail])}.{cents}"
-    return f"৳{text.translate(_BN_DIGITS)}" if locale == "bn" else f"Tk {text}"
 
 
 # --- rules (FR20.1, FR7.3) ------------------------------------------------------------
@@ -178,28 +165,27 @@ def notify(
         and template is not None
         and user.email_verified_at is not None
     ):
-        locale = user.locale if user.locale in ("bn", "en") else "en"
-        subject, body = template[locale]
+        email = alert_email(
+            user.email, user.locale, type, message_key, data, link, get_settings().web_base_url
+        )
         # The notice stays in the app either way; sent_at records that the email went.
-        if send_safely(
-            sender,
-            Email(
-                to=user.email,
-                subject=subject,
-                body=f"{body.format(**data)}\n\n{DISCLAIMER[locale]}",
-            ),
-        ):
+        if email is not None and send_safely(sender, email):
             row.sent_at = utcnow()
     # D26: a push copy to the person's browsers when the rule asks for one.
     if rule is not None and rule.channel in ("PUSH", "BOTH") and template is not None:
         locale = user.locale if user.locale in ("bn", "en") else "en"
         title, body = template[locale]
+        values = readable(data, locale)
         push.push_to_user(
             db,
             push.get_push_sender(),
             user.id,
             push.notice_message(
-                title, body.format(**data), link, get_settings().web_base_url, locale
+                title.format(**values),
+                body.format(**values),
+                link,
+                get_settings().web_base_url,
+                locale,
             ),
         )
     db.flush()
@@ -436,40 +422,16 @@ def send_monthly_reports(
             dedupe_key=dedupe,
         )
         db.add(row)
-        if (
+        # D25: email only a confirmed address; the report is in the app either way.
+        wants_email = (
             rule is not None
             and rule.channel in ("EMAIL", "BOTH")
             and user.email_verified_at is not None
+        )
+        if wants_email and send_safely(
+            sender, monthly_report_email(user.email, user.locale, figures, web_base_url)
         ):
-            locale = user.locale if user.locale in ("bn", "en") else "en"
-            subject, body, zakat_line, fire_line, savings_line = REPORT_TEXT[locale]
-            text = body.format(
-                month=figures["month"],
-                spending=taka(figures["spending"], locale),
-                savings=savings_line.format(
-                    income=taka(figures["income"], locale),
-                    savings=taka(figures["savings"], locale),
-                )
-                if figures["income"] is not None
-                else "",
-                net_worth=taka(figures["net_worth"], locale),
-                zakat=zakat_line.format(amount=taka(figures["zakat_due"], locale))
-                if figures["zakat_due"] is not None
-                else "",
-                fire=fire_line.format(pct=figures["fire_progress_pct"])
-                if figures["fire_progress_pct"] is not None
-                else "",
-                link=f"{web_base_url}/{locale}/personal",
-            )
-            if send_safely(
-                sender,
-                Email(
-                    to=user.email,
-                    subject=subject.format(month=figures["month"]),
-                    body=f"{text}\n\n{DISCLAIMER[locale]}",
-                ),
-            ):
-                row.sent_at = utcnow()
+            row.sent_at = utcnow()
         sent += 1
     db.flush()
     return sent

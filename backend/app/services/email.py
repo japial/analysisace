@@ -15,7 +15,8 @@ the request or job that triggered it.
 import logging
 import smtplib
 import ssl
-from dataclasses import dataclass
+from collections.abc import Mapping
+from dataclasses import dataclass, field
 from email.message import EmailMessage
 from email.utils import formataddr, formatdate, make_msgid, parseaddr
 from typing import Protocol
@@ -29,7 +30,12 @@ logger = logging.getLogger("analysisace.email")
 class Email:
     to: str
     subject: str
+    # The plain-text part; always present.
     body: str
+    # The HTML part (D31). With it the message is multipart/alternative.
+    html: str | None = None
+    # Extra headers, such as List-Unsubscribe.
+    headers: Mapping[str, str] = field(default_factory=dict)
 
 
 class EmailSendError(Exception):
@@ -84,7 +90,12 @@ class SmtpEmailSender:
         message["Message-ID"] = make_msgid(domain=domain)
         if self.reply_to:
             message["Reply-To"] = self.reply_to
+        for name, value in email.headers.items():
+            message[name] = value
         message.set_content(email.body, charset="utf-8")
+        if email.html:
+            # Mail apps show the last part they can display: HTML, else the text above.
+            message.add_alternative(email.html, subtype="html", charset="utf-8")
         return message
 
     def send(self, email: Email) -> None:
@@ -193,60 +204,3 @@ def send_safely(sender: EmailSender, email: Email) -> bool:
         logger.error("Email not sent (%s): %s", exc, email.subject)
         return False
     return True
-
-
-_RESET_TEXT = {
-    "en": (
-        "Reset your analysisACE password",
-        "Someone asked to reset the password for this analysisACE account.\n\n"
-        "Open this link within {minutes} minutes to choose a new password:\n{link}\n\n"
-        "If this was not you, ignore this email. Your password stays the same.",
-    ),
-    "bn": (
-        "আপনার analysisACE পাসওয়ার্ড পরিবর্তন করুন",
-        "এই analysisACE অ্যাকাউন্টের পাসওয়ার্ড পরিবর্তনের অনুরোধ করা হয়েছে।\n\n"
-        "নতুন পাসওয়ার্ড দিতে {minutes} মিনিটের মধ্যে এই লিংকটি খুলুন:\n{link}\n\n"
-        "আপনি অনুরোধ না করে থাকলে এই ইমেইল উপেক্ষা করুন। আপনার পাসওয়ার্ড আগের মতোই থাকবে।",
-    ),
-}
-
-
-def password_reset_email(to: str, locale: str, link: str, minutes: int) -> Email:
-    subject, body = _RESET_TEXT.get(locale, _RESET_TEXT["en"])
-    return Email(to=to, subject=subject, body=body.format(link=link, minutes=minutes))
-
-
-_VERIFY_TEXT = {
-    "en": (
-        "Confirm your email for analysisACE",
-        "Welcome to analysisACE.\n\n"
-        "Open this link within {hours} hours to confirm this is your email address:\n{link}\n\n"
-        "Until you do, reminders and monthly reports are not emailed to you. "
-        "If you did not sign up, ignore this email.",
-    ),
-    "bn": (
-        "analysisACE-এর জন্য আপনার ইমেইল নিশ্চিত করুন",
-        "analysisACE-এ স্বাগতম।\n\n"
-        "এটি আপনার ইমেইল ঠিকানা তা নিশ্চিত করতে {hours} ঘণ্টার মধ্যে এই লিংকটি খুলুন:\n{link}\n\n"
-        "নিশ্চিত না করা পর্যন্ত তাগিদ ও মাসিক প্রতিবেদন ইমেইলে পাঠানো হবে না। "
-        "আপনি নিবন্ধন না করে থাকলে এই ইমেইল উপেক্ষা করুন।",
-    ),
-}
-
-
-def verification_email(to: str, locale: str, link: str, hours: int) -> Email:
-    subject, body = _VERIFY_TEXT.get(locale, _VERIFY_TEXT["en"])
-    return Email(to=to, subject=subject, body=body.format(link=link, hours=hours))
-
-
-def job_failed_email(to: str, job: str, error: str, environment: str) -> Email:
-    """For operators (FR M1: alert on failed jobs). English only: it goes to the team."""
-    return Email(
-        to=to,
-        subject=f"[analysisACE {environment}] Job failed: {job}",
-        body=(
-            f"The scheduled job '{job}' failed.\n\n"
-            f"Error: {error[:500]}\n\n"
-            "Details are in the job runs table on /admin/audit and in the worker log."
-        ),
-    )

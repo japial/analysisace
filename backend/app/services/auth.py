@@ -37,12 +37,8 @@ from app.models import (
     Watchlist,
 )
 from app.services import household_data
-from app.services.email import (
-    EmailSender,
-    password_reset_email,
-    send_safely,
-    verification_email,
-)
+from app.services.email import EmailSender, send_safely
+from app.services.email_templates import password_reset_email, verification_email
 
 
 class AuthError(Exception):

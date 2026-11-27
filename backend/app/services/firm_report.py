@@ -12,7 +12,8 @@ from decimal import Decimal
 from app.core.security import utcnow
 from app.models import Firm, MacroNote
 from app.services.macro_notes import LABELS
-from app.services.statements import MUTED, NAVY, Statement, date_text, time_text
+from app.services.statements import MUTED, NAVY, Statement, time_text
+from app.services.text_format import date_text
 
 _TEXT = {
     "en": {
