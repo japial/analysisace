@@ -113,7 +113,6 @@ export async function resendVerificationAction(): Promise<FormState> {
   return { ok: true };
 }
 
-/** D25: the button on the page the emailed link opens. */
 /** D34: the confirm button on the unsubscribe page. */
 export async function unsubscribeAction(_: FormState, form: FormData): Promise<FormState> {
   try {
@@ -124,6 +123,7 @@ export async function unsubscribeAction(_: FormState, form: FormData): Promise<F
   return { ok: true };
 }
 
+/** D25: the button on the page the emailed link opens. */
 export async function confirmEmailAction(_: FormState, form: FormData): Promise<FormState> {
   try {
     await api.confirmEmailVerification(text(form, "token"));

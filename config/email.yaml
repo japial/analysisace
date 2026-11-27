@@ -1,0 +1,15 @@
+# Email delivery rules (D35). Change a value and bump `version`.
+version: "0.1.0"
+
+bounces:
+  # Enhanced status codes (RFC 3463), as prefixes, that mean the address itself does not
+  # work: no such mailbox (5.1.x), mailbox disabled (5.2.1), no such domain (5.4.4). One
+  # such bounce pauses alert and report emails to that person until they confirm the
+  # address again. Everything else is ignored: delays (4.x.x), a full mailbox (5.2.2) and
+  # policy refusals (5.7.x), which are usually about the sender, not the address.
+  pause_on_status: ["5.1.", "5.2.1", "5.4.4"]
+  # Gmail names hard-bounced recipients in an X-Failed-Recipients header. It is used when a
+  # bounce report has no machine-readable delivery status.
+  trust_failed_recipients_header: true
+  # Bounce reports read per run; the rest wait for the next run.
+  max_messages_per_run: 200

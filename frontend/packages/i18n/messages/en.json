@@ -419,7 +419,8 @@
     "unsubscribeAlready": "These emails are already off. You can turn them back on in your alert settings.",
     "unsubscribeSubmit": "Stop these emails",
     "unsubscribeDone": "Done. These emails are stopped. The notices still show in analysisACE.",
-    "unsubscribeSettings": "Open alert settings"
+    "unsubscribeSettings": "Open alert settings",
+    "bounceBanner": "Emails to {email} could not be delivered, so alert and report emails are paused. If the address is right, send a new link and open it to resume them."
   },
   "account": {
     "metaTitle": "My account",

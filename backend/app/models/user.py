@@ -32,6 +32,10 @@ class User(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     # Set when the person opens the link sent at sign-up (D25). Alert and report emails
     # wait for it; sign-in does not.
     email_verified_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    # Set when email to the address bounced as unusable (D35). Alert and report emails
+    # pause until the person confirms the address again; the status is e.g. "5.1.1".
+    email_bounced_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    email_bounce_status: Mapped[str | None] = mapped_column(String(10))
 
 
 class UserSession(UUIDPrimaryKeyMixin, TimestampMixin, Base):

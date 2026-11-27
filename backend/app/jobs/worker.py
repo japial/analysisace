@@ -20,7 +20,16 @@ from app.core.db import get_sessionmaker
 from app.core.trading_calendar import get_trading_calendar
 from app.models import JobRun
 from app.seed.reference import seed_reference
-from app.services import alerts, costs, income, macro_notes, market_data, portfolio, ratelimit
+from app.services import (
+    alerts,
+    bounces,
+    costs,
+    income,
+    macro_notes,
+    market_data,
+    portfolio,
+    ratelimit,
+)
 from app.services.config_registry import sync_config_versions
 from app.services.email import check_email_settings, get_email_sender, send_safely
 from app.services.email_templates import job_failed_email
@@ -60,6 +69,15 @@ def _personal_alerts(session: Session) -> dict[str, Any]:
 def _alert_digest(session: Session) -> dict[str, Any]:
     """FR7.3: one email or push a day for alerts set to arrive once a day."""
     return {"people": alerts.send_digests(session, get_email_sender())}
+
+
+def _email_bounces(session: Session) -> dict[str, Any]:
+    """D35: read bounce reports and pause email to addresses that do not work."""
+    settings = get_settings()
+    if not bounces.imap_configured(settings):
+        return {"skipped": "no bounce mailbox (EMAIL_BACKEND=smtp and BOUNCE_IMAP_* needed)"}
+    with bounces.open_mailbox(settings) as mailbox:
+        return bounces.process_mailbox(session, mailbox)
 
 
 def _monthly_report(session: Session) -> dict[str, Any]:
@@ -102,6 +120,7 @@ JOBS: dict[str, JobFn] = {
     "net_worth_snapshots": _net_worth_snapshots,
     "personal_alerts": _personal_alerts,
     "alert_digest": _alert_digest,
+    "email_bounces": _email_bounces,
     "monthly_report": _monthly_report,
     "adjusted_prices": _adjusted_prices,
     "data_quality": _data_quality,
@@ -160,11 +179,13 @@ def cron_trigger(spec: dict[str, Any], timezone: str) -> CronTrigger:
     """Translate one schedules.yaml entry into a cron trigger.
 
     `days: trading` fires Sunday to Thursday; the job itself must skip market holidays by
-    asking the trading calendar.
+    asking the trading calendar. `every_hours: N` repeats it every N hours from `at`.
     """
     hour, minute = (int(part) for part in str(spec["at"]).split(":"))
     days = spec.get("days", "daily")
     fields: dict[str, Any] = {"hour": hour, "minute": minute}
+    if spec.get("every_hours"):
+        fields["hour"] = f"{hour}-23/{int(spec['every_hours'])}"
     if days == "trading":
         fields["day_of_week"] = "sun,mon,tue,wed,thu"
     elif days == "weekly":

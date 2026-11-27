@@ -69,6 +69,8 @@ class UserOut(BaseModel):
     created_at: datetime
     last_login_at: datetime | None
     email_verified_at: datetime | None = None
+    # D35: email to the address bounced; alert and report emails are paused.
+    email_bounced_at: datetime | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property

@@ -76,6 +76,8 @@ export interface User {
   last_login_at: string | null;
   /** Null until the link sent at sign-up is opened (D25). */
   email_verified_at: string | null;
+  /** Set when email to the address bounced (D35); alert and report emails are paused. */
+  email_bounced_at?: string | null;
   permissions: Permission[];
 }
 

@@ -34,6 +34,7 @@ from app.models import (
 from app.models.enums import AlertFrequency, AlertType, Channel
 from app.services import (
     alt_assets,
+    bounces,
     islamic,
     performance,
     planning,
@@ -43,7 +44,7 @@ from app.services import (
 )
 from app.services.alert_texts import EMAIL_TEXT
 from app.services.auth import AuthError, ConsentPurpose
-from app.services.email import EmailSender, send_safely
+from app.services.email import EmailSender
 from app.services.email_render import readable
 from app.services.email_templates import (
     alert_email,
@@ -193,7 +194,7 @@ def notify(
         rule is not None
         and rule.channel in ("EMAIL", "BOTH")
         and template is not None
-        and user.email_verified_at is not None
+        and bounces.can_email(user)
     ):
         base = get_settings().web_base_url
         email = alert_email(
@@ -207,7 +208,7 @@ def notify(
             unsubscribe.links(base, _lang(user.locale), user.id, type),
         )
         # The notice stays in the app either way; sent_at records that the email went.
-        if email is not None and send_safely(sender, email):
+        if email is not None and bounces.send_to(db, sender, user, email):
             row.sent_at = utcnow()
     # D26: a push copy to the person's browsers when the rule asks for one.
     if rule is not None and rule.channel in ("PUSH", "BOTH") and template is not None:
@@ -422,7 +423,7 @@ def send_digests(db: Session, sender: EmailSender, now: dt.datetime | None = Non
         locale = user.locale if user.locale in ("bn", "en") else "en"
         by_email = [r for r in rows if r.digest_channel in ("EMAIL", "BOTH")]
         by_push = [r for r in rows if r.digest_channel in ("PUSH", "BOTH")]
-        if by_email and user.email_verified_at is not None:
+        if by_email and bounces.can_email(user):
             items = [
                 item
                 for r in by_email
@@ -435,7 +436,7 @@ def send_digests(db: Session, sender: EmailSender, now: dt.datetime | None = Non
             ]
             stop = unsubscribe.links(base, locale, user.id, unsubscribe.DIGEST)
             email = digest_email(user.email, locale, items, base, stop)
-            if items and not send_safely(sender, email):
+            if items and not bounces.send_to(db, sender, user, email):
                 # Try again at the next run; push waits too, so the two stay together.
                 continue
             for row in by_email:
@@ -539,12 +540,12 @@ def send_monthly_reports(
         db.add(row)
         # D25: email only a confirmed address; the report is in the app either way.
         wants_email = (
-            rule is not None
-            and rule.channel in ("EMAIL", "BOTH")
-            and user.email_verified_at is not None
+            rule is not None and rule.channel in ("EMAIL", "BOTH") and bounces.can_email(user)
         )
-        if wants_email and send_safely(
+        if wants_email and bounces.send_to(
+            db,
             sender,
+            user,
             monthly_report_email(
                 user.email,
                 user.locale,

@@ -152,7 +152,7 @@ def request_email_verification(
     sender: Annotated[EmailSender, Depends(get_email_sender)],
 ) -> Response:
     """D25: send a new confirmation link to the signed-in person. Nothing happens when the
-    address is already confirmed. Limited per person (D28)."""
+    address is already confirmed and has not bounced (D35). Limited per person (D28)."""
     _limit(db, "verify", str(identity.user.id), settings.rate_limit_verify_per_user_per_hour, HOUR)
     auth_service.start_email_verification(db, identity.user, sender, settings)
     db.commit()

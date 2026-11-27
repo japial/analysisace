@@ -22,6 +22,7 @@ DOMAINS = (
     "trading_calendar",
     "personal",
     "market",
+    "email",
 )
 
 

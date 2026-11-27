@@ -13,6 +13,7 @@ the request or job that triggered it.
 """
 
 import logging
+import re
 import smtplib
 import ssl
 from collections.abc import Mapping
@@ -39,7 +40,14 @@ class Email:
 
 
 class EmailSendError(Exception):
-    """The provider refused or could not be reached. The message holds no credentials."""
+    """The provider refused or could not be reached. The message holds no credentials.
+
+    `refused_status` is set when the server refused the recipient itself with a permanent
+    error, as an enhanced status code such as "5.1.1" (D35)."""
+
+    def __init__(self, message: str, refused_status: str | None = None) -> None:
+        super().__init__(message)
+        self.refused_status = refused_status
 
 
 class EmailSender(Protocol):
@@ -114,6 +122,17 @@ class SmtpEmailSender:
                 if self.username:
                     server.login(self.username, self.password or "")
                 server.send_message(message)
+        except smtplib.SMTPRecipientsRefused as exc:
+            codes = [(code, reply) for code, reply in exc.recipients.values()]
+            permanent = [(c, r) for c, r in codes if 500 <= c < 600]
+            status = None
+            if permanent:
+                refused, reply = permanent[0]
+                text = reply.decode("utf-8", "replace") if isinstance(reply, bytes) else str(reply)
+                found = re.search(r"\b5\.\d{1,3}\.\d{1,3}\b", text)
+                status = found.group(0) if found else f"5.0.{refused % 100}"
+            code_text = f" {codes[0][0]}" if codes else ""
+            raise EmailSendError(f"SMTPRecipientsRefused{code_text}", status) from None
         except (smtplib.SMTPException, OSError) as exc:
             # The class name and SMTP code are enough to diagnose; never the password.
             code = getattr(exc, "smtp_code", None)

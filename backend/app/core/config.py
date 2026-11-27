@@ -58,6 +58,14 @@ class Settings(BaseSettings):
     smtp_username: str | None = None
     smtp_password: SecretStr | None = None
     smtp_timeout_seconds: float = 15
+    # Where bounce reports arrive (D35), read over IMAP with TLS. Username and password
+    # default to the SMTP ones: Gmail returns bounces to the sending account. Reading
+    # needs EMAIL_BACKEND=smtp; empty BOUNCE_IMAP_HOST turns it off.
+    bounce_imap_host: str | None = "imap.gmail.com"
+    bounce_imap_port: int = 993
+    bounce_imap_username: str | None = None
+    bounce_imap_password: SecretStr | None = None
+    bounce_imap_folder: str = "INBOX"
     # Browser push (D26). Generate a pair with scripts/generate_vapid_keys.py; without one
     # push is off. The subject tells push services who to contact about this sender.
     webpush_public_key: str | None = None

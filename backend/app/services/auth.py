@@ -237,7 +237,8 @@ def start_email_verification(
 ) -> bool:
     """Email a link that confirms the address (D25). Earlier unused links stop working, so
     only the newest one counts. Returns False when there is nothing to confirm."""
-    if user.email_verified_at is not None or not user.is_active:
+    # A confirmed address that bounced (D35) can be confirmed again to resume email.
+    if not user.is_active or (user.email_verified_at is not None and user.email_bounced_at is None):
         return False
     now = utcnow()
     for old in db.scalars(
@@ -276,6 +277,19 @@ def confirm_email_verification(db: Session, token: str) -> User:
     if user.email_verified_at is None:
         user.email_verified_at = utcnow()
         audit(db, str(user.id), "EMAIL_VERIFIED", "app_user", str(user.id))
+    if user.email_bounced_at is not None:
+        # D35: the link reached the person, so the address works again.
+        audit(
+            db,
+            str(user.id),
+            "EMAIL_BOUNCE_CLEARED",
+            "app_user",
+            str(user.id),
+            before={"status": user.email_bounce_status},
+        )
+        user.email_bounced_at = None
+        user.email_bounce_status = None
+        user.email_verified_at = utcnow()
     return user
 
 
@@ -346,6 +360,9 @@ def export_user_data(db: Session, user: User) -> dict[str, Any]:
             "last_login_at": as_utc(user.last_login_at).isoformat() if user.last_login_at else None,
             "email_verified_at": as_utc(user.email_verified_at).isoformat()
             if user.email_verified_at
+            else None,
+            "email_bounced_at": as_utc(user.email_bounced_at).isoformat()
+            if user.email_bounced_at
             else None,
         },
         "consents": user.consents,
