@@ -3,64 +3,48 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>analysisACE | Coming soon: Shariah screening, market history and household money for Bangladesh</title>
-  <meta name="description" content="Clear Shariah screening and market history for DSE stocks, and every part of your household's money in one place: costs, holdings, Zakat, tax and plans. In Bangla and English. Coming soon.">
-  <meta name="theme-color" content="#0b1f3a">
-  <meta property="og:title" content="analysisACE: invest with clarity, manage money by your values">
-  <meta property="og:description" content="Shariah screening with reasons, market history for DSE stocks, and household money with Zakat and tax. Coming soon.">
+  <title>analysisACE | Coming soon: FIRE planning and personal finance for families in Bangladesh</title>
+  <meta name="description" content="Plan financial independence in Bangla and English: your FIRE number, savings rate and projected FIRE age, built on your Assets, Capital and Earnings, with Zakat, tax and halal choices included. Coming soon.">
+  <meta name="theme-color" content="#050b16">
+  <meta property="og:title" content="analysisACE: find the year work becomes optional">
+  <meta property="og:description" content="FIRE planning and personal finance for families in Bangladesh: income, costs, savings, net worth, Zakat and tax in one place. Coming soon.">
   <meta property="og:type" content="website">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&family=Fredoka:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&family=Fredoka:wght@600&display=swap" rel="stylesheet">
+  <script>document.documentElement.classList.add("js");</script>
   <style>
 /*
  * analysisACE coming-soon page. Plain CSS, no build step, no framework.
- * Brand: navy, teal and deep teal (same tokens as the web app, docs/DECISIONS.md D14).
+ * Dark "mission control" look: deep navy space, glass panels, teal light.
+ * ACE chart colours (assets violet, capital teal, earnings amber) were checked with the
+ * dataviz palette validator on the panel surface #0a1628: lightness band, chroma,
+ * colour-blind separation and contrast all pass.
  */
 
 :root {
-  --navy: #0b1f3a;
+  --space: #050b16;
+  --panel-solid: #0a1628;
+  --panel-2: rgba(255, 255, 255, 0.035);
+  --line: rgba(148, 197, 255, 0.12);
+  --line-2: rgba(148, 197, 255, 0.2);
+  --text: #eef4ff;
+  --text-2: #b4c3d8;
+  --text-3: #8496b0;
   --teal: #2dd4bf;
-  --teal-deep: #0f766e;
-  --bg: #ffffff;
-  --muted: #f5f7fa;
-  --card: #ffffff;
-  --border: #e3e8ef;
-  --text: #0b1f3a;
-  --text-2: #475569;
-  --text-3: #64748b;
-  --primary: var(--teal-deep);
-  --primary-soft: rgba(15, 118, 110, 0.1);
+  --navy: #0b1f3a;
+  --assets: #8b6cf0;
+  --capital: #14b09c;
+  --earnings: #d0901a;
+  --neutral: #33445f;
   --logo: #007078;
-  --logo-on-page: #007078;
-  --note: #fef9e7;
-  --note-border: #f5e3a3;
-  --note-text: #6b4e00;
-  --radius: 16px;
+  --radius: 20px;
   --font: "Inter", "Noto Sans Bengali", system-ui, sans-serif;
   --display: "Space Grotesk", "Inter", "Noto Sans Bengali", system-ui, sans-serif;
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0b1f3a;
-    --muted: #0e2645;
-    --card: #11294b;
-    --border: #1f3a5f;
-    --text: #f1f5f9;
-    --text-2: #cbd5e1;
-    --text-3: #94a3b8;
-    --primary: var(--teal);
-    --primary-soft: rgba(45, 212, 191, 0.12);
-    --logo-on-page: var(--teal);
-    --note: #2a2410;
-    --note-border: #4d4119;
-    --note-text: #f5e3a3;
-    color-scheme: dark;
-  }
+  --mono: "JetBrains Mono", ui-monospace, "Noto Sans Bengali", monospace;
+  color-scheme: dark;
 }
 
 *,
@@ -74,24 +58,39 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  *,
-  *::before,
-  *::after {
-    transition: none !important;
-  }
-}
-
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--space);
   color: var(--text);
   font-family: var(--font);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Fixed backdrop: aurora glows and a faint grid. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 40rem at 85% -10%, rgba(45, 212, 191, 0.16), transparent 60%),
+    radial-gradient(50rem 36rem at -10% 30%, rgba(139, 108, 240, 0.12), transparent 60%),
+    radial-gradient(40rem 30rem at 60% 110%, rgba(103, 232, 249, 0.08), transparent 60%),
+    var(--space);
+}
+
+.backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image: linear-gradient(rgba(148, 197, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 197, 255, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 20%, #000 20%, transparent 70%);
+  mask-image: radial-gradient(ellipse at 50% 20%, #000 20%, transparent 70%);
 }
 
 img,
@@ -158,16 +157,48 @@ a {
   top: 16px;
 }
 
-/* --- header -------------------------------------------------------------------- */
+/* --- glass panel ------------------------------------------------------------------ */
+
+.glass {
+  position: relative;
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(20, 40, 72, 0.6), rgba(10, 22, 40, 0.72));
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 30px 60px -30px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* Gradient hairline that lights up on hover. */
+.glow-edge::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(45, 212, 191, 0.7), rgba(139, 108, 240, 0.35) 45%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.glow-edge:hover::before {
+  opacity: 1;
+}
+
+/* --- header ----------------------------------------------------------------------- */
 
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 20;
-  background: rgba(11, 31, 58, 0.85);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  color: #fff;
+  z-index: 30;
+  background: rgba(5, 11, 22, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
 }
 
 .site-header .container {
@@ -178,8 +209,6 @@ a {
   height: 68px;
 }
 
-/* Text logo, following assets/images/logo.png: one rounded face in the logo teal. On the
-   dark header it sits on a white badge so the teal keeps its contrast. */
 .logo {
   display: inline-flex;
   align-items: center;
@@ -187,6 +216,7 @@ a {
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.96);
   text-decoration: none;
+  box-shadow: 0 0 24px rgba(45, 212, 191, 0.25);
   transition: transform 0.2s;
 }
 
@@ -211,15 +241,16 @@ a {
 
 .lang-switch {
   display: inline-flex;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--line-2);
   border-radius: 999px;
   padding: 3px;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .lang-switch button {
   border: 0;
   background: transparent;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--text-2);
   font: inherit;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -233,41 +264,46 @@ a {
   color: var(--navy);
 }
 
-/* --- buttons ------------------------------------------------------------------- */
+/* --- buttons ---------------------------------------------------------------------- */
 
 .btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 46px;
+  min-height: 48px;
   padding: 0 22px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid transparent;
   font: inherit;
   font-weight: 600;
   font-size: 0.95rem;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 
 .btn-teal {
-  background: var(--teal);
+  background: linear-gradient(135deg, #5eead4, var(--teal));
   color: var(--navy);
+  box-shadow: 0 0 0 1px rgba(45, 212, 191, 0.5), 0 10px 30px -8px rgba(45, 212, 191, 0.55);
 }
 
 .btn-teal:hover {
-  background: #5ce1d0;
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(45, 212, 191, 0.7), 0 14px 40px -8px rgba(45, 212, 191, 0.75);
 }
 
 .btn-ghost {
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #fff;
+  border-color: var(--line-2);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
 }
 
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(45, 212, 191, 0.5);
+  background: rgba(45, 212, 191, 0.08);
 }
 
 .btn-sm {
@@ -277,58 +313,130 @@ a {
   white-space: nowrap;
 }
 
-/* On narrow phones the hero's own button is enough; keep the header uncluttered. */
 @media (max-width: 479px) {
   .header-actions .btn {
     display: none;
   }
 }
 
-/* --- hero ---------------------------------------------------------------------- */
+/* --- shared section pieces --------------------------------------------------------- */
+
+section.band {
+  position: relative;
+  padding: 80px 0;
+}
+
+@media (min-width: 1024px) {
+  section.band {
+    padding: 112px 0;
+  }
+}
+
+.section-head {
+  max-width: 46rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+html[lang="bn"] .eyebrow {
+  font-family: var(--font);
+  letter-spacing: 0.02em;
+}
+
+.section-head h2 {
+  margin: 14px 0 0;
+  font-family: var(--display);
+  font-size: clamp(1.9rem, 4.2vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.grad {
+  background: linear-gradient(100deg, #fff 10%, #99f6e4 50%, var(--teal) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.section-head p {
+  margin: 16px 0 0;
+  font-size: 1.1rem;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.badge-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: radial-gradient(circle at 30% 20%, rgba(45, 212, 191, 0.3), rgba(45, 212, 191, 0.06));
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  color: var(--teal);
+  box-shadow: 0 0 20px -6px rgba(45, 212, 191, 0.6);
+  flex-shrink: 0;
+}
+
+.caption {
+  margin: 14px 0 0;
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+.dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-assets { background: var(--assets); }
+.dot-capital { background: var(--capital); }
+.dot-earnings { background: var(--earnings); }
+.dot-neutral { background: var(--neutral); }
+.dot-white { background: #fff; }
+
+/* Scroll reveal, only when JS runs. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.js .reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- hero ------------------------------------------------------------------------- */
 
 .hero {
   position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  background: var(--navy);
-  color: #fff;
-}
-
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  opacity: 0.07;
-  background-image: linear-gradient(#fff 1px, transparent 1px),
-    linear-gradient(90deg, #fff 1px, transparent 1px);
-  background-size: 48px 48px;
-  -webkit-mask-image: radial-gradient(ellipse at center, #000 35%, transparent 75%);
-  mask-image: radial-gradient(ellipse at center, #000 35%, transparent 75%);
-}
-
-.glow {
-  position: absolute;
-  z-index: -1;
-  border-radius: 50%;
-  filter: blur(80px);
-  pointer-events: none;
-}
-
-.glow-1 {
-  width: 28rem;
-  height: 28rem;
-  top: -8rem;
-  right: -6rem;
-  background: rgba(45, 212, 191, 0.25);
-}
-
-.glow-2 {
-  width: 24rem;
-  height: 24rem;
-  bottom: -10rem;
-  left: -6rem;
-  background: rgba(15, 118, 110, 0.4);
 }
 
 .hero-grid {
@@ -336,32 +444,46 @@ a {
   gap: 56px;
   align-items: center;
   padding-top: 64px;
-  padding-bottom: 80px;
+  padding-bottom: 72px;
 }
 
 @media (min-width: 1024px) {
   .hero-grid {
-    grid-template-columns: 1.1fr 1fr;
-    gap: 64px;
+    grid-template-columns: 1.05fr 1fr;
     padding-top: 96px;
-    padding-bottom: 112px;
+    padding-bottom: 104px;
   }
 }
 
 .pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 12px;
+  gap: 10px;
+  padding: 6px 14px 6px 6px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 0.75rem;
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  background: rgba(45, 212, 191, 0.08);
+  font-size: 0.78rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
+  color: #ccfbf1;
 }
 
-.pill .dot {
+.pill .tag {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--teal);
+  color: var(--navy);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+html[lang="bn"] .pill .tag {
+  font-family: var(--font);
+}
+
+.pulse {
   width: 7px;
   height: 7px;
   border-radius: 50%;
@@ -372,31 +494,25 @@ a {
 
 @keyframes pulse {
   50% {
-    box-shadow: 0 0 0 7px rgba(45, 212, 191, 0.05);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pill .dot {
-    animation: none;
+    box-shadow: 0 0 0 8px rgba(45, 212, 191, 0.04);
   }
 }
 
 .hero h1 {
-  margin: 22px 0 0;
+  margin: 24px 0 0;
   font-family: var(--display);
-  font-size: clamp(2.25rem, 6vw, 3.75rem);
+  font-size: clamp(2.5rem, 6.4vw, 4.4rem);
   font-weight: 700;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
   text-wrap: balance;
 }
 
 .hero .lead {
   max-width: 36rem;
-  margin: 22px 0 0;
+  margin: 24px 0 0;
   font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--text-2);
   text-wrap: pretty;
 }
 
@@ -404,18 +520,18 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 28px;
+  margin-top: 32px;
 }
 
 .ticks {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 20px;
-  margin: 24px 0 0;
+  margin: 26px 0 0;
   padding: 0;
   list-style: none;
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-2);
 }
 
 .ticks li {
@@ -428,100 +544,277 @@ a {
   color: var(--teal);
 }
 
-/* product illustration */
-.preview {
+/* FIRE console (hero illustration) */
+.console {
   position: relative;
   width: 100%;
-  max-width: 460px;
+  max-width: 520px;
   margin: 0 auto;
 }
 
-.preview-card {
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: #fff;
-  color: var(--navy);
-  padding: 24px;
-  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5);
+.console-card {
+  padding: 22px;
 }
 
-.preview-head {
+.console-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
 }
 
-.preview-head strong {
+.console-head strong {
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
-.preview-head span {
+.console-head span {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-3);
 }
 
-.status {
+.chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
+  gap: 6px;
+  padding: 5px 10px;
   border-radius: 999px;
-  background: rgba(15, 118, 110, 0.1);
-  color: var(--teal-deep);
+  border: 1px solid rgba(45, 212, 191, 0.4);
+  background: rgba(45, 212, 191, 0.1);
+  color: #99f6e4 !important;
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
-.rules {
-  margin: 20px 0 0;
-  padding: 0;
-  list-style: none;
+.console-top {
   display: grid;
-  gap: 16px;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  align-items: center;
+  margin-top: 18px;
 }
 
-.rule-top {
+.ring {
+  position: relative;
+  width: 124px;
+  height: 124px;
+}
+
+@media (max-width: 419px) {
+  .console-top {
+    gap: 14px;
+  }
+  .ring {
+    width: 100px;
+    height: 100px;
+  }
+  .ring-label b {
+    font-size: 1.4rem;
+  }
+}
+
+.ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ring .track,
+.mini-ring .track {
+  stroke: rgba(148, 197, 255, 0.12);
+}
+
+.ring .arc {
+  stroke: url(#ringGrad);
+  stroke-linecap: round;
+  stroke-dasharray: 263.9;
+  stroke-dashoffset: 163.6;
+  filter: drop-shadow(0 0 6px rgba(45, 212, 191, 0.6));
+  transition: stroke-dashoffset 1.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.js .console:not(.in) .ring .arc {
+  stroke-dashoffset: 263.9;
+}
+
+.ring-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.ring-label b {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.ring-label small {
+  max-width: 4.6rem;
+  margin-top: 4px;
+  font-size: 0.625rem;
+  line-height: 1.25;
+  color: var(--text-3);
+}
+
+.kv {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.kv div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.8rem;
+}
+
+.kv div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.kv dt {
+  color: var(--text-3);
+}
+
+.kv dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* projection chart */
+.proj {
+  position: relative;
+  margin-top: 18px;
+  padding: 14px 14px 8px;
+  border-radius: 14px;
+  background: rgba(5, 11, 22, 0.55);
+  border: 1px solid var(--line);
+}
+
+.proj-title {
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  font-size: 0.75rem;
-  color: #475569;
+  font-size: 0.72rem;
+  color: var(--text-3);
 }
 
-.rule-top b {
-  color: var(--navy);
-  font-variant-numeric: tabular-nums;
+.proj svg {
+  width: 100%;
+  height: auto;
+  margin-top: 8px;
+  overflow: visible;
 }
 
-.rule-top em {
-  font-style: normal;
-  color: #64748b;
+.proj .axis-label {
+  fill: var(--text-3);
+  font-size: 9px;
+  font-family: var(--font);
 }
 
-.bar {
-  height: 6px;
-  margin-top: 6px;
-  border-radius: 999px;
-  background: #eef2f6;
-  overflow: hidden;
+.proj .target-label {
+  fill: var(--text-2);
+  font-size: 9px;
+  font-weight: 600;
+  font-family: var(--font);
 }
 
-.bar i {
+.proj .line {
+  fill: none;
+  stroke: var(--capital);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.proj .target {
+  stroke: rgba(238, 244, 255, 0.5);
+  stroke-width: 1;
+}
+
+.proj .cross {
+  stroke: rgba(238, 244, 255, 0.4);
+  stroke-width: 1;
+}
+
+.proj #proj-hit {
+  cursor: crosshair;
+}
+
+.tip {
+  position: absolute;
+  z-index: 5;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #0d1d36;
+  border: 1px solid var(--line-2);
+  box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.8);
+  font-size: 0.72rem;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translate(-50%, -130%);
+}
+
+.tip[hidden] {
+  display: none;
+}
+
+.levers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 419px) {
+  .levers {
+    grid-template-columns: 1fr;
+  }
+}
+
+.levers li {
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+}
+
+.lever-name {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.levers b {
   display: block;
-  height: 100%;
-  border-radius: 999px;
-  background: var(--teal-deep);
+  margin-top: 5px;
+  font-size: 0.95rem;
 }
 
-.preview-source {
-  margin: 20px 0 0;
-  padding-top: 12px;
-  border-top: 1px solid #e3e8ef;
-  font-size: 0.6875rem;
-  color: #64748b;
+.levers small {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--text-3);
+}
+
+.console-source {
+  margin: 14px 0 0;
+  font-size: 0.68rem;
+  color: var(--text-3);
   text-align: right;
 }
 
@@ -529,11 +822,8 @@ a {
   position: absolute;
   display: none;
   padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid #e3e8ef;
-  background: #fff;
-  color: var(--navy);
-  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.45);
+  border-radius: 14px;
+  animation: bob 6s ease-in-out infinite;
 }
 
 @media (min-width: 640px) {
@@ -542,313 +832,957 @@ a {
   }
 }
 
+@keyframes bob {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
 .float small {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.6875rem;
-  color: #64748b;
+  font-size: 0.68rem;
+  color: var(--text-3);
 }
 
 .float small .icon {
-  color: var(--teal-deep);
+  color: var(--earnings);
 }
 
 .float b {
   display: block;
   margin-top: 2px;
-  font-size: 0.9rem;
-}
-
-.float-rate {
-  top: -64px;
-  right: 16px;
-  max-width: 16rem;
+  font-size: 1.05rem;
 }
 
 .float-zakat {
-  bottom: 24px;
-  left: -12px;
+  bottom: 30px;
+  left: -34px;
 }
 
-.float-zakat b {
-  font-size: 1.1rem;
-}
-
-.preview figcaption {
-  margin-top: 36px;
+.console figcaption {
+  margin-top: 16px;
   text-align: center;
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-3);
 }
 
-/* --- sections ------------------------------------------------------------------ */
+/* --- ticker ----------------------------------------------------------------------- */
 
-section.band {
-  padding: 72px 0;
+.ticker {
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: rgba(8, 18, 36, 0.6);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
 }
 
-@media (min-width: 1024px) {
-  section.band {
-    padding: 104px 0;
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 48s linear infinite;
+}
+
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+.ticker ul {
+  display: flex;
+  gap: 12px;
+  margin: 0;
+  padding: 16px 6px;
+  list-style: none;
+}
+
+.ticker li {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.025);
+  font-size: 0.85rem;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.ticker li::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 8px var(--teal);
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
   }
 }
 
-.band-muted {
-  background: var(--muted);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+/* --- FIRE explained ---------------------------------------------------------------- */
+
+.idea-grid {
+  display: grid;
+  gap: 18px;
+  margin: 56px 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.section-head {
-  max-width: 44rem;
-  margin: 0 auto;
+@media (min-width: 768px) {
+  .idea-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.idea {
+  height: 100%;
+  padding: 26px;
+}
+
+.idea .step {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--teal);
+  letter-spacing: 0.1em;
+}
+
+.idea h3 {
+  margin: 10px 0 8px;
+  font-family: var(--display);
+  font-size: 1.3rem;
+}
+
+.idea p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+
+/* FIRE number equation */
+.equation {
+  display: grid;
+  gap: 22px;
+  align-items: center;
+  margin-top: 22px;
+  padding: 28px;
+}
+
+@media (min-width: 900px) {
+  .equation {
+    grid-template-columns: auto auto 1fr auto auto;
+    gap: 26px;
+  }
+}
+
+.eq-term {
   text-align: center;
 }
 
-.eyebrow {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: var(--primary-soft);
-  color: var(--primary);
+.eq-term small {
+  display: block;
   font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  color: var(--text-3);
 }
 
-.section-head h2 {
-  margin: 14px 0 0;
+.eq-term b {
+  display: block;
+  margin-top: 4px;
   font-family: var(--display);
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-size: 1.5rem;
+}
+
+.eq-unit {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 10px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #5eead4, var(--capital));
+  box-shadow: 0 0 24px -4px rgba(45, 212, 191, 0.7);
+}
+
+.eq-op {
+  font-family: var(--display);
+  font-size: 2rem;
+  color: var(--teal);
+  text-align: center;
+  text-shadow: 0 0 18px rgba(45, 212, 191, 0.7);
+}
+
+.squares {
+  display: grid;
+  grid-template-columns: repeat(25, 1fr);
+  gap: 4px;
+}
+
+@media (max-width: 899px) {
+  .squares {
+    grid-template-columns: repeat(10, 1fr);
+    max-width: 320px;
+    margin: 0 auto;
+  }
+}
+
+.squares i {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  background: rgba(45, 212, 191, 0.22);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+}
+
+.squares i:first-child {
+  background: linear-gradient(135deg, #5eead4, var(--capital));
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.8);
+}
+
+.js .equation .squares i {
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.4s, transform 0.4s;
+}
+
+.js .equation.in .squares i {
+  opacity: 1;
+  transform: none;
+}
+
+.eq-times {
+  margin-top: 10px;
+}
+
+.eq-result b {
+  font-size: 1.9rem;
+}
+
+.eq-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-3);
+  text-align: center;
+}
+
+/* --- savings-rate simulator --------------------------------------------------------- */
+
+.split {
+  display: grid;
+  gap: 40px;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .split {
+    grid-template-columns: 1fr 1.15fr;
+    gap: 64px;
+  }
+}
+
+.split .section-head {
+  margin: 0;
+  text-align: left;
+}
+
+.split .section-body {
+  margin: 16px 0 0;
+  color: var(--text-2);
+}
+
+.sim {
+  padding: 26px;
+}
+
+.sim-top {
+  display: grid;
+  gap: 20px;
+}
+
+@media (min-width: 520px) {
+  .sim-top {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+  }
+}
+
+.sim label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.sim-rate {
+  display: block;
+  font-family: var(--display);
+  font-size: 1.5rem;
+  color: #f1c46a;
+}
+
+.readout {
+  text-align: right;
+}
+
+.readout b {
+  display: block;
+  font-size: 3.4rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 0 30px rgba(45, 212, 191, 0.6);
+}
+
+.readout small {
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 28px;
+  margin: 10px 0 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--earnings) var(--fill, 41%), rgba(148, 197, 255, 0.15) var(--fill, 41%));
+}
+
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--earnings) var(--fill, 41%), rgba(148, 197, 255, 0.15) var(--fill, 41%));
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: #fff;
+  border: 4px solid var(--earnings);
+  box-shadow: 0 0 0 6px rgba(208, 144, 26, 0.2), 0 0 18px rgba(208, 144, 26, 0.7);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 4px solid var(--earnings);
+  box-shadow: 0 0 0 6px rgba(208, 144, 26, 0.2), 0 0 18px rgba(208, 144, 26, 0.7);
+}
+
+/* Segmented bars: one whole split into parts, 2px gap, labels inside in white or near-black. */
+.splitbar {
+  margin-top: 18px;
+}
+
+.splitbar-bar {
+  display: flex;
+  gap: 2px;
+  height: 28px;
+}
+
+.splitbar-bar span {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 0 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: flex-basis 0.35s ease;
+}
+
+.splitbar .kept {
+  background: var(--earnings);
+  color: #141414;
+}
+
+.splitbar .spent {
+  justify-content: flex-end;
+  background: var(--neutral);
+  color: #fff;
+}
+
+.splitbar .cap {
+  background: var(--capital);
+  color: #06130f;
+}
+
+.splitbar .home {
+  background: var(--assets);
+  color: #fff;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+.legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rate-head,
+.rate-rows li {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr 3rem;
+  align-items: center;
+  gap: 12px;
+}
+
+.rate-head {
+  margin-top: 22px;
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
+
+.rate-head span:last-child,
+.rate-rows b {
+  text-align: right;
+}
+
+.rate-rows {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2);
+}
+
+.rate-rows .track {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(148, 197, 255, 0.07);
+  overflow: hidden;
+}
+
+.rate-rows .track i {
+  display: block;
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+  background: rgba(148, 197, 255, 0.3);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.rate-rows li.on {
+  color: #fff;
+  font-weight: 700;
+}
+
+.rate-rows li.on .track i {
+  background: var(--capital);
+  box-shadow: 0 0 14px rgba(20, 176, 156, 0.8);
+}
+
+/* --- ACE flow ------------------------------------------------------------------------ */
+
+.flow {
+  display: grid;
+  gap: 16px;
+  margin-top: 56px;
+  padding: 26px;
+}
+
+@media (min-width: 960px) {
+  .flow {
+    grid-template-columns: 1.25fr auto 1fr auto 1fr;
+    gap: 14px;
+  }
+}
+
+.node {
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(5, 11, 22, 0.5);
+}
+
+.node-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+html[lang="bn"] .node-head {
+  font-family: var(--font);
+  letter-spacing: 0.02em;
+}
+
+.node-value {
+  margin: 8px 0 0;
+  font-size: 1.6rem;
   font-weight: 700;
   line-height: 1.15;
-  letter-spacing: -0.015em;
-  text-wrap: balance;
 }
 
-.section-head p {
-  margin: 14px 0 0;
-  font-size: 1.125rem;
-  color: var(--text-2);
-  text-wrap: pretty;
+.node-sub {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-3);
 }
 
-.grid {
+.mini-ring {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.mini-ring svg {
+  width: 64px;
+  height: 64px;
+  transform: rotate(-90deg);
+}
+
+.mini-ring .arc {
+  stroke: var(--capital);
+  stroke-linecap: round;
+  stroke-dasharray: 150.8;
+  stroke-dashoffset: 93.5;
+  filter: drop-shadow(0 0 4px rgba(20, 176, 156, 0.8));
+}
+
+.mini-ring b {
+  display: block;
+  font-size: 1.4rem;
+}
+
+.mini-ring small {
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+.arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--text-3);
+  text-align: center;
+}
+
+.arrow .beam {
+  position: relative;
+  width: 2px;
+  height: 36px;
+  background: linear-gradient(180deg, transparent, var(--teal));
+  overflow: hidden;
+}
+
+@media (min-width: 960px) {
+  .arrow .beam {
+    width: 56px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--teal));
+  }
+}
+
+.arrow .beam::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, #fff, transparent);
+  animation: beam 2.4s linear infinite;
+}
+
+@keyframes beam {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.assets-row {
+  grid-column: 1 / -1;
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(139, 108, 240, 0.4);
+  background: rgba(139, 108, 240, 0.06);
+}
+
+.assets-row .row-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.flow > .caption {
+  grid-column: 1 / -1;
+  margin: 0;
+  text-align: center;
+}
+
+/* pillar cards */
+.pillars {
   display: grid;
   gap: 18px;
-  margin: 48px 0 0;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 900px) {
+  .pillars {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.pillar {
+  height: 100%;
+  padding: 24px;
+}
+
+.pillar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--c);
+  box-shadow: 0 0 16px var(--c);
+}
+
+.pillar-assets { --c: var(--assets); }
+.pillar-capital { --c: var(--capital); }
+.pillar-earnings { --c: var(--earnings); }
+
+.pillar-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pillar-letter {
+  font-family: var(--display);
+  font-size: 3.2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--c);
+  text-shadow: 0 0 24px var(--c);
+}
+
+.pillar h3 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.pillar .tagline {
+  font-size: 0.85rem;
+  color: var(--text-3);
+}
+
+.pillar .lever {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.pillar .lever .icon {
+  margin-top: 2px;
+  color: var(--c);
+}
+
+.pillar ul {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pillar li {
+  display: flex;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+.pillar li .icon {
+  margin-top: 3px;
+  color: var(--teal);
+}
+
+/* --- Bangladesh + stress test --------------------------------------------------------- */
+
+.feature-grid,
+.q-grid,
+.tool-grid {
+  display: grid;
+  gap: 16px;
+  margin: 56px 0 0;
   padding: 0;
   list-style: none;
 }
 
 @media (min-width: 640px) {
-  .grid-2,
-  .grid-3,
-  .grid-4 {
+  .feature-grid,
+  .q-grid,
+  .tool-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (min-width: 1024px) {
-  .grid-3 {
+  .feature-grid,
+  .q-grid,
+  .tool-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  .grid-4 {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .span-2 {
-    grid-column: span 2;
-  }
-  .row-2 {
-    grid-row: span 2;
-  }
 }
 
-@media (min-width: 640px) and (max-width: 1023px) {
-  .grid-4 .row-2 {
-    grid-column: span 2;
-  }
-}
-
-.tile {
-  position: relative;
+.feature,
+.tool {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   height: 100%;
-  padding: 24px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: var(--card);
-  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  padding: 22px;
 }
 
-.tile:hover {
-  transform: translateY(-2px);
-  border-color: rgba(15, 118, 110, 0.4);
-  box-shadow: 0 16px 32px -20px rgba(15, 118, 110, 0.35);
+.feature h3,
+.tool h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .tile:hover {
-    transform: none;
-  }
-}
-
-.tile h3 {
-  margin: 0;
-  font-size: 1.0625rem;
-  font-weight: 600;
-}
-
-.tile p {
+.feature p,
+.tool p {
   margin: 0;
   font-size: 0.875rem;
   color: var(--text-2);
 }
 
-.tile .q {
-  font-family: var(--display);
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--text);
-  text-wrap: balance;
+.stress {
+  margin-top: 18px;
+  padding: 26px;
 }
 
-.tile-wide {
-  background: linear-gradient(135deg, var(--primary-soft), var(--card) 55%);
-}
-
-.tile-dashed {
-  border-style: dashed;
-  background: transparent;
-  justify-content: center;
-}
-
-.badge-icon {
+.stress-head {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--primary-soft);
-  color: var(--primary);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 20px;
+  align-items: baseline;
 }
 
-.soon {
-  align-self: flex-start;
-  padding: 2px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  font-size: 0.6875rem;
+.stress-head h3 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.2rem;
+}
+
+.stress-rows {
+  display: grid;
+  gap: 4px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stress-rows li,
+.stress-axis {
+  display: grid;
+  grid-template-columns: minmax(7rem, 15rem) 1fr 4.5rem;
+  align-items: center;
+  gap: 16px;
+}
+
+.stress-rows li {
+  min-height: 40px;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+.stress-rows li:first-child {
+  color: #fff;
   font-weight: 600;
+}
+
+.lane {
+  position: relative;
+  height: 40px;
+}
+
+.lane::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--line);
+}
+
+.lane .base {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 28.57%;
+  width: 1px;
+  background: rgba(238, 244, 255, 0.35);
+}
+
+.lane .seg {
+  position: absolute;
+  top: 50%;
+  height: 2px;
+  left: 28.57%;
+  margin-top: -1px;
+  background: linear-gradient(90deg, rgba(20, 176, 156, 0.2), var(--capital));
+}
+
+.lane .pt {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: var(--capital);
+  box-shadow: 0 0 0 2px var(--panel-solid), 0 0 14px rgba(20, 176, 156, 0.9);
+}
+
+.stress-rows b {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.stress-rows b small {
+  font-weight: 500;
   color: var(--text-3);
 }
 
-/* Zakat feature tile */
-.tile-zakat {
-  overflow: hidden;
-  justify-content: space-between;
-  background: var(--navy);
-  border-color: var(--navy);
-  color: #fff;
+.stress-axis {
+  margin-top: 4px;
+  font-size: 0.7rem;
+  color: var(--text-3);
 }
 
-.tile-zakat::after {
-  content: "";
+.ticks-x {
+  position: relative;
+  height: 1.2em;
+}
+
+.ticks-x span {
   position: absolute;
-  top: -4rem;
-  right: -4rem;
-  width: 14rem;
-  height: 14rem;
-  border-radius: 50%;
-  background: rgba(45, 212, 191, 0.25);
-  filter: blur(60px);
+  transform: translateX(-50%);
 }
 
-@media (prefers-color-scheme: dark) {
-  .tile-zakat {
-    border-color: rgba(45, 212, 191, 0.3);
-    background: linear-gradient(160deg, #123a5c, var(--navy) 70%);
+@media (max-width: 559px) {
+  .stress-rows li,
+  .stress-axis {
+    grid-template-columns: 1fr 3.5rem;
+    gap: 4px 12px;
+  }
+  .stress-rows li > span:first-child {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+  }
+  .stress-axis > span:first-child {
+    display: none;
   }
 }
 
-.tile-zakat > * {
-  position: relative;
-  z-index: 1;
-}
+/* --- questions --------------------------------------------------------------------- */
 
-.tile-zakat h3 {
-  font-family: var(--display);
-  font-size: 1.5rem;
-}
-
-.tile-zakat p {
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.tile-zakat .badge-icon {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--teal);
-}
-
-.chips {
+.q-card {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 8px 0 0;
-  padding: 0;
-  list-style: none;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  padding: 24px;
+  transition: transform 0.25s;
 }
 
-.chips li {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.85);
+.q-card:hover {
+  transform: translateY(-3px);
 }
 
-.chips .icon {
-  width: 14px;
-  height: 14px;
-  color: var(--teal);
+.q-card .q {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  text-wrap: balance;
 }
 
-/* steps */
-.steps {
+.q-card p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+/* --- steps timeline ------------------------------------------------------------------ */
+
+.timeline {
   position: relative;
   display: grid;
   gap: 32px;
-  margin: 48px 0 0;
+  margin: 56px 0 0;
   padding: 0;
   list-style: none;
-  counter-reset: step;
 }
 
 @media (min-width: 768px) {
-  .steps {
+  .timeline {
     grid-template-columns: repeat(3, 1fr);
   }
-  .steps::before {
+  .timeline::before {
     content: "";
     position: absolute;
-    top: 24px;
+    top: 27px;
     left: 16%;
     right: 16%;
-    height: 1px;
-    background: var(--border);
+    height: 2px;
+    background: linear-gradient(90deg, var(--earnings), var(--capital), var(--assets));
+    box-shadow: 0 0 14px rgba(45, 212, 191, 0.6);
   }
 }
 
-.steps li {
+.timeline li {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -857,38 +1791,83 @@ section.band {
   text-align: center;
 }
 
-.steps .num {
+.timeline .node-num {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: var(--primary);
-  color: var(--bg);
+  border: 2px solid var(--teal);
+  background: var(--space);
+  color: #fff;
   font-family: var(--display);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  box-shadow: 0 0 0 8px var(--muted);
+  box-shadow: 0 0 0 6px var(--space), 0 0 26px rgba(45, 212, 191, 0.6);
 }
 
-.steps h3 {
+.timeline h3 {
   margin: 6px 0 0;
-  font-size: 1.0625rem;
+  font-size: 1.05rem;
 }
 
-.steps p {
+.timeline p {
   max-width: 18rem;
   margin: 0;
   font-size: 0.875rem;
   color: var(--text-2);
 }
 
-/* principles */
+/* --- stock tools -------------------------------------------------------------------- */
+
+.tool-grid {
+  margin-top: 48px;
+  gap: 14px;
+}
+
+.tool {
+  padding: 20px;
+}
+
+.tool .badge-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(139, 108, 240, 0.1);
+  border-color: rgba(139, 108, 240, 0.35);
+  color: #c4b5fd;
+  box-shadow: none;
+}
+
+.watch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 14px;
+  padding: 18px 20px;
+}
+
+.watch p {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.watch p .icon {
+  color: var(--teal);
+}
+
+/* --- trust ------------------------------------------------------------------------- */
+
 .principles {
   display: grid;
   gap: 36px 32px;
-  margin: 48px 0 0;
+  margin: 56px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -921,18 +1900,22 @@ section.band {
   color: var(--text-2);
 }
 
-/* questions and answers */
+/* --- FAQ ----------------------------------------------------------------------------- */
+
 .faq {
-  max-width: 48rem;
-  margin: 40px auto 0;
+  max-width: 50rem;
+  margin: 48px auto 0;
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
 .faq details {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--card);
+  border-radius: 14px;
+  transition: border-color 0.2s;
+}
+
+.faq details[open] {
+  border-color: rgba(45, 212, 191, 0.4);
 }
 
 .faq summary {
@@ -951,12 +1934,12 @@ section.band {
 }
 
 .faq summary .icon {
-  color: var(--text-3);
+  color: var(--teal);
   transition: transform 0.2s;
 }
 
 .faq details[open] summary .icon {
-  transform: rotate(180deg);
+  transform: rotate(45deg);
 }
 
 .faq details p {
@@ -966,45 +1949,48 @@ section.band {
   color: var(--text-2);
 }
 
-/* notify me */
+/* --- notify -------------------------------------------------------------------------- */
+
 .notify {
-  position: relative;
-  isolation: isolate;
   overflow: hidden;
+  padding: 64px 24px;
   border-radius: 28px;
-  background: var(--navy);
-  color: #fff;
-  padding: 56px 24px;
   text-align: center;
+  isolation: isolate;
 }
 
 @media (min-width: 640px) {
   .notify {
-    padding: 64px 48px;
+    padding: 80px 48px;
   }
 }
 
-.notify .glow {
-  width: 24rem;
-  height: 24rem;
-  top: -6rem;
+.notify::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
   left: 50%;
+  top: -12rem;
+  width: 36rem;
+  height: 24rem;
   transform: translateX(-50%);
-  background: rgba(45, 212, 191, 0.25);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(45, 212, 191, 0.35), transparent);
 }
 
 .notify h2 {
-  margin: 0;
+  margin: 14px 0 0;
   font-family: var(--display);
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  line-height: 1.15;
+  font-size: clamp(1.9rem, 4.4vw, 2.9rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
 .notify > p {
   max-width: 34rem;
-  margin: 12px auto 0;
-  color: rgba(255, 255, 255, 0.75);
+  margin: 14px auto 0;
+  color: var(--text-2);
 }
 
 .notify-form {
@@ -1012,30 +1998,36 @@ section.band {
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
-  max-width: 30rem;
-  margin: 28px auto 0;
+  max-width: 32rem;
+  margin: 30px auto 0;
 }
 
 .notify-form input[type="email"] {
   flex: 1 1 16rem;
-  min-height: 46px;
+  min-height: 48px;
   padding: 0 16px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  border: 1px solid var(--line-2);
+  background: rgba(5, 11, 22, 0.6);
   color: #fff;
   font: inherit;
 }
 
+.notify-form input[type="email"]:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.15);
+  outline: none;
+}
+
 .notify-form input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-3);
 }
 
 .notify .fineprint {
   margin: 14px auto 0;
   max-width: 30rem;
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--text-3);
 }
 
 .notify .thanks {
@@ -1048,22 +2040,21 @@ section.band {
   display: none;
 }
 
-/* disclaimer and footer */
 .disclaimer {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 32px;
+  margin-top: 28px;
   padding: 14px 18px;
   border-radius: 12px;
-  border: 1px solid var(--note-border);
-  background: var(--note);
-  color: var(--note-text);
+  border: 1px solid rgba(208, 144, 26, 0.35);
+  background: rgba(208, 144, 26, 0.08);
+  color: #f5d9a0;
   font-size: 0.9rem;
 }
 
 .site-footer {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--line);
   padding: 28px 0;
   font-size: 0.85rem;
   color: var(--text-3);
@@ -1079,48 +2070,77 @@ section.band {
 
 .site-footer .wordmark {
   font-size: 1.15rem;
-  color: var(--logo-on-page);
+  color: var(--teal);
 }
 
-/* Bangla text needs a little more line height. */
 html[lang="bn"] body {
   line-height: 1.75;
 }
 
 html[lang="bn"] .hero h1,
-html[lang="bn"] .section-head h2 {
+html[lang="bn"] .section-head h2,
+html[lang="bn"] .notify h2 {
   line-height: 1.3;
+  letter-spacing: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .js .reveal,
+  .js .equation .squares i {
+    opacity: 1;
+    transform: none;
+  }
+  .js .console:not(.in) .ring .arc {
+    stroke-dashoffset: 163.6;
+  }
 }
   </style>
 </head>
 <body>
+  <div class="backdrop" aria-hidden="true"></div>
+
   <!-- Icons (Lucide, ISC licence), used with <svg><use href="#i-name"/></svg>. -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#99f6e4"/><stop offset="1" stop-color="#14b09c"/></linearGradient>
+      <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14b09c" stop-opacity="0.3"/><stop offset="1" stop-color="#14b09c" stop-opacity="0"/></linearGradient>
+    </defs>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
     <symbol id="i-badge" viewBox="0 0 24 24"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></symbol>
     <symbol id="i-percent" viewBox="0 0 24 24"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol>
     <symbol id="i-zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
     <symbol id="i-heart" viewBox="0 0 24 24"><path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16"/><path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"/><path d="m2 15 6 6"/><path d="M19.5 8.5c.7-.7 1.5-1.6 1.5-2.7A2.73 2.73 0 0 0 16 4a2.78 2.78 0 0 0-5 1.8c0 1.2.8 2 1.5 2.8L16 12Z"/></symbol>
-    <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8M16 13H8M16 17H8"/></symbol>
-    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.050 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
     <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9M13 17V5M8 17v-3"/></symbol>
     <symbol id="i-news" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6Z"/></symbol>
     <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.8 5.4a2 2 0 0 1-1.28 1.28l-5.4 1.8 1.8-5.4a2 2 0 0 1 1.28-1.28z"/></symbol>
     <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></symbol>
     <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
     <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
-    <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 17.5v-11"/></symbol>
     <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
-    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10.27 21a2 2 0 0 0 3.46 0"/><path d="M3.26 15.33A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.67C19.41 13.96 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.41 5.96-2.74 7.33"/></symbol>
     <symbol id="i-scroll" viewBox="0 0 24 24"><path d="M15 12h-5M15 8h-5M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></symbol>
     <symbol id="i-help" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></symbol>
     <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
-    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 4.99-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
-    <symbol id="i-bank" viewBox="0 0 24 24"><path d="M10 18v-7M14 18v-7M18 18v-7M6 18v-7M3 22h18"/><path d="M11.47 2.12a1.2 1.2 0 0 1 1.06 0L21 6.6V9H3V6.6Z"/></symbol>
-    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 4.99-5.540 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 14.99 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
     <symbol id="i-mail" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .71-1.53l7-6a2 2 0 0 1 2.58 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol>
   </svg>
 
   <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
@@ -1143,16 +2163,14 @@ html[lang="bn"] .section-head h2 {
   <main id="main">
     <!-- Hero -->
     <section class="hero" id="top">
-      <span class="glow glow-1" aria-hidden="true"></span>
-      <span class="glow glow-2" aria-hidden="true"></span>
       <div class="container hero-grid">
-        <div>
-          <span class="pill"><span class="dot" aria-hidden="true"></span><span data-i18n="hero.eyebrow">Coming soon · Made for investors and families in Bangladesh</span></span>
-          <h1 data-i18n="hero.title">Invest with clarity. Manage money by your values.</h1>
-          <p class="lead" data-i18n="hero.lead">See why a DSE stock passes or fails a Shariah screen, how it moved when rates rose or a crisis hit, and where your household stands on Zakat, tax and long-term plans. Every number shows where it came from.</p>
+        <div class="reveal">
+          <span class="pill"><span class="tag" data-i18n="hero.tag">Soon</span><span class="pulse" aria-hidden="true"></span><span data-i18n="hero.eyebrow">FIRE planning for families in Bangladesh</span></span>
+          <h1><span data-i18n="hero.title1">Find the year</span> <span class="grad" data-i18n="hero.title2">work becomes optional.</span></h1>
+          <p class="lead" data-i18n="hero.lead">analysisACE turns your household's income, costs and savings into a FIRE plan: your FIRE number, your savings rate and the year your capital could cover your costs. Grow your Assets, Capital and Earnings, with Zakat, tax and halal choices built in. Every number shows where it came from.</p>
           <div class="hero-actions">
             <a class="btn btn-teal" href="#notify"><span data-i18n="hero.ctaNotify">Notify me at launch</span><svg class="icon icon-sm"><use href="#i-arrow"/></svg></a>
-            <a class="btn btn-ghost" href="#markets" data-i18n="hero.ctaExplore">See what's coming</a>
+            <a class="btn btn-ghost" href="#simulator" data-i18n="hero.ctaExplore">Try the savings simulator</a>
           </div>
           <ul class="ticks">
             <li><svg class="icon icon-sm"><use href="#i-check"/></svg><span data-i18n="hero.trust.sources">Every number shows its source</span></li>
@@ -1161,157 +2179,386 @@ html[lang="bn"] .section-head h2 {
           </ul>
         </div>
 
-        <figure class="preview">
-          <div class="preview-card">
-            <div class="preview-head">
-              <div><strong lang="en">DMPHARMA</strong><span lang="en">Demo Pharma Ltd.</span></div>
-              <span class="status"><svg class="icon icon-sm"><use href="#i-badge"/></svg><span data-i18n="preview.status">Shariah compliant</span></span>
+        <!-- Fictional figures that agree with each other: costs Tk 85,000 a month, so the FIRE
+             number is 85,000 x 12 x 25 = Tk 2.55 crore; Tk 43,800 saved of Tk 1,28,800 income
+             is 34%; Tk 96.9 lakh invested is 38% of the FIRE number; adding Tk 43,800 a month
+             at a 4.5% real return, capital passes the FIRE number at age 51. -->
+        <figure class="console reveal">
+          <div class="glass console-card">
+            <div class="console-head">
+              <div><strong data-i18n="preview.title">A sample FIRE plan</strong><span data-i18n="preview.subtitle">Household of four, age 38</span></div>
+              <span class="chip"><svg class="icon icon-sm"><use href="#i-flame"/></svg><span data-i18n="preview.fireAge">FIRE at 51</span></span>
             </div>
-            <ul class="rules">
-              <li>
-                <div class="rule-top"><span data-i18n="preview.debt">Interest-bearing debt</span><span><b data-num>13.27%</b> <em><span data-i18n="preview.limit">limit</span> <span data-num>30%</span></em></span></div>
-                <div class="bar"><i style="width:44%"></i></div>
-              </li>
-              <li>
-                <div class="rule-top"><span data-i18n="preview.cash">Cash and interest securities</span><span><b data-num>8.84%</b> <em><span data-i18n="preview.limit">limit</span> <span data-num>30%</span></em></span></div>
-                <div class="bar"><i style="width:29%"></i></div>
-              </li>
-              <li>
-                <div class="rule-top"><span data-i18n="preview.income">Non-permissible income</span><span><b data-num>1.20%</b> <em><span data-i18n="preview.limit">limit</span> <span data-num>5%</span></em></span></div>
-                <div class="bar"><i style="width:24%"></i></div>
-              </li>
+
+            <div class="console-top">
+              <div class="ring">
+                <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="42" fill="none" stroke-width="8"/><circle class="arc" cx="50" cy="50" r="42" fill="none" stroke-width="8"/></svg>
+                <div class="ring-label"><b data-num>38%</b><small data-i18n="preview.progress">of the FIRE number</small></div>
+              </div>
+              <dl class="kv">
+                <div><dt data-i18n="preview.investedLabel">Invested now</dt><dd data-i18n="preview.investedValue">৳96.9 lakh</dd></div>
+                <div><dt data-i18n="preview.fireNumberLabel">FIRE number</dt><dd data-i18n="preview.fireNumberValue">৳2.55 crore</dd></div>
+                <div><dt data-i18n="preview.savingsRate">Savings rate</dt><dd data-num>34%</dd></div>
+              </dl>
+            </div>
+
+            <div class="proj">
+              <div class="proj-title"><span data-i18n="preview.projTitle">Projected capital by age</span><span data-i18n="preview.projHint">Point at the line</span></div>
+              <svg viewBox="0 0 320 116" role="img" aria-labelledby="proj-desc">
+                <desc id="proj-desc" data-i18n="preview.projDesc">Projected invested capital rises from 96.9 lakh taka at age 38 to 2.62 crore at age 51, passing the FIRE number of 2.55 crore.</desc>
+                <line x1="0" x2="320" y1="96.5" y2="96.5" stroke="rgba(148,197,255,0.15)"/>
+                <line class="target" x1="0" x2="320" y1="8.6" y2="8.6"/>
+                <text class="target-label" x="0" y="4.6" data-i18n="preview.projTarget">FIRE number</text>
+                <path id="proj-area" fill="url(#areaGrad)"/>
+                <path id="proj-line" class="line"/>
+                <line class="cross" id="proj-cross" y1="0" y2="96" visibility="hidden"/>
+                <circle cx="320" cy="6.2" r="5" fill="#14b09c" stroke="#0a1628" stroke-width="2"/>
+                <circle id="proj-dot" r="5" fill="#14b09c" stroke="#0a1628" stroke-width="2" visibility="hidden"/>
+                <text class="axis-label" x="0" y="112" data-num>38</text>
+                <text class="axis-label" x="160" y="112" text-anchor="middle" data-num>45</text>
+                <text class="axis-label" x="320" y="112" text-anchor="end" data-num>51</text>
+                <rect id="proj-hit" x="0" y="0" width="320" height="98" fill="transparent"/>
+              </svg>
+              <div class="tip" id="proj-tip" hidden></div>
+            </div>
+
+            <ul class="levers">
+              <li><span class="lever-name"><span class="dot dot-assets"></span><span data-i18n="preview.assets">Assets</span></span><b data-i18n="preview.assetsValue">৳1.49 crore</b><small data-i18n="preview.assetsNote">Net worth</small></li>
+              <li><span class="lever-name"><span class="dot dot-capital"></span><span data-i18n="preview.capital">Capital</span></span><b data-i18n="preview.capitalValue">৳96.9 lakh</b><small data-i18n="preview.capitalNote">Can be lived from</small></li>
+              <li><span class="lever-name"><span class="dot dot-earnings"></span><span data-i18n="preview.earnings">Earnings</span></span><b data-num>৳43,800</b><small data-i18n="preview.earningsNote">Saved a month</small></li>
             </ul>
-            <p class="preview-source" data-i18n="preview.source">Source: annual report, page 64</p>
+            <p class="console-source" data-i18n="preview.source">Source: the household's own records</p>
           </div>
-          <div class="float float-rate" aria-hidden="true">
-            <small><svg class="icon icon-sm"><use href="#i-percent"/></svg><span data-i18n="preview.rate">Rate sensitivity</span></small>
-            <b data-i18n="preview.rateValue">−1.0% per 1-point yield rise</b>
-          </div>
-          <div class="float float-zakat" aria-hidden="true">
-            <small><svg class="icon icon-sm"><use href="#i-heart"/></svg><span data-i18n="preview.zakat">Zakat due</span></small>
+          <div class="glass float float-zakat" aria-hidden="true">
+            <small><svg class="icon icon-sm"><use href="#i-heart"/></svg><span data-i18n="preview.zakat">Zakat due this year</span></small>
             <b data-num>৳99,264.75</b>
           </div>
-          <figcaption data-i18n="preview.label">Illustration with a fictional company</figcaption>
+          <figcaption data-i18n="preview.label">Illustration with fictional figures</figcaption>
         </figure>
       </div>
     </section>
 
-    <!-- The questions people ask -->
-    <section class="band" aria-labelledby="questions-title">
-      <div class="container">
-        <div class="section-head">
-          <h2 id="questions-title" data-i18n="questions.title">Answers to the questions you actually ask</h2>
-          <p data-i18n="questions.lead">analysisACE starts from the decisions people in Bangladesh make about their money, not from a list of charts.</p>
-        </div>
-        <ul class="grid grid-3">
-          <li class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-badge"/></svg></span><p class="q" data-i18n="questions.halal.q">“Is this stock Shariah compliant, and why?”</p><p data-i18n="questions.halal.a">Every rule, the company's own figure, the limit and the report page it came from.</p></li>
-          <li class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-percent"/></svg></span><p class="q" data-i18n="questions.rates.q">“What happened to stocks like mine when rates rose?”</p><p data-i18n="questions.rates.a">A sensitivity score for each stock and sector, from five years of weekly data.</p></li>
-          <li class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-zap"/></svg></span><p class="q" data-i18n="questions.shock.q">“How did the market behave in past crises?”</p><p data-i18n="questions.shock.a">Moves after wars, energy shocks and policy changes, and how long recovery took.</p></li>
-          <li class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-heart"/></svg></span><p class="q" data-i18n="questions.zakat.q">“How much Zakat do I owe this year?”</p><p data-i18n="questions.zakat.a">A line-by-line calculation from your records, with a PDF in Bangla or English.</p></li>
-          <li class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-file"/></svg></span><p class="q" data-i18n="questions.tax.q">“What goes in my wealth statement?”</p><p data-i18n="questions.tax.a">Assets, debts, income and tax already deducted, ready for your return.</p></li>
-          <li class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-flame"/></svg></span><p class="q" data-i18n="questions.fire.q">“When could our savings cover our costs?”</p><p data-i18n="questions.fire.a">A FIRE plan with what-ifs for a market fall, higher costs or higher inflation.</p></li>
+    <!-- What a Bangladeshi household holds -->
+    <div class="ticker">
+      <div class="ticker-track">
+        <ul>
+          <li data-i18n="ticker.sanchay">Sanchayapatra</li>
+          <li data-i18n="ticker.fdr">FDR and DPS</li>
+          <li data-i18n="ticker.sukuk">Government sukuk</li>
+          <li data-i18n="ticker.mudaraba">Mudaraba deposits</li>
+          <li data-i18n="ticker.gold">Gold and silver</li>
+          <li data-i18n="ticker.land">Land and flats</li>
+          <li data-i18n="ticker.bo">BO accounts</li>
+          <li data-i18n="ticker.funds">Mutual funds</li>
+          <li data-i18n="ticker.pf">Provident fund</li>
+          <li data-i18n="ticker.business">Business stakes</li>
+          <li data-i18n="ticker.hajj">Hajj savings</li>
+          <li data-i18n="ticker.loans">Loans given and owed</li>
         </ul>
+        <ul aria-hidden="true">
+          <li data-i18n="ticker.sanchay">Sanchayapatra</li>
+          <li data-i18n="ticker.fdr">FDR and DPS</li>
+          <li data-i18n="ticker.sukuk">Government sukuk</li>
+          <li data-i18n="ticker.mudaraba">Mudaraba deposits</li>
+          <li data-i18n="ticker.gold">Gold and silver</li>
+          <li data-i18n="ticker.land">Land and flats</li>
+          <li data-i18n="ticker.bo">BO accounts</li>
+          <li data-i18n="ticker.funds">Mutual funds</li>
+          <li data-i18n="ticker.pf">Provident fund</li>
+          <li data-i18n="ticker.business">Business stakes</li>
+          <li data-i18n="ticker.hajj">Hajj savings</li>
+          <li data-i18n="ticker.loans">Loans given and owed</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- FIRE, explained -->
+    <section class="band" id="fire" aria-labelledby="fire-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow" data-i18n="fire.eyebrow">FIRE, explained</span>
+          <h2 id="fire-title" data-i18n="fire.title">Financial independence in three ideas</h2>
+          <p data-i18n="fire.lead">FIRE means Financial Independence, Retire Early. You are financially independent when your invested capital could pay your family's yearly costs. Retiring early is optional; the freedom is the point.</p>
+        </div>
+        <ol class="idea-grid">
+          <li class="reveal"><div class="glass glow-edge idea"><span class="step" data-i18n="fire.number.step">01 / NUMBER</span><h3 data-i18n="fire.number.title">Your FIRE number</h3><p data-i18n="fire.number.body">Add up a year of your household's real costs and multiply by 25. That is roughly the invested capital that could pay for those costs every year at a 4% withdrawal rate.</p></div></li>
+          <li class="reveal"><div class="glass glow-edge idea"><span class="step" data-i18n="fire.rate.step">02 / RATE</span><h3 data-i18n="fire.rate.title">Your savings rate</h3><p data-i18n="fire.rate.body">The share of income you keep. It works twice: it builds capital faster, and it lowers the costs your capital has to cover.</p></div></li>
+          <li class="reveal"><div class="glass glow-edge idea"><span class="step" data-i18n="fire.date.step">03 / DATE</span><h3 data-i18n="fire.date.title">Your FIRE date</h3><p data-i18n="fire.date.body">The age at which your investable capital is projected to reach your FIRE number, from your own savings, returns and inflation. Progress updates as your records grow.</p></div></li>
+        </ol>
+
+        <!-- The FIRE number as a picture: one year of costs, times 25 -->
+        <div class="glass equation reveal" role="group" aria-labelledby="eq-label">
+          <span class="sr-only" id="eq-label" data-i18n="fire.formula">FIRE number = a year of costs × 25</span>
+          <div class="eq-term"><div class="eq-unit" aria-hidden="true"></div><small data-i18n="fire.eq.year">A year of costs</small><b data-i18n="fire.eq.yearValue">৳10.2 lakh</b></div>
+          <div class="eq-op" aria-hidden="true">×</div>
+          <div class="eq-term">
+            <div class="squares" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <small class="eq-times" data-i18n="fire.eq.times">25 years of costs, invested</small>
+          </div>
+          <div class="eq-op" aria-hidden="true">=</div>
+          <div class="eq-term eq-result"><small data-i18n="fire.eq.result">Your FIRE number</small><b class="grad" data-i18n="fire.eq.resultValue">৳2.55 crore</b></div>
+          <p class="eq-note" data-i18n="fire.formulaNote">25 is 100 ÷ 4, the 4% withdrawal rate: each year about one square is spent while the rest stays invested. You can change the rate in your plan. It is a rule of thumb from past markets, not a guarantee.</p>
+        </div>
       </div>
     </section>
 
-    <!-- Markets -->
-    <section class="band band-muted" id="markets" aria-labelledby="markets-title">
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow" data-i18n="markets.eyebrow">Markets, explained</span>
-          <h2 id="markets-title" data-i18n="markets.title">Understand DSE stocks before you decide</h2>
-          <p data-i18n="markets.lead">Open methods, published rules and history you can check. analysisACE describes what happened; the decision stays yours.</p>
+    <!-- Savings-rate simulator: years = ln(1 + 25(1 - s) x 0.05 / s) / ln 1.05 -->
+    <section class="band" id="simulator" aria-labelledby="rate-title">
+      <div class="container split">
+        <div class="section-head reveal">
+          <span class="eyebrow" data-i18n="rate.eyebrow">The biggest lever</span>
+          <h2 id="rate-title" data-i18n="rate.title">Your savings rate decides more than your returns</h2>
+          <p data-i18n="rate.lead">Returns are mostly outside your control. What you keep from each month's income is not.</p>
+          <p class="section-body" data-i18n="rate.body">Drag the slider. Moving from saving 20% to 40% of income shortens the wait by about 15 years. analysisACE works out your savings rate from your income and cost records every month.</p>
         </div>
-        <ul class="grid grid-3">
-          <li class="span-2"><div class="tile tile-wide"><span class="badge-icon"><svg class="icon"><use href="#i-badge"/></svg></span><h3 data-i18n="markets.shariah.title">Shariah screen with reasons</h3><p data-i18n="markets.shariah.body">Two methods, AAOIFI-style and S&amp;P-style, side by side. See which ratio decided a status and open the report behind it.</p></div></li>
-          <li><div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-chart"/></svg></span><h3 data-i18n="markets.basket.title">Shariah list and basket</h3><p data-i18n="markets.basket.body">Filter every screened company, and compare a basket of compliant stocks with the DSES and DSEX over one, three or five years.</p></div></li>
-          <li><div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-percent"/></svg></span><h3 data-i18n="markets.rates.title">Rate sensitivity</h3><p data-i18n="markets.rates.body">How far each stock and sector has typically moved when the 91-day T-bill yield rose one point, with the confidence of the estimate.</p></div></li>
-          <li><div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-zap"/></svg></span><h3 data-i18n="markets.shocks.title">Shock playbook</h3><p data-i18n="markets.shocks.body">How the market, sectors and single stocks moved after past wars, energy events and policy changes.</p></div></li>
-          <li><div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-news"/></svg></span><h3 data-i18n="markets.macro.title">Weekly macro note</h3><p data-i18n="markets.macro.body">Yields, inflation, the taka, remittance, oil and the DSE each week, in plain Bangla and English, every figure sourced.</p></div></li>
-          <li class="span-2"><div class="tile tile-wide"><span class="badge-icon"><svg class="icon"><use href="#i-compass"/></svg></span><h3 data-i18n="markets.regime.title">Macro regime</h3><p data-i18n="markets.regime.body">A monthly label from rates, inflation and oil, and how each sector did in past months like this one.</p></div></li>
-          <li><div class="tile tile-dashed"><span class="badge-icon"><svg class="icon"><use href="#i-eye"/></svg></span><p><strong data-i18n="markets.watch">Watch any company and get a notice if its Shariah status changes.</strong></p></div></li>
-        </ul>
-      </div>
-    </section>
 
-    <!-- My money -->
-    <section class="band" aria-labelledby="money-title">
-      <div class="container">
-        <div class="section-head">
-          <span class="eyebrow" data-i18n="money.eyebrow">My money</span>
-          <h2 id="money-title" data-i18n="money.title">Your whole household's money, organised</h2>
-          <p data-i18n="money.lead">Everything a Bangladeshi family owns and owes, from BO accounts to gold, land and sanchayapatra, with Zakat and tax worked out for you.</p>
-        </div>
-        <div class="grid grid-4">
-          <div class="span-2 row-2">
-            <div class="tile tile-zakat">
-              <div>
-                <span class="badge-icon"><svg class="icon"><use href="#i-heart"/></svg></span>
-                <h3 data-i18n="money.zakat.title">Zakat, line by line</h3>
-                <p data-i18n="money.zakat.body">Choose gold or silver nisab and the date. Every asset is counted at each member's share, with interest-bearing items flagged. Download a PDF statement in Bangla or English.</p>
-              </div>
-              <ul class="chips">
-                <li><svg class="icon"><use href="#i-check"/></svg><span data-i18n="money.zakat.cash">Cash and bank</span></li>
-                <li><svg class="icon"><use href="#i-check"/></svg><span data-i18n="money.zakat.gold">Gold and silver</span></li>
-                <li><svg class="icon"><use href="#i-check"/></svg><span data-i18n="money.zakat.shares">Listed shares and funds</span></li>
-                <li><svg class="icon"><use href="#i-check"/></svg><span data-i18n="money.zakat.sukuk">Sukuk and Islamic deposits</span></li>
-                <li><svg class="icon"><use href="#i-check"/></svg><span data-i18n="money.zakat.business">Business</span></li>
-              </ul>
+        <div class="glass sim reveal">
+          <div class="sim-top">
+            <div>
+              <label for="rate-input" data-i18n="rate.sliderLabel">Share of income you keep</label>
+              <span class="sim-rate" id="rate-value" aria-hidden="true">34%</span>
+              <input id="rate-input" type="range" min="5" max="75" step="1" value="34">
+            </div>
+            <div class="readout" aria-live="polite">
+              <b id="rate-years">24</b>
+              <small data-i18n="rate.readout">years from zero to FIRE</small>
             </div>
           </div>
-          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-wallet"/></svg></span><h3 data-i18n="money.wealth.title">Everything you own</h3><p data-i18n="money.wealth.body">Bank, BO and fund accounts, sukuk and Islamic deposits, land, flats, gold and business stakes. Import your broker statement in one step.</p></div>
-          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-shield"/></svg></span><h3 data-i18n="money.check.title">Shariah check of your portfolio</h3><p data-i18n="money.check.body">Your compliant share by value, rate and shock exposure, and an estimate of dividends to purify.</p></div>
-          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-file"/></svg></span><h3 data-i18n="money.tax.title">Tax statement</h3><p data-i18n="money.tax.body">Wealth statement, income by kind, tax deducted at source and rebate-eligible purchases for the tax year, as PDF or CSV.</p></div>
-          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-flame"/></svg></span><h3 data-i18n="money.plans.title">FIRE plan and goals</h3><p data-i18n="money.plans.body">See when savings could cover your costs, test what-ifs, and track goals for net worth or a target age.</p></div>
-          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-receipt"/></svg></span><h3 data-i18n="money.costs.title">Costs and performance</h3><p data-i18n="money.costs.body">Monthly spending in today's taka, recurring bills added for you, and returns beside the DSE indices.</p></div>
-          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-users"/></svg></span><h3 data-i18n="money.family.title">Built for families</h3><p data-i18n="money.family.body">Add members with their own roles and Zakat dates, split shared assets by owner, and keep parents' money in a separate household.</p></div>
-          <div class="tile"><span class="badge-icon"><svg class="icon"><use href="#i-bell"/></svg></span><h3 data-i18n="money.alerts.title">Gentle reminders</h3><p data-i18n="money.alerts.body">Notices for maturities, sukuk auctions, Zakat dates, drift from your target mix and goals reached.</p></div>
-          <div class="tile tile-dashed"><a class="btn btn-teal" href="#notify"><span data-i18n="hero.ctaNotify">Notify me at launch</span><svg class="icon icon-sm"><use href="#i-arrow"/></svg></a></div>
+
+          <div class="splitbar" aria-hidden="true">
+            <div class="splitbar-bar"><span class="kept" id="bar-kept" style="flex-basis:34%"></span><span class="spent" id="bar-spent" style="flex-basis:66%"></span></div>
+            <div class="legend"><span><i class="dot dot-earnings"></i><span data-i18n="rate.kept">Kept and invested</span></span><span><i class="dot dot-neutral"></i><span data-i18n="rate.spent">Spent on costs</span></span></div>
+          </div>
+
+          <div class="rate-head" aria-hidden="true"><span data-i18n="rate.colRate">Rate</span><span></span><span data-i18n="rate.colYears">Years</span></div>
+          <ul class="rate-rows" id="rate-rows">
+            <li data-rate="10"><span data-num>10%</span><span class="track"><i style="width:98%"></i></span><b data-num>51</b></li>
+            <li data-rate="20"><span data-num>20%</span><span class="track"><i style="width:71%"></i></span><b data-num>37</b></li>
+            <li data-rate="30"><span data-num>30%</span><span class="track"><i style="width:54%"></i></span><b data-num>28</b></li>
+            <li data-rate="40"><span data-num>40%</span><span class="track"><i style="width:42%"></i></span><b data-num>22</b></li>
+            <li data-rate="50"><span data-num>50%</span><span class="track"><i style="width:32%"></i></span><b data-num>17</b></li>
+            <li data-rate="60"><span data-num>60%</span><span class="track"><i style="width:24%"></i></span><b data-num>12</b></li>
+            <li data-rate="70"><span data-num>70%</span><span class="track"><i style="width:17%"></i></span><b data-num>9</b></li>
+          </ul>
+          <p class="caption" data-i18n="rate.assumptions">Illustration, not a forecast. Starts from zero savings and assumes a 5% yearly return after inflation and a 4% withdrawal rate. Your own plan uses your figures.</p>
         </div>
+      </div>
+    </section>
+
+    <!-- ACE: how one month of money moves toward FIRE -->
+    <section class="band" id="ace" aria-labelledby="ace-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow" data-i18n="ace.eyebrow">Three levers</span>
+          <h2 id="ace-title" data-i18n="ace.title">Assets, Capital and Earnings move your FIRE date</h2>
+          <p data-i18n="ace.lead">ACE is how analysisACE organises your money. Follow one month of the sample family: what they earn, what they keep, and where it goes.</p>
+        </div>
+
+        <div class="glass flow reveal">
+          <div class="node">
+            <div class="node-head"><span class="dot dot-earnings"></span><span data-i18n="flow.earnings">Earnings</span></div>
+            <p class="node-value" data-num>৳1,28,800</p>
+            <p class="node-sub" data-i18n="flow.income">Income this month</p>
+            <div class="splitbar">
+              <div class="splitbar-bar"><span class="kept" style="flex-basis:34%" data-num>34%</span><span class="spent" style="flex-basis:66%" data-num>66%</span></div>
+              <div class="legend"><span><i class="dot dot-earnings"></i><span data-i18n="flow.saved">Saved ৳43,800</span></span><span><i class="dot dot-neutral"></i><span data-i18n="flow.costs">Costs ৳85,000</span></span></div>
+            </div>
+          </div>
+          <div class="arrow" aria-hidden="true"><span class="beam"></span><span data-i18n="flow.invest">invested</span></div>
+          <div class="node">
+            <div class="node-head"><span class="dot dot-capital"></span><span data-i18n="flow.capital">Capital</span></div>
+            <p class="node-value" data-i18n="flow.capitalValue">৳96.9 lakh</p>
+            <p class="node-sub" data-i18n="flow.capitalSub">Sukuk, deposits, sanchayapatra and shares, growing at a 4.5% return after inflation</p>
+          </div>
+          <div class="arrow" aria-hidden="true"><span class="beam"></span><span data-i18n="flow.toward">toward</span></div>
+          <div class="node">
+            <div class="node-head"><span class="dot dot-white"></span><span data-i18n="flow.fire">FIRE number</span></div>
+            <p class="node-value" data-i18n="flow.fireValue">৳2.55 crore</p>
+            <div class="mini-ring">
+              <svg viewBox="0 0 60 60" aria-hidden="true"><circle class="track" cx="30" cy="30" r="24" fill="none" stroke-width="6"/><circle class="arc" cx="30" cy="30" r="24" fill="none" stroke-width="6"/></svg>
+              <div><b data-num>38%</b><small data-i18n="flow.progress">reached · FIRE at 51</small></div>
+            </div>
+          </div>
+          <div class="assets-row">
+            <div class="row-top">
+              <div class="node-head"><span class="dot dot-assets"></span><span data-i18n="flow.assets">Assets · net worth</span></div>
+              <p class="node-value" style="margin:0" data-i18n="flow.assetsValue">৳1.49 crore</p>
+            </div>
+            <div class="splitbar">
+              <div class="splitbar-bar"><span class="cap" style="flex-basis:65%" data-num>65%</span><span class="home" style="flex-basis:35%" data-num>35%</span></div>
+              <div class="legend"><span><i class="dot dot-capital"></i><span data-i18n="flow.assetsCap">Capital at work, can be lived from</span></span><span><i class="dot dot-assets"></i><span data-i18n="flow.assetsHome">Family home and land, kept out of the FIRE base</span></span></div>
+            </div>
+          </div>
+          <p class="caption" data-i18n="flow.note">Illustration with fictional figures: the same family as the sample plan above.</p>
+        </div>
+
+        <ul class="pillars">
+          <li class="reveal">
+            <div class="glass glow-edge pillar pillar-assets">
+              <div class="pillar-top"><span class="pillar-letter" aria-hidden="true">A</span><div><h3 data-i18n="ace.assets.title">Assets</h3><span class="tagline" data-i18n="ace.assets.tagline">What you own, and what you owe</span></div></div>
+              <p class="lever"><svg class="icon icon-sm"><use href="#i-scale"/></svg><span data-i18n="ace.assets.lever">Shows where you stand and keeps your duties in view</span></p>
+              <ul>
+                <li><svg class="icon icon-sm"><use href="#i-check"/></svg><span data-i18n="ace.assets.a">Net worth across accounts, gold, land and business stakes, at each owner's share</span></li>
+                <li><svg class="icon icon-sm"><use href="#i-check"/></svg><span data-i18n="ace.assets.b">Debts in one list, so you see what slows the plan</span></li>
+                <li><svg class="icon icon-sm"><use href="#i-check"/></svg><span data-i18n="ace.assets.c">Zakat line by line and a wealth statement for tax</span></li>
+              </ul>
+            </div>
+          </li>
+          <li class="reveal">
+            <div class="glass glow-edge pillar pillar-capital">
+              <div class="pillar-top"><span class="pillar-letter" aria-hidden="true">C</span><div><h3 data-i18n="ace.capital.title">Capital</h3><span class="tagline" data-i18n="ace.capital.tagline">Money put to work</span></div></div>
+              <p class="lever"><svg class="icon icon-sm"><use href="#i-trend"/></svg><span data-i18n="ace.capital.lever">Grows toward your FIRE number</span></p>
+              <ul>
+                <li><svg class="icon icon-sm"><use href="#i-check"/></svg><span data-i18n="ace.capital.a">One portfolio for sukuk, Islamic deposits, savings certificates, shares and alternative investments</span></li>
+                <li><svg class="icon icon-sm"><use href="#i-check"/></svg><span data-i18n="ace.capital.b">Returns over time, your target mix and drift from it</span></li>
+                <li><svg class="icon icon-sm"><use href="#i-check"/></svg><span data-i18n="ace.capital.c">A FIRE plan, goals and stress tests</span></li>
+              </ul>
+            </div>
+          </li>
+          <li class="reveal">
+            <div class="glass glow-edge pillar pillar-earnings">
+              <div class="pillar-top"><span class="pillar-letter" aria-hidden="true">E</span><div><h3 data-i18n="ace.earnings.title">Earnings</h3><span class="tagline" data-i18n="ace.earnings.tagline">What comes in and what goes out</span></div></div>
+              <p class="lever"><svg class="icon icon-sm"><use href="#i-wallet"/></svg><span data-i18n="ace.earnings.lever">Raises your savings rate and lowers your FIRE number</span></p>
+              <ul>
+                <li><svg class="icon icon-sm"><use href="#i-check"/></svg><span data-i18n="ace.earnings.a">Income and recurring salary, with savings worked out each month</span></li>
+                <li><svg class="icon icon-sm"><use href="#i-check"/></svg><span data-i18n="ace.earnings.b">Daily costs in today's taka, recurring bills added for you</span></li>
+                <li><svg class="icon icon-sm"><use href="#i-check"/></svg><span data-i18n="ace.earnings.c">Tax deducted at source and a statement for your return</span></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- FIRE in Bangladesh -->
+    <section class="band" aria-labelledby="local-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow" data-i18n="local.eyebrow">FIRE in Bangladesh</span>
+          <h2 id="local-title" data-i18n="local.title">A FIRE plan made for life here</h2>
+          <p data-i18n="local.lead">Most FIRE calculators assume low inflation and an index fund. Families here face different facts, and the plan handles them.</p>
+        </div>
+        <ul class="feature-grid">
+          <li class="reveal"><div class="glass glow-edge feature"><span class="badge-icon"><svg class="icon"><use href="#i-percent"/></svg></span><div><h3 data-i18n="local.inflation.title">Inflation from BBS figures</h3><p data-i18n="local.inflation.body">Your plan starts from the last 12 months of the BBS consumer price index, and your costs are shown in today's prices.</p></div></div></li>
+          <li class="reveal"><div class="glass glow-edge feature"><span class="badge-icon"><svg class="icon"><use href="#i-badge"/></svg></span><div><h3 data-i18n="local.halal.title">Returns from halal choices</h3><p data-i18n="local.halal.body">The starting return comes from your own sukuk and Islamic deposits. Shares can be checked against a Shariah screen with reasons.</p></div></div></li>
+          <li class="reveal"><div class="glass glow-edge feature"><span class="badge-icon"><svg class="icon"><use href="#i-users"/></svg></span><div><h3 data-i18n="local.family.title">The people you look after</h3><p data-i18n="local.family.body">Money sent to parents and family support is recorded as a cost, so your FIRE number includes everyone you provide for.</p></div></div></li>
+          <li class="reveal"><div class="glass glow-edge feature"><span class="badge-icon"><svg class="icon"><use href="#i-home"/></svg></span><div><h3 data-i18n="local.home.title">Land and home kept apart</h3><p data-i18n="local.home.body">Land and the family home are left out of the money you can live from by default, because they cannot be sold a piece at a time. You can include them.</p></div></div></li>
+          <li class="reveal"><div class="glass glow-edge feature"><span class="badge-icon"><svg class="icon"><use href="#i-heart"/></svg></span><div><h3 data-i18n="local.zakat.title">Zakat inside the plan</h3><p data-i18n="local.zakat.body">Zakat is worked out line by line each year, and the Zakat and sadaqah you record as costs are part of your FIRE number.</p></div></div></li>
+          <li class="reveal"><div class="glass glow-edge feature"><span class="badge-icon"><svg class="icon"><use href="#i-activity"/></svg></span><div><h3 data-i18n="local.stress.title">Tested against bad years</h3><p data-i18n="local.stress.body">See your plan after a market fall in year one, higher costs, higher inflation, stopping work five years sooner, or a replay of a past DSE event.</p></div></div></li>
+        </ul>
+
+        <!-- Stress-test dot plot. Axis runs from age 49 to 56: position = (age - 49) / 7. -->
+        <div class="glass stress reveal">
+          <div class="stress-head">
+            <h3 data-i18n="stress.title">Stress test: the sample plan in bad years</h3>
+            <span class="caption" style="margin:0" data-i18n="stress.note">Illustration with fictional figures</span>
+          </div>
+          <ul class="stress-rows">
+            <li><span data-i18n="stress.base">Base plan</span><span class="lane"><span class="base"></span><span class="pt" style="left:28.57%"></span></span><b data-num>51</b></li>
+            <li><span data-i18n="stress.crash">Market falls 20% in year one</span><span class="lane"><span class="base"></span><span class="seg" style="width:14.29%"></span><span class="pt" style="left:42.86%"></span></span><b><span data-num>52</span> <small data-num>+1</small></b></li>
+            <li><span data-i18n="stress.costs">Costs 15% higher</span><span class="lane"><span class="base"></span><span class="seg" style="width:28.57%"></span><span class="pt" style="left:57.14%"></span></span><b><span data-num>53</span> <small data-num>+2</small></b></li>
+            <li><span data-i18n="stress.inflation">Inflation 3 points higher</span><span class="lane"><span class="base"></span><span class="seg" style="width:42.86%"></span><span class="pt" style="left:71.43%"></span></span><b><span data-num>54</span> <small data-num>+3</small></b></li>
+          </ul>
+          <div class="stress-axis" aria-hidden="true"><span></span><span class="ticks-x"><span style="left:0%" data-num>49</span><span style="left:28.57%" data-num>51</span><span style="left:57.14%" data-num>53</span><span style="left:100%" data-num>56</span></span><span></span></div>
+          <p class="caption" data-i18n="stress.axis">Projected FIRE age under each scenario. The vertical line is the base plan.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Questions -->
+    <section class="band" aria-labelledby="questions-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow" data-i18n="questions.eyebrow">Real questions</span>
+          <h2 id="questions-title" data-i18n="questions.title">Questions on the way to independence</h2>
+          <p data-i18n="questions.lead">analysisACE starts from the decisions families in Bangladesh make about their money, not from a list of charts.</p>
+        </div>
+        <ul class="q-grid">
+          <li class="reveal"><div class="glass glow-edge q-card"><span class="badge-icon"><svg class="icon"><use href="#i-calendar"/></svg></span><p class="q" data-i18n="questions.when.q">“When could we stop needing a salary?”</p><p data-i18n="questions.when.a">A projected FIRE age from your savings, returns and inflation.</p></div></li>
+          <li class="reveal"><div class="glass glow-edge q-card"><span class="badge-icon"><svg class="icon"><use href="#i-target"/></svg></span><p class="q" data-i18n="questions.enough.q">“How much is enough for our family?”</p><p data-i18n="questions.enough.a">Your FIRE number, from a year of your real costs.</p></div></li>
+          <li class="reveal"><div class="glass glow-edge q-card"><span class="badge-icon"><svg class="icon"><use href="#i-zap"/></svg></span><p class="q" data-i18n="questions.crash.q">“What if the market falls in our first year?”</p><p data-i18n="questions.crash.a">Stress tests for a market fall, higher costs and higher inflation.</p></div></li>
+          <li class="reveal"><div class="glass glow-edge q-card"><span class="badge-icon"><svg class="icon"><use href="#i-wallet"/></svg></span><p class="q" data-i18n="questions.savings.q">“How much are we really saving?”</p><p data-i18n="questions.savings.a">Income less costs every month, and your savings rate.</p></div></li>
+          <li class="reveal"><div class="glass glow-edge q-card"><span class="badge-icon"><svg class="icon"><use href="#i-heart"/></svg></span><p class="q" data-i18n="questions.zakat.q">“How much Zakat do I owe this year?”</p><p data-i18n="questions.zakat.a">A line-by-line calculation from your records, with a PDF in Bangla or English.</p></div></li>
+          <li class="reveal"><div class="glass glow-edge q-card"><span class="badge-icon"><svg class="icon"><use href="#i-shield"/></svg></span><p class="q" data-i18n="questions.halal.q">“Is our money growing in halal ways?”</p><p data-i18n="questions.halal.a">The Shariah share of your holdings by value, with sukuk and Islamic deposits in one place.</p></div></li>
+        </ul>
       </div>
     </section>
 
     <!-- Steps -->
-    <section class="band band-muted" aria-labelledby="steps-title">
+    <section class="band" aria-labelledby="steps-title">
       <div class="container">
-        <div class="section-head"><h2 id="steps-title" data-i18n="steps.title">Up and running in three steps</h2></div>
-        <ol class="steps">
-          <li><span class="num" data-num>1</span><h3 data-i18n="steps.one.title">Create your account</h3><p data-i18n="steps.one.body">Sign up in a minute and choose Bangla or English.</p></li>
-          <li><span class="num" data-num>2</span><h3 data-i18n="steps.two.title">Add your household</h3><p data-i18n="steps.two.body">Record accounts, holdings, gold and land, or import a broker CSV.</p></li>
-          <li><span class="num" data-num>3</span><h3 data-i18n="steps.three.title">See the full picture</h3><p data-i18n="steps.three.body">Net worth, Shariah share, Zakat due and your plans, kept up to date.</p></li>
+        <div class="section-head reveal">
+          <span class="eyebrow" data-i18n="steps.eyebrow">Getting started</span>
+          <h2 id="steps-title" data-i18n="steps.title">Your FIRE plan in three steps</h2>
+        </div>
+        <ol class="timeline reveal">
+          <li><span class="node-num" data-num>1</span><h3 data-i18n="steps.one.title">Create your account</h3><p data-i18n="steps.one.body">Sign up in a minute and choose Bangla or English.</p></li>
+          <li><span class="node-num" data-num>2</span><h3 data-i18n="steps.two.title">Record income, costs and what you own</h3><p data-i18n="steps.two.body">Add salaries and bills once; recurring ones repeat by themselves. Import a broker CSV for shares.</p></li>
+          <li><span class="node-num" data-num>3</span><h3 data-i18n="steps.three.title">See your FIRE date</h3><p data-i18n="steps.three.body">Your FIRE number, savings rate and projected FIRE age, with progress as your records grow.</p></li>
         </ol>
+      </div>
+    </section>
+
+    <!-- Stock tools: one kind of capital, after the personal finance story -->
+    <section class="band" id="tools" aria-labelledby="tools-title">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow" data-i18n="tools.eyebrow">For the shares in your portfolio</span>
+          <h2 id="tools-title" data-i18n="tools.title">Holding DSE shares? Understand them better</h2>
+          <p data-i18n="tools.lead">Stocks are one kind of capital among many. If you hold some, these tools describe what happened in the past. Open methods, published rules and history you can check. The decision stays yours.</p>
+        </div>
+        <ul class="tool-grid">
+          <li class="reveal"><div class="glass glow-edge tool"><span class="badge-icon"><svg class="icon icon-sm"><use href="#i-badge"/></svg></span><div><h3 data-i18n="tools.shariah.title">Shariah screen with reasons</h3><p data-i18n="tools.shariah.body">Two methods, AAOIFI-style and S&amp;P-style, side by side. See which ratio decided a status and open the report behind it.</p></div></div></li>
+          <li class="reveal"><div class="glass glow-edge tool"><span class="badge-icon"><svg class="icon icon-sm"><use href="#i-chart"/></svg></span><div><h3 data-i18n="tools.basket.title">Shariah list and basket</h3><p data-i18n="tools.basket.body">Filter every screened company, and compare a basket of compliant stocks with the DSES and DSEX over one, three or five years.</p></div></div></li>
+          <li class="reveal"><div class="glass glow-edge tool"><span class="badge-icon"><svg class="icon icon-sm"><use href="#i-percent"/></svg></span><div><h3 data-i18n="tools.rates.title">Rate sensitivity</h3><p data-i18n="tools.rates.body">How far each stock and sector has typically moved when the 91-day T-bill yield rose one point, with the confidence of the estimate.</p></div></div></li>
+          <li class="reveal"><div class="glass glow-edge tool"><span class="badge-icon"><svg class="icon icon-sm"><use href="#i-zap"/></svg></span><div><h3 data-i18n="tools.shocks.title">Shock playbook</h3><p data-i18n="tools.shocks.body">How the market, sectors and single stocks moved after past wars, energy events and policy changes.</p></div></div></li>
+          <li class="reveal"><div class="glass glow-edge tool"><span class="badge-icon"><svg class="icon icon-sm"><use href="#i-news"/></svg></span><div><h3 data-i18n="tools.macro.title">Weekly macro note</h3><p data-i18n="tools.macro.body">Yields, inflation, the taka, remittance, oil and the DSE each week, in plain Bangla and English, every figure sourced.</p></div></div></li>
+          <li class="reveal"><div class="glass glow-edge tool"><span class="badge-icon"><svg class="icon icon-sm"><use href="#i-compass"/></svg></span><div><h3 data-i18n="tools.regime.title">Macro regime</h3><p data-i18n="tools.regime.body">A monthly label from rates, inflation and oil, and how each sector did in past months like this one.</p></div></div></li>
+        </ul>
+        <div class="glass watch reveal">
+          <p><svg class="icon"><use href="#i-eye"/></svg><span data-i18n="tools.watch">Watch any company and get a notice if its Shariah status changes.</span></p>
+          <a class="btn btn-teal btn-sm" href="#notify"><span data-i18n="hero.ctaNotify">Notify me at launch</span><svg class="icon icon-sm"><use href="#i-arrow"/></svg></a>
+        </div>
       </div>
     </section>
 
     <!-- Principles -->
     <section class="band" aria-labelledby="trust-title">
       <div class="container">
-        <div class="section-head">
+        <div class="section-head reveal">
+          <span class="eyebrow" data-i18n="trust.eyebrow">Principles</span>
           <h2 id="trust-title" data-i18n="trust.title">Built on trust, not tips</h2>
           <p data-i18n="trust.lead">Money decisions deserve evidence you can check. These principles are part of how analysisACE is built.</p>
         </div>
-        <ul class="principles">
+        <ul class="principles reveal">
           <li><span class="badge-icon"><svg class="icon"><use href="#i-eye"/></svg></span><div><h3 data-i18n="trust.traceable.title">Every number is traceable</h3><p data-i18n="trust.traceable.body">Each figure shows its source and the time it was worked out.</p></div></li>
-          <li><span class="badge-icon"><svg class="icon"><use href="#i-scroll"/></svg></span><div><h3 data-i18n="trust.rules.title">Rules are published</h3><p data-i18n="trust.rules.body">Screening and Zakat rules are versioned, shown on every result and sent to a Shariah advisor for approval.</p></div></li>
-          <li><span class="badge-icon"><svg class="icon"><use href="#i-help"/></svg></span><div><h3 data-i18n="trust.advice.title">History, never tips</h3><p data-i18n="trust.advice.body">We describe how markets moved in the past. We never tell you to buy, sell or hold.</p></div></li>
+          <li><span class="badge-icon"><svg class="icon"><use href="#i-scroll"/></svg></span><div><h3 data-i18n="trust.rules.title">Rules are published</h3><p data-i18n="trust.rules.body">Zakat and screening rules are versioned, shown on every result and sent to a Shariah advisor for approval.</p></div></li>
+          <li><span class="badge-icon"><svg class="icon"><use href="#i-help"/></svg></span><div><h3 data-i18n="trust.advice.title">Projections, never tips</h3><p data-i18n="trust.advice.body">We show projections from your own figures and what happened in the past. We never tell you to buy, sell or hold.</p></div></li>
           <li><span class="badge-icon"><svg class="icon"><use href="#i-lock"/></svg></span><div><h3 data-i18n="trust.privacy.title">Your data, your control</h3><p data-i18n="trust.privacy.body">Consent for every optional use, encrypted account numbers and documents, export or delete at any time.</p></div></li>
-          <li><span class="badge-icon"><svg class="icon"><use href="#i-pin"/></svg></span><div><h3 data-i18n="trust.local.title">Made for Bangladesh</h3><p data-i18n="trust.local.body">DSE trading days, lakh and crore, Bangla digits, sanchayapatra, Mudaraba deposits and the July-to-June tax year.</p></div></li>
-          <li><span class="badge-icon"><svg class="icon"><use href="#i-bank"/></svg></span><div><h3 data-i18n="trust.own.title">Our own screen</h3><p data-i18n="trust.own.body">analysisACE runs its own screening from company reports. It never republishes the DSE's licensed constituent list.</p></div></li>
+          <li><span class="badge-icon"><svg class="icon"><use href="#i-pin"/></svg></span><div><h3 data-i18n="trust.local.title">Made for Bangladesh</h3><p data-i18n="trust.local.body">Lakh and crore, Bangla digits, sanchayapatra, Mudaraba deposits, DSE trading days and the July-to-June tax year.</p></div></li>
+          <li><span class="badge-icon"><svg class="icon"><use href="#i-users"/></svg></span><div><h3 data-i18n="trust.family.title">Built for families</h3><p data-i18n="trust.family.body">Members with their own roles, shared assets split by owner, and Zakat and tax worked out for each person.</p></div></li>
         </ul>
       </div>
     </section>
 
-    <!-- Questions and answers -->
-    <section class="band band-muted" aria-labelledby="faq-title">
+    <!-- FAQ -->
+    <section class="band" aria-labelledby="faq-title">
       <div class="container">
-        <div class="section-head"><h2 id="faq-title" data-i18n="faq.title">Common questions</h2></div>
-        <div class="faq">
-          <details><summary><span data-i18n="faq.launch.q">When will analysisACE open?</span><svg class="icon icon-sm"><use href="#i-down"/></svg></summary><p data-i18n="faq.launch.a">The features on this page are built and being tested with demo data. Leave your email below and we will tell you the day it opens.</p></details>
-          <details><summary><span data-i18n="faq.advice.q">Is this investment advice?</span><svg class="icon icon-sm"><use href="#i-down"/></svg></summary><p data-i18n="faq.advice.a">No. analysisACE shows historical analysis for education. It never recommends buying, selling or holding anything, and the decision is always yours.</p></details>
-          <details><summary><span data-i18n="faq.method.q">Which Shariah method do you use?</span><svg class="icon icon-sm"><use href="#i-down"/></svg></summary><p data-i18n="faq.method.a">Two: an AAOIFI-style and an S&amp;P-style method, shown side by side. The thresholds are published and versioned, and they stay provisional until a Shariah advisor approves them.</p></details>
-          <details><summary><span data-i18n="faq.data.q">Where does the data come from?</span><svg class="icon icon-sm"><use href="#i-down"/></svg></summary><p data-i18n="faq.data.a">Prices and indices from the stock exchange, rates and macro figures from Bangladesh Bank and other public sources, and company figures from annual and quarterly reports. Every figure names its source.</p></details>
-          <details><summary><span data-i18n="faq.privacy.q">Is my household's data private?</span><svg class="icon icon-sm"><use href="#i-down"/></svg></summary><p data-i18n="faq.privacy.a">Yes. Only members of your household can see it. Account numbers and documents are encrypted, optional uses need your consent, and you can export or delete your data at any time.</p></details>
-          <details><summary><span data-i18n="faq.language.q">Can I use it in Bangla?</span><svg class="icon icon-sm"><use href="#i-down"/></svg></summary><p data-i18n="faq.language.a">Yes. Every page, notice and PDF statement is available in Bangla and English, with Bangla digits.</p></details>
+        <div class="section-head reveal">
+          <span class="eyebrow" data-i18n="faq.eyebrow">FAQ</span>
+          <h2 id="faq-title" data-i18n="faq.title">Common questions</h2>
+        </div>
+        <div class="faq reveal">
+          <details class="glass"><summary><span data-i18n="faq.fire.q">What is FIRE?</span><svg class="icon icon-sm"><use href="#i-plus"/></svg></summary><p data-i18n="faq.fire.a">Financial Independence, Retire Early. It means having enough invested that its returns could pay your yearly costs, so paid work becomes a choice. Many people keep working after they reach it.</p></details>
+          <details class="glass"><summary><span data-i18n="faq.retire.q">Do I have to retire early?</span><svg class="icon icon-sm"><use href="#i-plus"/></svg></summary><p data-i18n="faq.retire.a">No. Most people use FIRE as a target for freedom: to change careers, start a business, care for family or work less. The plan shows when that choice could open up.</p></details>
+          <details class="glass"><summary><span data-i18n="faq.promise.q">Is my FIRE age a promise?</span><svg class="icon icon-sm"><use href="#i-plus"/></svg></summary><p data-i18n="faq.promise.a">No. It is a projection from the figures you enter and assumptions about returns and inflation. Markets and costs change, so the plan includes stress tests and you can update it at any time.</p></details>
+          <details class="glass"><summary><span data-i18n="faq.what.q">What does ACE mean?</span><svg class="icon icon-sm"><use href="#i-plus"/></svg></summary><p data-i18n="faq.what.a">Assets, Capital and Earnings. Assets are what you own and owe. Capital is the part of your money that is invested or put to work. Earnings are your income, costs and savings. Together they decide how soon you could reach FIRE.</p></details>
+          <details class="glass"><summary><span data-i18n="faq.shares.q">Do I need to own shares?</span><svg class="icon icon-sm"><use href="#i-plus"/></svg></summary><p data-i18n="faq.shares.a">No. A FIRE plan can be built on savings certificates, sukuk, Islamic deposits, gold and other assets. Share tools are an extra for people who hold DSE stocks.</p></details>
+          <details class="glass"><summary><span data-i18n="faq.launch.q">When will analysisACE open?</span><svg class="icon icon-sm"><use href="#i-plus"/></svg></summary><p data-i18n="faq.launch.a">The FIRE plan, money records and tools on this page are built and being tested with demo data. Leave your email below and we will tell you the day it opens.</p></details>
+          <details class="glass"><summary><span data-i18n="faq.advice.q">Is this investment advice?</span><svg class="icon icon-sm"><use href="#i-plus"/></svg></summary><p data-i18n="faq.advice.a">No. analysisACE shows historical analysis for education. It never recommends buying, selling or holding anything, and the decision is always yours.</p></details>
+          <details class="glass"><summary><span data-i18n="faq.data.q">Where does the data come from?</span><svg class="icon icon-sm"><use href="#i-plus"/></svg></summary><p data-i18n="faq.data.a">Your household figures come from what you enter or import. Market figures come from the stock exchange, Bangladesh Bank and other public sources, and company reports. Every figure names its source.</p></details>
+          <details class="glass"><summary><span data-i18n="faq.privacy.q">Is my household's data private?</span><svg class="icon icon-sm"><use href="#i-plus"/></svg></summary><p data-i18n="faq.privacy.a">Yes. Only members of your household can see it. Account numbers and documents are encrypted, optional uses need your consent, and you can export or delete your data at any time.</p></details>
+          <details class="glass"><summary><span data-i18n="faq.language.q">Can I use it in Bangla?</span><svg class="icon icon-sm"><use href="#i-plus"/></svg></summary><p data-i18n="faq.language.a">Yes. Every page, notice and PDF statement is available in Bangla and English, with Bangla digits.</p></details>
         </div>
       </div>
     </section>
@@ -1319,10 +2566,10 @@ html[lang="bn"] .section-head h2 {
     <!-- Notify me at launch (Netlify Forms) -->
     <section class="band" id="notify" aria-labelledby="notify-title">
       <div class="container">
-        <div class="notify">
-          <span class="glow" aria-hidden="true"></span>
-          <h2 id="notify-title" data-i18n="notify.title">Be the first to know</h2>
-          <p data-i18n="notify.lead">Leave your email and we will tell you the day analysisACE opens. Nothing else.</p>
+        <div class="glass notify reveal">
+          <span class="eyebrow" data-i18n="notify.eyebrow">Early access</span>
+          <h2 id="notify-title"><span data-i18n="notify.title1">Be the first to find</span> <span class="grad" data-i18n="notify.title2">your FIRE date</span></h2>
+          <p data-i18n="notify.lead">Leave your email and we will tell you the day analysisACE opens, so you can start your FIRE plan. Nothing else.</p>
           <form class="notify-form" name="launch-notify" method="POST" data-netlify="true" netlify-honeypot="company">
             <input type="hidden" name="form-name" value="launch-notify">
             <input type="hidden" name="language" value="en">
@@ -1342,14 +2589,15 @@ html[lang="bn"] .section-head h2 {
   <footer class="site-footer">
     <div class="container">
       <span class="wordmark" lang="en">analysisACE</span>
-      <span>&copy; 2026 analysisACE · <span data-i18n="disclaimer">Historical analysis for education only. Not investment advice.</span></span>
+      <span>&copy; 2026 analysisACE · <span data-i18n="footer.tagline">Grow your ACE. Find your FIRE date.</span></span>
     </div>
   </footer>
 
   <script>
 /*
- * analysisACE coming-soon page: English/Bangla switch and the launch notice form.
- * The page works without this script (English, form posts normally).
+ * analysisACE coming-soon page: English/Bangla switch, the savings-rate simulator, the
+ * projection chart's hover readout, scroll reveal and the launch notice form.
+ * The page works without this script (English, static figures, form posts normally).
  */
 (function () {
   "use strict";
@@ -1357,130 +2605,279 @@ html[lang="bn"] .section-head h2 {
   var BN = {
     skip: "মূল লেখায় যান",
     "nav.notify": "জানিয়ে দিন",
-    "hero.eyebrow": "শিগগিরই আসছে · বাংলাদেশের বিনিয়োগকারী ও পরিবারের জন্য তৈরি",
-    "hero.title": "স্পষ্টভাবে বিনিয়োগ করুন। মূল্যবোধ মেনে অর্থ সামলান।",
-    "hero.lead": "দেখুন ডিএসইর একটি শেয়ার কেন শরিয়াহ যাচাইয়ে উত্তীর্ণ বা অনুত্তীর্ণ, সুদহার বাড়লে বা সংকট এলে সেটি কেমন নড়েছে, আর যাকাত, কর ও দীর্ঘমেয়াদি পরিকল্পনায় আপনার পরিবার কোথায় আছে। প্রতিটি সংখ্যার উৎস দেওয়া থাকে।",
+    "hero.tag": "শিগগিরই",
+    "hero.eyebrow": "বাংলাদেশের পরিবারের জন্য FIRE পরিকল্পনা",
+    "hero.title1": "জানুন কোন বছর থেকে",
+    "hero.title2": "কাজ হবে আপনার ইচ্ছা।",
+    "hero.lead": "analysisACE আপনার পরিবারের আয়, খরচ ও সঞ্চয় থেকে একটি FIRE পরিকল্পনা তৈরি করে: আপনার FIRE অঙ্ক, সঞ্চয়ের হার, আর কোন বছর আপনার মূলধন দিয়ে খরচ চলতে পারে। যাকাত, কর ও হালাল বিকল্প মাথায় রেখে বাড়ান আপনার সম্পদ, মূলধন ও আয়। প্রতিটি সংখ্যার উৎস দেওয়া থাকে।",
     "hero.ctaNotify": "চালু হলে জানিয়ে দিন",
-    "hero.ctaExplore": "কী আসছে দেখুন",
+    "hero.ctaExplore": "সঞ্চয় সিমুলেটর চালিয়ে দেখুন",
     "hero.trust.sources": "প্রতিটি সংখ্যার উৎস দেখা যায়",
     "hero.trust.bilingual": "বাংলা ও ইংরেজি",
     "hero.trust.noTips": "কোনো টিপস নয়, কোনো হুজুগ নয়",
-    "preview.status": "শরিয়াহসম্মত",
-    "preview.debt": "সুদভিত্তিক ঋণ",
-    "preview.cash": "নগদ ও সুদভিত্তিক সিকিউরিটিজ",
-    "preview.income": "অননুমোদিত আয়",
-    "preview.limit": "সীমা",
-    "preview.source": "উৎস: বার্ষিক প্রতিবেদন, পৃষ্ঠা ৬৪",
-    "preview.rate": "সুদহারের প্রতি সংবেদনশীলতা",
-    "preview.rateValue": "সুদহার ১ পয়েন্ট বাড়লে −১.০%",
-    "preview.zakat": "প্রদেয় যাকাত",
-    "preview.label": "কাল্পনিক কোম্পানি দিয়ে উদাহরণ",
-    "questions.title": "আপনি যে প্রশ্নগুলো সত্যিই করেন, তার উত্তর",
-    "questions.lead": "analysisACE শুরু হয় বাংলাদেশের মানুষের অর্থ নিয়ে নেওয়া সিদ্ধান্ত থেকে, চার্টের তালিকা থেকে নয়।",
-    "questions.halal.q": "“এই শেয়ারটি কি শরিয়াহসম্মত, এবং কেন?”",
-    "questions.halal.a": "প্রতিটি নিয়ম, কোম্পানির নিজস্ব সংখ্যা, সীমা এবং যে প্রতিবেদনের পৃষ্ঠা থেকে নেওয়া।",
-    "questions.rates.q": "“সুদহার বাড়লে আমার মতো শেয়ারের কী হয়েছিল?”",
-    "questions.rates.a": "পাঁচ বছরের সাপ্তাহিক তথ্য থেকে প্রতিটি শেয়ার ও খাতের সংবেদনশীলতা স্কোর।",
-    "questions.shock.q": "“অতীতের সংকটে বাজার কেমন আচরণ করেছে?”",
-    "questions.shock.a": "যুদ্ধ, জ্বালানি সংকট ও নীতি পরিবর্তনের পর দামের ওঠানামা, এবং ফিরে আসতে কত সময় লেগেছে।",
+    "preview.title": "একটি নমুনা FIRE পরিকল্পনা",
+    "preview.subtitle": "চার সদস্যের পরিবার, বয়স ৩৮",
+    "preview.fireAge": "৫১ বছরে FIRE",
+    "preview.progress": "FIRE অঙ্কের",
+    "preview.investedLabel": "এখন বিনিয়োগ",
+    "preview.investedValue": "৳৯৬.৯ লাখ",
+    "preview.fireNumberLabel": "FIRE অঙ্ক",
+    "preview.fireNumberValue": "৳২.৫৫ কোটি",
+    "preview.savingsRate": "সঞ্চয়ের হার",
+    "preview.projTitle": "বয়স অনুযায়ী সম্ভাব্য মূলধন",
+    "preview.projHint": "রেখার ওপর রাখুন",
+    "preview.projDesc": "সম্ভাব্য বিনিয়োগ করা মূলধন ৩৮ বছর বয়সে ৯৬.৯ লাখ টাকা থেকে ৫১ বছরে ২.৬২ কোটিতে ওঠে, ২.৫৫ কোটির FIRE অঙ্ক পেরিয়ে।",
+    "preview.projTarget": "FIRE অঙ্ক",
+    "preview.assets": "সম্পদ",
+    "preview.assetsValue": "৳১.৪৯ কোটি",
+    "preview.assetsNote": "নিট সম্পদ",
+    "preview.capital": "মূলধন",
+    "preview.capitalValue": "৳৯৬.৯ লাখ",
+    "preview.capitalNote": "যা দিয়ে চলা যায়",
+    "preview.earnings": "আয়",
+    "preview.earningsNote": "মাসে সঞ্চয়",
+    "preview.source": "উৎস: পরিবারের নিজস্ব রেকর্ড",
+    "preview.zakat": "এ বছরের প্রদেয় যাকাত",
+    "preview.label": "কাল্পনিক সংখ্যা দিয়ে উদাহরণ",
+    "ticker.sanchay": "সঞ্চয়পত্র",
+    "ticker.fdr": "এফডিআর ও ডিপিএস",
+    "ticker.sukuk": "সরকারি সুকুক",
+    "ticker.mudaraba": "মুদারাবা আমানত",
+    "ticker.gold": "সোনা ও রুপা",
+    "ticker.land": "জমি ও ফ্ল্যাট",
+    "ticker.bo": "বিও অ্যাকাউন্ট",
+    "ticker.funds": "মিউচুয়াল ফান্ড",
+    "ticker.pf": "প্রভিডেন্ট ফান্ড",
+    "ticker.business": "ব্যবসার অংশ",
+    "ticker.hajj": "হজ সঞ্চয়",
+    "ticker.loans": "দেওয়া ও নেওয়া ঋণ",
+    "fire.eyebrow": "FIRE, সহজ ভাষায়",
+    "fire.title": "তিনটি ধারণায় আর্থিক স্বাধীনতা",
+    "fire.lead": "FIRE মানে Financial Independence, Retire Early, অর্থাৎ আর্থিক স্বাধীনতা ও আগেভাগে অবসর। যখন আপনার বিনিয়োগ করা মূলধন দিয়ে পরিবারের বছরের খরচ চলতে পারে, তখন আপনি আর্থিকভাবে স্বাধীন। আগে অবসর নেওয়া ঐচ্ছিক; আসল কথা হলো স্বাধীনতা।",
+    "fire.number.step": "০১ / অঙ্ক",
+    "fire.number.title": "আপনার FIRE অঙ্ক",
+    "fire.number.body": "পরিবারের এক বছরের প্রকৃত খরচ যোগ করে ২৫ দিয়ে গুণ করুন। ৪% উত্তোলন হারে মোটামুটি এতটা বিনিয়োগ করা মূলধন থাকলে প্রতি বছর সেই খরচ চলতে পারে।",
+    "fire.rate.step": "০২ / হার",
+    "fire.rate.title": "আপনার সঞ্চয়ের হার",
+    "fire.rate.body": "আয়ের যে অংশ আপনি রেখে দেন। এটি দুভাবে কাজ করে: মূলধন দ্রুত বাড়ায়, আর মূলধনকে যে খরচ চালাতে হবে তা কমায়।",
+    "fire.date.step": "০৩ / তারিখ",
+    "fire.date.title": "আপনার FIRE তারিখ",
+    "fire.date.body": "আপনার নিজের সঞ্চয়, রিটার্ন ও মূল্যস্ফীতি থেকে হিসাব করা সেই বয়স, যখন বিনিয়োগযোগ্য মূলধন FIRE অঙ্কে পৌঁছাতে পারে। রেকর্ড বাড়লে অগ্রগতিও হালনাগাদ হয়।",
+    "fire.formula": "FIRE অঙ্ক = এক বছরের খরচ × ২৫",
+    "fire.eq.year": "এক বছরের খরচ",
+    "fire.eq.yearValue": "৳১০.২ লাখ",
+    "fire.eq.times": "২৫ বছরের খরচ, বিনিয়োগ করা",
+    "fire.eq.result": "আপনার FIRE অঙ্ক",
+    "fire.eq.resultValue": "৳২.৫৫ কোটি",
+    "fire.formulaNote": "২৫ হলো ১০০ ÷ ৪, অর্থাৎ ৪% উত্তোলন হার: প্রতি বছর মোটামুটি একটি ঘর খরচ হয়, বাকিটা বিনিয়োগে থাকে। পরিকল্পনায় হারটি বদলানো যায়। এটি অতীত বাজার থেকে নেওয়া একটি সাধারণ নিয়ম, নিশ্চয়তা নয়।",
+    "rate.eyebrow": "সবচেয়ে বড় হাতিয়ার",
+    "rate.title": "রিটার্নের চেয়ে সঞ্চয়ের হার বেশি গুরুত্বপূর্ণ",
+    "rate.lead": "রিটার্ন বেশির ভাগই আপনার নিয়ন্ত্রণের বাইরে। প্রতি মাসের আয় থেকে কতটা রাখবেন, তা নয়।",
+    "rate.body": "স্লাইডারটি টানুন। আয়ের ২০% থেকে ৪০% সঞ্চয়ে গেলে অপেক্ষা প্রায় ১৫ বছর কমে। analysisACE প্রতি মাসে আপনার আয় ও খরচের রেকর্ড থেকে সঞ্চয়ের হার বের করে।",
+    "rate.sliderLabel": "আয়ের যে অংশ রেখে দেন",
+    "rate.readout": "বছর, শূন্য থেকে FIRE পর্যন্ত",
+    "rate.kept": "রাখা ও বিনিয়োগ করা",
+    "rate.spent": "খরচে গেছে",
+    "rate.colRate": "হার",
+    "rate.colYears": "বছর",
+    "rate.assumptions": "উদাহরণ, পূর্বাভাস নয়। শূন্য সঞ্চয় থেকে শুরু, মূল্যস্ফীতি বাদে বছরে ৫% রিটার্ন এবং ৪% উত্তোলন হার ধরা হয়েছে। আপনার নিজের পরিকল্পনা আপনার সংখ্যা ব্যবহার করে।",
+    "ace.eyebrow": "তিনটি হাতিয়ার",
+    "ace.title": "সম্পদ, মূলধন ও আয় এগিয়ে আনে আপনার FIRE তারিখ",
+    "ace.lead": "ACE হলো analysisACE-এ আপনার অর্থ সাজানোর উপায়। নমুনা পরিবারের এক মাস দেখুন: কত আয়, কত রাখা, আর তা কোথায় যায়।",
+    "flow.earnings": "আয়",
+    "flow.income": "এ মাসের আয়",
+    "flow.saved": "সঞ্চয় ৳৪৩,৮০০",
+    "flow.costs": "খরচ ৳৮৫,০০০",
+    "flow.invest": "বিনিয়োগ",
+    "flow.capital": "মূলধন",
+    "flow.capitalValue": "৳৯৬.৯ লাখ",
+    "flow.capitalSub": "সুকুক, আমানত, সঞ্চয়পত্র ও শেয়ার, মূল্যস্ফীতি বাদে ৪.৫% রিটার্নে বাড়ছে",
+    "flow.toward": "লক্ষ্যের দিকে",
+    "flow.fire": "FIRE অঙ্ক",
+    "flow.fireValue": "৳২.৫৫ কোটি",
+    "flow.progress": "পূর্ণ · ৫১ বছরে FIRE",
+    "flow.assets": "সম্পদ · নিট সম্পদ",
+    "flow.assetsValue": "৳১.৪৯ কোটি",
+    "flow.assetsCap": "কাজে লাগানো মূলধন, যা দিয়ে চলা যায়",
+    "flow.assetsHome": "পরিবারের বাড়ি ও জমি, FIRE হিসাবের বাইরে",
+    "flow.note": "কাল্পনিক সংখ্যা দিয়ে উদাহরণ: ওপরের নমুনা পরিকল্পনার একই পরিবার।",
+    "ace.assets.title": "সম্পদ",
+    "ace.assets.tagline": "যা আপনার আছে, আর যা দেনা",
+    "ace.assets.lever": "আপনি কোথায় আছেন দেখায় এবং দায়িত্বগুলো সামনে রাখে",
+    "ace.assets.a": "অ্যাকাউন্ট, সোনা, জমি ও ব্যবসার অংশ মিলিয়ে নিট সম্পদ, প্রত্যেক মালিকের ভাগ অনুযায়ী",
+    "ace.assets.b": "সব দেনা এক তালিকায়, যাতে বোঝা যায় কী পরিকল্পনা ধীর করছে",
+    "ace.assets.c": "লাইন ধরে যাকাত এবং করের জন্য সম্পদ বিবরণী",
+    "ace.capital.title": "মূলধন",
+    "ace.capital.tagline": "যে অর্থ কাজে লাগানো হয়েছে",
+    "ace.capital.lever": "FIRE অঙ্কের দিকে বেড়ে ওঠে",
+    "ace.capital.a": "সুকুক, ইসলামী আমানত, সঞ্চয়পত্র, শেয়ার ও বিকল্প বিনিয়োগ, সব এক পোর্টফোলিওতে",
+    "ace.capital.b": "সময়ের সাথে রিটার্ন, আপনার লক্ষ্য মিশ্রণ ও তা থেকে বিচ্যুতি",
+    "ace.capital.c": "FIRE পরিকল্পনা, লক্ষ্য ও কঠিন পরিস্থিতির পরীক্ষা",
+    "ace.earnings.title": "আয়",
+    "ace.earnings.tagline": "যা আসে আর যা যায়",
+    "ace.earnings.lever": "সঞ্চয়ের হার বাড়ায় এবং FIRE অঙ্ক কমায়",
+    "ace.earnings.a": "আয় ও নিয়মিত বেতন, প্রতি মাসের সঞ্চয়ের হিসাবসহ",
+    "ace.earnings.b": "আজকের টাকায় দৈনিক খরচ, নিয়মিত বিল আপনাআপনি যোগ",
+    "ace.earnings.c": "উৎসে কাটা কর এবং রিটার্নের জন্য বিবরণী",
+    "local.eyebrow": "বাংলাদেশে FIRE",
+    "local.title": "এখানকার জীবনের জন্য তৈরি FIRE পরিকল্পনা",
+    "local.lead": "বেশির ভাগ FIRE ক্যালকুলেটর কম মূল্যস্ফীতি আর ইনডেক্স ফান্ড ধরে নেয়। এখানকার পরিবারের বাস্তবতা ভিন্ন, আর পরিকল্পনা সেগুলো হিসাবে রাখে।",
+    "local.inflation.title": "বিবিএসের মূল্যস্ফীতি",
+    "local.inflation.body": "পরিকল্পনা শুরু হয় বিবিএসের ভোক্তা মূল্য সূচকের শেষ ১২ মাস থেকে, আর আপনার খরচ দেখানো হয় আজকের দামে।",
+    "local.halal.title": "হালাল বিকল্প থেকে রিটার্ন",
+    "local.halal.body": "শুরুর রিটার্ন আসে আপনার নিজের সুকুক ও ইসলামী আমানত থেকে। শেয়ার কারণসহ শরিয়াহ যাচাইয়ে মিলিয়ে দেখা যায়।",
+    "local.family.title": "যাদের দায়িত্ব আপনার",
+    "local.family.body": "মা-বাবাকে পাঠানো টাকা ও পরিবারের সহায়তা খরচ হিসেবে লেখা হয়, তাই FIRE অঙ্কে আপনার ওপর নির্ভরশীল সবাই থাকেন।",
+    "local.home.title": "জমি ও বাড়ি আলাদা",
+    "local.home.body": "জমি ও পরিবারের বাড়ি ডিফল্টভাবে চলার মতো অর্থের বাইরে রাখা হয়, কারণ এগুলো অল্প অল্প করে বিক্রি করা যায় না। চাইলে যোগ করতে পারেন।",
+    "local.zakat.title": "পরিকল্পনার ভেতরে যাকাত",
+    "local.zakat.body": "প্রতি বছর লাইন ধরে যাকাতের হিসাব হয়, আর খরচ হিসেবে লেখা যাকাত ও সদকা আপনার FIRE অঙ্কের অংশ।",
+    "local.stress.title": "খারাপ বছরে পরীক্ষা",
+    "local.stress.body": "প্রথম বছরে বাজার পতন, বাড়তি খরচ, বাড়তি মূল্যস্ফীতি, পাঁচ বছর আগে কাজ ছাড়া, বা ডিএসইর অতীত কোনো ঘটনার পুনরাবৃত্তিতে পরিকল্পনা কেমন দাঁড়ায় দেখুন।",
+    "stress.title": "কঠিন পরিস্থিতির পরীক্ষা: খারাপ বছরে নমুনা পরিকল্পনা",
+    "stress.note": "কাল্পনিক সংখ্যা দিয়ে উদাহরণ",
+    "stress.base": "মূল পরিকল্পনা",
+    "stress.crash": "প্রথম বছরে বাজার ২০% পড়ল",
+    "stress.costs": "খরচ ১৫% বেশি",
+    "stress.inflation": "মূল্যস্ফীতি ৩ পয়েন্ট বেশি",
+    "stress.axis": "প্রতিটি পরিস্থিতিতে সম্ভাব্য FIRE বয়স। খাড়া রেখাটি মূল পরিকল্পনা।",
+    "questions.eyebrow": "আসল প্রশ্ন",
+    "questions.title": "স্বাধীনতার পথে যে প্রশ্নগুলো আসে",
+    "questions.lead": "analysisACE শুরু হয় বাংলাদেশের পরিবারের অর্থ নিয়ে নেওয়া সিদ্ধান্ত থেকে, চার্টের তালিকা থেকে নয়।",
+    "questions.when.q": "“কবে থেকে আর বেতনের ওপর নির্ভর করতে হবে না?”",
+    "questions.when.a": "আপনার সঞ্চয়, রিটার্ন ও মূল্যস্ফীতি থেকে হিসাব করা সম্ভাব্য FIRE বয়স।",
+    "questions.enough.q": "“আমাদের পরিবারের জন্য কত হলে যথেষ্ট?”",
+    "questions.enough.a": "আপনার এক বছরের প্রকৃত খরচ থেকে FIRE অঙ্ক।",
+    "questions.crash.q": "“প্রথম বছরেই বাজার পড়ে গেলে কী হবে?”",
+    "questions.crash.a": "বাজার পতন, বাড়তি খরচ ও বাড়তি মূল্যস্ফীতির পরীক্ষা।",
+    "questions.savings.q": "“আমরা আসলে কতটা জমাচ্ছি?”",
+    "questions.savings.a": "প্রতি মাসে আয় থেকে খরচ বাদ, এবং আপনার সঞ্চয়ের হার।",
     "questions.zakat.q": "“এ বছর আমার যাকাত কত?”",
     "questions.zakat.a": "আপনার রেকর্ড থেকে লাইন ধরে হিসাব, সাথে বাংলা বা ইংরেজিতে PDF।",
-    "questions.tax.q": "“সম্পদ বিবরণীতে কী কী দিতে হবে?”",
-    "questions.tax.a": "সম্পদ, ঋণ, আয় ও উৎসে কাটা কর, রিটার্নের জন্য প্রস্তুত।",
-    "questions.fire.q": "“কবে আমাদের সঞ্চয় দিয়ে খরচ চলবে?”",
-    "questions.fire.a": "বাজার পতন, বাড়তি খরচ বা বাড়তি মূল্যস্ফীতির হিসাবসহ একটি FIRE পরিকল্পনা।",
-    "markets.eyebrow": "বাজার, ব্যাখ্যাসহ",
-    "markets.title": "সিদ্ধান্তের আগে ডিএসইর শেয়ার বুঝে নিন",
-    "markets.lead": "উন্মুক্ত পদ্ধতি, প্রকাশিত নিয়ম আর যাচাই করা যায় এমন ইতিহাস। analysisACE জানায় কী ঘটেছিল; সিদ্ধান্ত আপনার।",
-    "markets.shariah.title": "কারণসহ শরিয়াহ যাচাই",
-    "markets.shariah.body": "AAOIFI ও S&P, দুই পদ্ধতি পাশাপাশি। কোন অনুপাতে অবস্থা ঠিক হলো দেখুন এবং পেছনের প্রতিবেদন খুলুন।",
-    "markets.basket.title": "শরিয়াহ তালিকা ও ঝুড়ি",
-    "markets.basket.body": "যাচাই করা সব কোম্পানি ছেঁকে দেখুন, এবং শরিয়াহসম্মত শেয়ারের ঝুড়িকে এক, তিন বা পাঁচ বছরে ডিএসইএস ও ডিএসইএক্সের সাথে তুলনা করুন।",
-    "markets.rates.title": "সুদহারের প্রতি সংবেদনশীলতা",
-    "markets.rates.body": "৯১ দিনের ট্রেজারি বিলের সুদহার ১ পয়েন্ট বাড়লে প্রতিটি শেয়ার ও খাত সাধারণত কতটা নড়েছে, অনুমানের আস্থাসহ।",
-    "markets.shocks.title": "শক প্লেবুক",
-    "markets.shocks.body": "অতীতের যুদ্ধ, জ্বালানি সংকট ও নীতি পরিবর্তনের পর বাজার, খাত ও আলাদা শেয়ার কেমন নড়েছে।",
-    "markets.macro.title": "সাপ্তাহিক সামষ্টিক নোট",
-    "markets.macro.body": "প্রতি সপ্তাহে সুদহার, মূল্যস্ফীতি, টাকা, রেমিট্যান্স, তেল ও ডিএসই, সহজ বাংলা ও ইংরেজিতে, প্রতিটি সংখ্যার উৎসসহ।",
-    "markets.regime.title": "সামষ্টিক পরিস্থিতি",
-    "markets.regime.body": "সুদহার, মূল্যস্ফীতি ও তেলের দাম থেকে মাসিক লেবেল, এবং এমন অতীত মাসগুলোতে প্রতিটি খাত কেমন করেছে।",
-    "markets.watch": "যেকোনো কোম্পানি নজরে রাখুন; শরিয়াহ অবস্থা বদলালে নোটিশ পাবেন।",
-    "money.eyebrow": "আমার অর্থ",
-    "money.title": "পুরো পরিবারের অর্থ, গোছানো",
-    "money.lead": "বিও অ্যাকাউন্ট থেকে সোনা, জমি ও সঞ্চয়পত্র পর্যন্ত বাংলাদেশি পরিবারের যা কিছু আছে ও যা দেনা, সাথে যাকাত ও করের হিসাব।",
-    "money.zakat.title": "লাইন ধরে যাকাত",
-    "money.zakat.body": "সোনা বা রুপার নিসাব ও তারিখ বেছে নিন। প্রতিটি সম্পদ প্রত্যেক সদস্যের অংশ অনুযায়ী গোনা হয়, সুদভিত্তিক বিষয় চিহ্নিত থাকে। বাংলা বা ইংরেজিতে PDF বিবরণী নামান।",
-    "money.zakat.cash": "নগদ ও ব্যাংক",
-    "money.zakat.gold": "সোনা ও রুপা",
-    "money.zakat.shares": "তালিকাভুক্ত শেয়ার ও ফান্ড",
-    "money.zakat.sukuk": "সুকুক ও ইসলামী আমানত",
-    "money.zakat.business": "ব্যবসা",
-    "money.wealth.title": "আপনার সব সম্পদ",
-    "money.wealth.body": "ব্যাংক, বিও ও ফান্ড অ্যাকাউন্ট, সুকুক ও ইসলামী আমানত, জমি, ফ্ল্যাট, সোনা ও ব্যবসার অংশ। এক ধাপে ব্রোকারের বিবরণী আনুন।",
-    "money.check.title": "পোর্টফোলিওর শরিয়াহ যাচাই",
-    "money.check.body": "মূল্য অনুযায়ী শরিয়াহসম্মত অংশ, সুদহার ও ধাক্কার প্রভাব, এবং পরিশোধনযোগ্য লভ্যাংশের আনুমানিক হিসাব।",
-    "money.tax.title": "কর বিবরণী",
-    "money.tax.body": "করবর্ষের সম্পদ বিবরণী, ধরন অনুযায়ী আয়, উৎসে কাটা কর ও রেয়াতযোগ্য কেনাকাটা, PDF বা CSV হিসেবে।",
-    "money.plans.title": "FIRE পরিকল্পনা ও লক্ষ্য",
-    "money.plans.body": "কবে সঞ্চয় দিয়ে খরচ চলবে দেখুন, বিভিন্ন পরিস্থিতি পরখ করুন, এবং নিট সম্পদ বা নির্দিষ্ট বয়সের লক্ষ্য অনুসরণ করুন।",
-    "money.costs.title": "খরচ ও পারফরম্যান্স",
-    "money.costs.body": "আজকের টাকায় মাসিক খরচ, নিয়মিত বিল আপনাআপনি যোগ, এবং ডিএসই সূচকের পাশে রিটার্ন।",
-    "money.family.title": "পরিবারের জন্য তৈরি",
-    "money.family.body": "প্রত্যেক সদস্যের নিজস্ব ভূমিকা ও যাকাতের তারিখ, মালিক অনুযায়ী যৌথ সম্পদ ভাগ, আর মা-বাবার অর্থ আলাদা পরিবারে রাখুন।",
-    "money.alerts.title": "সময়মতো মনে করিয়ে দেওয়া",
-    "money.alerts.body": "মেয়াদপূর্তি, সুকুক নিলাম, যাকাতের তারিখ, লক্ষ্য বণ্টন থেকে বিচ্যুতি ও লক্ষ্য অর্জনের নোটিশ।",
-    "steps.title": "তিন ধাপে শুরু করুন",
+    "questions.halal.q": "“আমাদের অর্থ কি হালাল পথে বাড়ছে?”",
+    "questions.halal.a": "মূল্য অনুযায়ী আপনার বিনিয়োগের শরিয়াহসম্মত অংশ, সুকুক ও ইসলামী আমানত এক জায়গায়।",
+    "steps.eyebrow": "শুরু করা",
+    "steps.title": "তিন ধাপে আপনার FIRE পরিকল্পনা",
     "steps.one.title": "অ্যাকাউন্ট খুলুন",
     "steps.one.body": "এক মিনিটে নিবন্ধন করুন, বাংলা বা ইংরেজি বেছে নিন।",
-    "steps.two.title": "পরিবার যোগ করুন",
-    "steps.two.body": "হিসাব, বিনিয়োগ, সোনা ও জমি লিখুন, অথবা ব্রোকারের CSV আনুন।",
-    "steps.three.title": "পুরো ছবি দেখুন",
-    "steps.three.body": "নিট সম্পদ, শরিয়াহসম্মত অংশ, প্রদেয় যাকাত ও পরিকল্পনা, সবসময় হালনাগাদ।",
+    "steps.two.title": "আয়, খরচ ও সম্পদ লিখুন",
+    "steps.two.body": "বেতন ও বিল একবার লিখুন; নিয়মিতগুলো নিজে থেকেই আসবে। শেয়ারের জন্য ব্রোকারের CSV আনুন।",
+    "steps.three.title": "আপনার FIRE তারিখ দেখুন",
+    "steps.three.body": "আপনার FIRE অঙ্ক, সঞ্চয়ের হার ও সম্ভাব্য FIRE বয়স, রেকর্ড বাড়ার সাথে অগ্রগতিসহ।",
+    "tools.eyebrow": "আপনার পোর্টফোলিওর শেয়ারের জন্য",
+    "tools.title": "ডিএসইর শেয়ার আছে? আরও ভালো বুঝে নিন",
+    "tools.lead": "শেয়ার অনেক ধরনের মূলধনের একটি মাত্র। আপনার শেয়ার থাকলে এই সরঞ্জামগুলো অতীতে কী ঘটেছিল তা জানায়। উন্মুক্ত পদ্ধতি, প্রকাশিত নিয়ম আর যাচাই করা যায় এমন ইতিহাস। সিদ্ধান্ত আপনার।",
+    "tools.shariah.title": "কারণসহ শরিয়াহ যাচাই",
+    "tools.shariah.body": "AAOIFI ও S&P, দুই পদ্ধতি পাশাপাশি। কোন অনুপাতে অবস্থা ঠিক হলো দেখুন এবং পেছনের প্রতিবেদন খুলুন।",
+    "tools.basket.title": "শরিয়াহ তালিকা ও ঝুড়ি",
+    "tools.basket.body": "যাচাই করা সব কোম্পানি ছেঁকে দেখুন, এবং শরিয়াহসম্মত শেয়ারের ঝুড়িকে এক, তিন বা পাঁচ বছরে ডিএসইএস ও ডিএসইএক্সের সাথে তুলনা করুন।",
+    "tools.rates.title": "সুদহারের প্রতি সংবেদনশীলতা",
+    "tools.rates.body": "৯১ দিনের ট্রেজারি বিলের সুদহার ১ পয়েন্ট বাড়লে প্রতিটি শেয়ার ও খাত সাধারণত কতটা নড়েছে, অনুমানের আস্থাসহ।",
+    "tools.shocks.title": "শক প্লেবুক",
+    "tools.shocks.body": "অতীতের যুদ্ধ, জ্বালানি সংকট ও নীতি পরিবর্তনের পর বাজার, খাত ও আলাদা শেয়ার কেমন নড়েছে।",
+    "tools.macro.title": "সাপ্তাহিক সামষ্টিক নোট",
+    "tools.macro.body": "প্রতি সপ্তাহে সুদহার, মূল্যস্ফীতি, টাকা, রেমিট্যান্স, তেল ও ডিএসই, সহজ বাংলা ও ইংরেজিতে, প্রতিটি সংখ্যার উৎসসহ।",
+    "tools.regime.title": "সামষ্টিক পরিস্থিতি",
+    "tools.regime.body": "সুদহার, মূল্যস্ফীতি ও তেলের দাম থেকে মাসিক লেবেল, এবং এমন অতীত মাসগুলোতে প্রতিটি খাত কেমন করেছে।",
+    "tools.watch": "যেকোনো কোম্পানি নজরে রাখুন; শরিয়াহ অবস্থা বদলালে নোটিশ পাবেন।",
+    "trust.eyebrow": "নীতি",
     "trust.title": "টিপস নয়, আস্থার ওপর তৈরি",
     "trust.lead": "অর্থের সিদ্ধান্তে যাচাইযোগ্য প্রমাণ দরকার। এই নীতিগুলো analysisACE তৈরির অংশ।",
     "trust.traceable.title": "প্রতিটি সংখ্যা যাচাইযোগ্য",
     "trust.traceable.body": "প্রতিটি সংখ্যার পাশে তার উৎস ও হিসাবের সময় দেখা যায়।",
     "trust.rules.title": "নিয়ম প্রকাশিত",
-    "trust.rules.body": "যাচাই ও যাকাতের নিয়ম সংস্করণসহ রাখা, প্রতিটি ফলাফলে দেখানো এবং অনুমোদনের জন্য শরিয়াহ উপদেষ্টার কাছে পাঠানো।",
-    "trust.advice.title": "ইতিহাস, টিপস নয়",
-    "trust.advice.body": "আমরা জানাই অতীতে বাজার কেমন নড়েছে। কখনো কিনতে, বিক্রি করতে বা ধরে রাখতে বলি না।",
+    "trust.rules.body": "যাকাত ও যাচাইয়ের নিয়ম সংস্করণসহ রাখা, প্রতিটি ফলাফলে দেখানো এবং অনুমোদনের জন্য শরিয়াহ উপদেষ্টার কাছে পাঠানো।",
+    "trust.advice.title": "হিসাব, টিপস নয়",
+    "trust.advice.body": "আমরা আপনার নিজের সংখ্যা থেকে সম্ভাব্য হিসাব এবং অতীতে কী ঘটেছে তা দেখাই। কখনো কিনতে, বিক্রি করতে বা ধরে রাখতে বলি না।",
     "trust.privacy.title": "আপনার তথ্য, আপনার নিয়ন্ত্রণে",
     "trust.privacy.body": "প্রতিটি ঐচ্ছিক ব্যবহারে সম্মতি, অ্যাকাউন্ট নম্বর ও নথি এনক্রিপ্ট করা, যেকোনো সময় নামানো বা মুছে ফেলা যায়।",
     "trust.local.title": "বাংলাদেশের জন্য তৈরি",
-    "trust.local.body": "ডিএসইর লেনদেনের দিন, লাখ ও কোটি, বাংলা অঙ্ক, সঞ্চয়পত্র, মুদারাবা আমানত এবং জুলাই-জুন করবর্ষ।",
-    "trust.own.title": "নিজস্ব যাচাই",
-    "trust.own.body": "analysisACE কোম্পানির প্রতিবেদন থেকে নিজস্ব যাচাই চালায়। ডিএসইর লাইসেন্সকৃত তালিকা কখনো পুনঃপ্রকাশ করে না।",
+    "trust.local.body": "লাখ ও কোটি, বাংলা অঙ্ক, সঞ্চয়পত্র, মুদারাবা আমানত, ডিএসইর লেনদেনের দিন এবং জুলাই-জুন করবর্ষ।",
+    "trust.family.title": "পরিবারের জন্য তৈরি",
+    "trust.family.body": "প্রত্যেক সদস্যের নিজস্ব ভূমিকা, মালিক অনুযায়ী যৌথ সম্পদ ভাগ, আর প্রত্যেকের যাকাত ও করের আলাদা হিসাব।",
+    "faq.eyebrow": "প্রশ্নোত্তর",
     "faq.title": "সাধারণ প্রশ্ন",
+    "faq.fire.q": "FIRE কী?",
+    "faq.fire.a": "Financial Independence, Retire Early, অর্থাৎ আর্থিক স্বাধীনতা ও আগেভাগে অবসর। এর মানে এতটা বিনিয়োগ থাকা যে তার রিটার্নে বছরের খরচ চলতে পারে, ফলে বেতনের কাজ হয় ইচ্ছার বিষয়। অনেকে সেখানে পৌঁছেও কাজ চালিয়ে যান।",
+    "faq.retire.q": "আগে অবসর নিতেই হবে?",
+    "faq.retire.a": "না। বেশির ভাগ মানুষ FIRE-কে স্বাধীনতার লক্ষ্য হিসেবে দেখেন: পেশা বদলানো, ব্যবসা শুরু, পরিবারের দেখাশোনা বা কম কাজ করা। পরিকল্পনা দেখায় কবে সেই সুযোগ খুলতে পারে।",
+    "faq.promise.q": "আমার FIRE বয়স কি নিশ্চিত?",
+    "faq.promise.a": "না। এটি আপনার দেওয়া সংখ্যা এবং রিটার্ন ও মূল্যস্ফীতির অনুমান থেকে করা একটি হিসাব। বাজার ও খরচ বদলায়, তাই পরিকল্পনায় কঠিন পরিস্থিতির পরীক্ষা আছে এবং যেকোনো সময় হালনাগাদ করা যায়।",
+    "faq.what.q": "ACE মানে কী?",
+    "faq.what.a": "Assets, Capital ও Earnings, অর্থাৎ সম্পদ, মূলধন ও আয়। সম্পদ হলো যা আপনার আছে ও যা দেনা। মূলধন হলো আপনার অর্থের যে অংশ বিনিয়োগ করা বা কাজে লাগানো। আয় হলো আপনার আয়, খরচ ও সঞ্চয়। তিনটি মিলে ঠিক করে কত তাড়াতাড়ি আপনি FIRE-এ পৌঁছাতে পারেন।",
+    "faq.shares.q": "শেয়ার থাকতেই হবে?",
+    "faq.shares.a": "না। সঞ্চয়পত্র, সুকুক, ইসলামী আমানত, সোনা ও অন্যান্য সম্পদ দিয়েও FIRE পরিকল্পনা হয়। শেয়ারের সরঞ্জাম ডিএসইর শেয়ার আছে এমন মানুষের জন্য বাড়তি সুবিধা।",
     "faq.launch.q": "analysisACE কবে চালু হবে?",
-    "faq.launch.a": "এই পাতার ফিচারগুলো তৈরি হয়েছে এবং নমুনা তথ্যে পরীক্ষা চলছে। নিচে ইমেইল দিন; চালুর দিন আমরা জানিয়ে দেব।",
+    "faq.launch.a": "এই পাতার FIRE পরিকল্পনা, অর্থের রেকর্ড ও সরঞ্জামগুলো তৈরি হয়েছে এবং নমুনা তথ্যে পরীক্ষা চলছে। নিচে ইমেইল দিন; চালুর দিন আমরা জানিয়ে দেব।",
     "faq.advice.q": "এটি কি বিনিয়োগ পরামর্শ?",
     "faq.advice.a": "না। analysisACE শিক্ষার জন্য ঐতিহাসিক বিশ্লেষণ দেখায়। কখনো কিছু কিনতে, বিক্রি করতে বা ধরে রাখতে বলে না; সিদ্ধান্ত সবসময় আপনার।",
-    "faq.method.q": "কোন শরিয়াহ পদ্ধতি ব্যবহার করেন?",
-    "faq.method.a": "দুটি: AAOIFI ও S&P পদ্ধতি, পাশাপাশি দেখানো। সীমাগুলো প্রকাশিত ও সংস্করণসহ, এবং শরিয়াহ উপদেষ্টা অনুমোদন না করা পর্যন্ত অস্থায়ী।",
     "faq.data.q": "তথ্য কোথা থেকে আসে?",
-    "faq.data.a": "দাম ও সূচক স্টক এক্সচেঞ্জ থেকে, সুদহার ও সামষ্টিক তথ্য বাংলাদেশ ব্যাংক ও অন্যান্য সরকারি উৎস থেকে, এবং কোম্পানির সংখ্যা বার্ষিক ও প্রান্তিক প্রতিবেদন থেকে। প্রতিটি সংখ্যার উৎস উল্লেখ থাকে।",
+    "faq.data.a": "পরিবারের সংখ্যা আসে আপনার লেখা বা আনা তথ্য থেকে। বাজারের সংখ্যা আসে স্টক এক্সচেঞ্জ, বাংলাদেশ ব্যাংক ও অন্যান্য সরকারি উৎস এবং কোম্পানির প্রতিবেদন থেকে। প্রতিটি সংখ্যার উৎস উল্লেখ থাকে।",
     "faq.privacy.q": "পরিবারের তথ্য কি গোপন থাকে?",
     "faq.privacy.a": "হ্যাঁ। শুধু আপনার পরিবারের সদস্যরা দেখতে পান। অ্যাকাউন্ট নম্বর ও নথি এনক্রিপ্ট করা, ঐচ্ছিক ব্যবহারে আপনার সম্মতি লাগে, এবং যেকোনো সময় তথ্য নামানো বা মুছে ফেলা যায়।",
     "faq.language.q": "বাংলায় ব্যবহার করা যায়?",
     "faq.language.a": "হ্যাঁ। প্রতিটি পাতা, নোটিশ ও PDF বিবরণী বাংলা ও ইংরেজিতে, বাংলা অঙ্কসহ।",
-    "notify.title": "সবার আগে জানুন",
-    "notify.lead": "ইমেইল দিন; analysisACE চালুর দিন আমরা জানিয়ে দেব। এর বাইরে কিছু নয়।",
+    "notify.eyebrow": "আগাম সুযোগ",
+    "notify.title1": "সবার আগে জানুন",
+    "notify.title2": "আপনার FIRE তারিখ",
+    "notify.lead": "ইমেইল দিন; analysisACE চালুর দিন আমরা জানিয়ে দেব, যাতে আপনি FIRE পরিকল্পনা শুরু করতে পারেন। এর বাইরে কিছু নয়।",
     "notify.label": "ইমেইল ঠিকানা",
     "notify.submit": "জানিয়ে দিন",
     "notify.fineprint": "আপনার ইমেইল শুধু analysisACE চালুর খবর জানাতে ব্যবহার হবে। কোনো প্রচারণা নয়, কারও সাথে শেয়ার নয়।",
     "notify.thanks": "ধন্যবাদ। analysisACE চালু হলে আমরা আপনাকে ইমেইল করব।",
+    "footer.tagline": "আপনার ACE বাড়ান। খুঁজে নিন আপনার FIRE তারিখ।",
     disclaimer: "ঐতিহাসিক বিশ্লেষণ শুধু শিক্ষার উদ্দেশ্যে। এটি বিনিয়োগ পরামর্শ নয়।",
   };
   var NOTIFY_ERROR = {
     en: "That did not go through. Please try again in a moment.",
     bn: "পাঠানো যায়নি। একটু পরে আবার চেষ্টা করুন।",
   };
+  var UNITS = {
+    en: { age: "Age", lakh: "lakh", crore: "crore" },
+    bn: { age: "বয়স", lakh: "লাখ", crore: "কোটি" },
+  };
   var BN_DIGITS = "০১২৩৪৫৬৭৮৯";
   var STORAGE_KEY = "aa-lang";
+  var current = "en";
+
+  function digits(text) {
+    text = String(text);
+    return current === "bn"
+      ? text.replace(/[0-9]/g, function (d) {
+          return BN_DIGITS[Number(d)];
+        })
+      : text;
+  }
+
+  /* --- savings-rate simulator ----------------------------------------------------- */
+  // Years from zero savings to 25x costs at a 5% real return:
+  // n = ln(1 + 25(1 - s) x 0.05 / s) / ln 1.05
+  var rateInput = document.getElementById("rate-input");
+  var rateRows = document.querySelectorAll("#rate-rows li");
+
+  function updateSimulator() {
+    if (!rateInput) return;
+    var pct = Number(rateInput.value);
+    var s = pct / 100;
+    var years = Math.round(Math.log(1 + (25 * (1 - s) * 0.05) / s) / Math.log(1.05));
+    document.getElementById("rate-value").textContent = digits(pct + "%");
+    document.getElementById("rate-years").textContent = digits(years);
+    document.getElementById("bar-kept").style.flexBasis = pct + "%";
+    document.getElementById("bar-spent").style.flexBasis = 100 - pct + "%";
+    rateInput.style.setProperty("--fill", ((pct - 5) / 70) * 100 + "%");
+    rateInput.setAttribute("aria-valuetext", digits(pct + "%"));
+    var nearest = Math.min(70, Math.max(10, Math.round(pct / 10) * 10));
+    rateRows.forEach(function (row) {
+      row.classList.toggle("on", Number(row.getAttribute("data-rate")) === nearest);
+    });
+  }
+
+  if (rateInput) rateInput.addEventListener("input", updateSimulator);
+
+  /* --- language switch ---------------------------------------------------------- */
 
   var textNodes = document.querySelectorAll("[data-i18n]");
   var numNodes = document.querySelectorAll("[data-num]");
-  // The English text is the page itself; keep it to switch back.
   var english = new Map();
   textNodes.forEach(function (el) {
     english.set(el, el.textContent);
@@ -1488,14 +2885,6 @@ html[lang="bn"] .section-head h2 {
   numNodes.forEach(function (el) {
     english.set(el, el.textContent);
   });
-
-  function toBanglaDigits(text) {
-    return text.replace(/[0-9]/g, function (d) {
-      return BN_DIGITS[Number(d)];
-    });
-  }
-
-  var current = "en";
 
   function apply(lang) {
     current = lang === "bn" ? "bn" : "en";
@@ -1505,20 +2894,120 @@ html[lang="bn"] .section-head h2 {
       el.textContent = current === "bn" && BN[key] ? BN[key] : english.get(el);
     });
     numNodes.forEach(function (el) {
-      var original = english.get(el);
-      el.textContent = current === "bn" ? toBanglaDigits(original) : original;
+      el.textContent = digits(english.get(el));
     });
     document.querySelectorAll(".lang-switch button").forEach(function (button) {
       button.setAttribute("aria-pressed", String(button.getAttribute("data-lang") === current));
     });
     var languageField = document.querySelector('.notify-form input[name="language"]');
     if (languageField) languageField.value = current;
+    updateSimulator();
     try {
       localStorage.setItem(STORAGE_KEY, current);
     } catch (e) {
       /* Storage can be blocked; the choice then lasts for this visit only. */
     }
   }
+
+  /* --- projection chart --------------------------------------------------------- */
+  // Fictional sample: Tk 96.9 lakh at 38, Tk 5,25,600 added a year, 4.5% real return.
+  var PROJ = [9690000, 10651650, 11656574, 12706720, 13804122, 14950908, 16149299, 17401617, 18710290, 20077853, 21506957, 23000370, 24560986, 26191831];
+  var W = 320;
+  var H = 96;
+  var VIEW_H = 116;
+  var MAX = 28000000;
+
+  function px(i) {
+    return (i / (PROJ.length - 1)) * W;
+  }
+
+  function py(v) {
+    return H - (v / MAX) * H;
+  }
+
+  function compact(v) {
+    var u = UNITS[current];
+    return v >= 10000000
+      ? "৳" + digits((v / 10000000).toFixed(2)) + " " + u.crore
+      : "৳" + digits((v / 100000).toFixed(1)) + " " + u.lakh;
+  }
+
+  var line = document.getElementById("proj-line");
+  if (line) {
+    var d = PROJ.map(function (v, i) {
+      return (i ? "L" : "M") + px(i).toFixed(1) + "," + py(v).toFixed(1);
+    }).join(" ");
+    line.setAttribute("d", d);
+    document.getElementById("proj-area").setAttribute("d", d + " L" + W + "," + H + " L0," + H + " Z");
+
+    var hit = document.getElementById("proj-hit");
+    var cross = document.getElementById("proj-cross");
+    var dot = document.getElementById("proj-dot");
+    var tip = document.getElementById("proj-tip");
+    var svg = hit.ownerSVGElement;
+
+    var show = function (clientX) {
+      var box = svg.getBoundingClientRect();
+      var x = ((clientX - box.left) / box.width) * W;
+      var i = Math.max(0, Math.min(PROJ.length - 1, Math.round((x / W) * (PROJ.length - 1))));
+      cross.setAttribute("x1", px(i));
+      cross.setAttribute("x2", px(i));
+      dot.setAttribute("cx", px(i));
+      dot.setAttribute("cy", py(PROJ[i]));
+      cross.setAttribute("visibility", "visible");
+      dot.setAttribute("visibility", "visible");
+      tip.hidden = false;
+      tip.textContent = UNITS[current].age + " " + digits(38 + i) + " · " + compact(PROJ[i]);
+      var wrap = tip.parentElement.getBoundingClientRect();
+      tip.style.left = box.left - wrap.left + (px(i) / W) * box.width + "px";
+      tip.style.top = box.top - wrap.top + (py(PROJ[i]) / VIEW_H) * box.height + "px";
+    };
+    var hide = function () {
+      cross.setAttribute("visibility", "hidden");
+      dot.setAttribute("visibility", "hidden");
+      tip.hidden = true;
+    };
+    hit.addEventListener("mousemove", function (e) {
+      show(e.clientX);
+    });
+    hit.addEventListener(
+      "touchmove",
+      function (e) {
+        show(e.touches[0].clientX);
+      },
+      { passive: true }
+    );
+    hit.addEventListener("mouseleave", hide);
+    hit.addEventListener("touchend", hide);
+  }
+
+  /* --- scroll reveal ------------------------------------------------------------- */
+
+  var revealables = document.querySelectorAll(".reveal");
+  document.querySelectorAll(".squares i").forEach(function (sq, i) {
+    sq.style.transitionDelay = i * 35 + "ms";
+  });
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("in");
+          io.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.12 }
+    );
+    revealables.forEach(function (el) {
+      io.observe(el);
+    });
+  } else {
+    revealables.forEach(function (el) {
+      el.classList.add("in");
+    });
+  }
+
+  /* --- start-up ------------------------------------------------------------------- */
 
   document.querySelectorAll(".lang-switch button").forEach(function (button) {
     button.addEventListener("click", function () {
@@ -1534,8 +3023,10 @@ html[lang="bn"] .section-head h2 {
   }
   var preferred = saved || ((navigator.language || "").toLowerCase().indexOf("bn") === 0 ? "bn" : "en");
   if (preferred === "bn") apply("bn");
+  else updateSimulator();
 
-  // Launch notice form: send in place to Netlify Forms, then thank the visitor.
+  /* --- launch notice form ------------------------------------------------------- */
+
   var form = document.querySelector(".notify-form");
   if (form && window.fetch) {
     form.addEventListener("submit", function (event) {
@@ -1551,13 +3042,11 @@ html[lang="bn"] .section-head h2 {
           if (!response.ok) throw new Error(String(response.status));
           form.hidden = true;
           document.querySelector(".notify .fineprint").hidden = true;
-          var thanks = document.querySelector(".notify .thanks");
-          thanks.hidden = false;
+          document.querySelector(".notify .thanks").hidden = false;
         })
         .catch(function () {
           button.disabled = false;
-          var fine = document.querySelector(".notify .fineprint");
-          fine.textContent = NOTIFY_ERROR[current];
+          document.querySelector(".notify .fineprint").textContent = NOTIFY_ERROR[current];
         });
     });
   }
