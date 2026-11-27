@@ -71,6 +71,28 @@ def samples(locale: str) -> dict[str, Email | None]:
             BASE,
         ),
         "monthly-report": templates.monthly_report_email(TO, locale, report, BASE),
+        "daily-digest": templates.digest_email(
+            TO,
+            locale,
+            [
+                item
+                for key, data, link in (
+                    ("GOAL_REACHED", {"name": "First crore"}, "/personal/goals"),
+                    (
+                        "HAWL_APPROACHING",
+                        {"name": "Karim Rahman", "date": "2027-02-01", "days": "30"},
+                        "/personal/zakat",
+                    ),
+                    (
+                        "MATURITY_DUE",
+                        {"name": "Family DPS", "date": "2026-12-15", "days": "18"},
+                        "/personal/sukuk",
+                    ),
+                )
+                if (item := templates.digest_item(locale, key, data, link, BASE)) is not None
+            ],
+            BASE,
+        ),
     }
 
 

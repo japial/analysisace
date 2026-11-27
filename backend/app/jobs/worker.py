@@ -57,6 +57,11 @@ def _personal_alerts(session: Session) -> dict[str, Any]:
     return {"created": alerts.run_personal_alerts(session, get_email_sender())}
 
 
+def _alert_digest(session: Session) -> dict[str, Any]:
+    """FR7.3: one email or push a day for alerts set to arrive once a day."""
+    return {"people": alerts.send_digests(session, get_email_sender())}
+
+
 def _monthly_report(session: Session) -> dict[str, Any]:
     """FR20.2: last month's spending, net worth, Zakat estimate and FIRE progress."""
     sent = alerts.send_monthly_reports(session, get_email_sender(), get_settings().web_base_url)
@@ -96,6 +101,7 @@ JOBS: dict[str, JobFn] = {
     "rate_limit_cleanup": _rate_limit_cleanup,
     "net_worth_snapshots": _net_worth_snapshots,
     "personal_alerts": _personal_alerts,
+    "alert_digest": _alert_digest,
     "monthly_report": _monthly_report,
     "adjusted_prices": _adjusted_prices,
     "data_quality": _data_quality,

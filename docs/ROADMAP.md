@@ -67,7 +67,7 @@ Last updated 2026-11-21. "Blocked" means a decision or input from the owner is n
 | F4 | Weekly macro note (bn, en) | MVP | Built | Live macro data feeds (Bangladesh Bank, BBS, Brent) |
 | F5 | Shock playbook | R2 | Built | Curate real events and Bangladesh Bank policy-rate changes; confirm the LNG fire date |
 | F6 | Portfolio check | R2 | Built | — |
-| F7 | Alerts (status, regime, shock) | R2 | Built | In-app, email (D24) and browser push (D26). Owner: choose the email provider and generate push keys |
+| F7 | Alerts (status, regime, shock) | R2 | Built | In-app, email (D24), browser push (D26) and the daily digest (D32, FR7.3). Owner: set the Gmail settings and generate push keys |
 | F8 | Macro regime dashboard | R3 | Built | Owner to confirm the inflation bands and choose a liquidity series (FR8.1) |
 | F9 | Firm features (white-label, CSV, API, seats) | R3 | Built, switched off | `FIRM_FEATURES_ENABLED` stays off until the BSEC check (Q4) and the Extended Metronic licence; payments not built (D30) |
 | F10 | Ownership change layer | Later | Not built | Data source |

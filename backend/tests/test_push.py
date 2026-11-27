@@ -87,6 +87,7 @@ def _alert(demo_session: Session, channel: str, recorder: Recorder, monkeypatch:
     rule = demo_session.scalar(select(AlertRule).where(AlertRule.user_id == user.id))
     assert rule is not None
     rule.channel = channel
+    rule.frequency = "INSTANT"  # sent at once, not held for the digest (D32)
 
     class Quiet:
         def send(self, email: Email) -> None:

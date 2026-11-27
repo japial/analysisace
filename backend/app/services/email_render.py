@@ -59,6 +59,16 @@ class Button:
 
 
 @dataclass(frozen=True)
+class Item:
+    """One entry in a list email, such as a notice in the daily digest."""
+
+    title: str
+    text: str
+    url: str
+    link_label: str
+
+
+@dataclass(frozen=True)
 class Content:
     """What an email says. Every string is plain text; the renderer escapes it for HTML."""
 
@@ -71,6 +81,8 @@ class Content:
     paragraphs: Sequence[str] = ()
     # Label and value pairs, for figures.
     facts: Sequence[tuple[str, str]] = ()
+    # Entries with their own link, shown before the button.
+    items: Sequence[Item] = ()
     button: Button | None = None
     # Smaller notes after the button, such as how long a link works.
     notes: Sequence[str] = ()
@@ -91,6 +103,8 @@ def _text(content: Content) -> str:
         lines += [paragraph, ""]
     if content.facts:
         lines += [f"{label}: {value}" for label, value in content.facts] + [""]
+    for item in content.items:
+        lines += [f"* {item.title}", f"  {item.text}", f"  {item.url}", ""]
     if content.button:
         lines += [f"{content.button.label}:", content.button.url, ""]
     for note in content.notes:
@@ -126,6 +140,19 @@ def _html(content: Content) -> str:
         parts.append(
             '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" '
             f'border="0" style="border-collapse:collapse;margin:0 0 20px;">{rows}</table>'
+        )
+    if content.items:
+        blocks = "".join(
+            f'<tr><td style="padding:14px 0;border-bottom:1px solid {LINE};">'
+            f'<p style="{base}font-size:16px;line-height:22px;font-weight:600;color:{NAVY};margin:0 0 4px;">{_e(item.title)}</p>'
+            f'<p style="{base}font-size:15px;line-height:23px;margin:0 0 6px;">{_e(item.text)}</p>'
+            f'<a href="{_e(item.url)}" style="font-family:{font};font-size:14px;color:{TEAL_DEEP};font-weight:600;">{_e(item.link_label)}</a>'
+            "</td></tr>"
+            for item in content.items
+        )
+        parts.append(
+            '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" '
+            f'border="0" style="border-collapse:collapse;margin:0 0 20px;border-top:1px solid {LINE};">{blocks}</table>'
         )
     if content.button:
         url = _e(content.button.url)

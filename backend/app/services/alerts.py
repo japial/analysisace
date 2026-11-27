@@ -37,7 +37,13 @@ from app.services.alert_texts import EMAIL_TEXT
 from app.services.auth import AuthError, ConsentPurpose
 from app.services.email import EmailSender, send_safely
 from app.services.email_render import readable
-from app.services.email_templates import alert_email, monthly_report_email
+from app.services.email_templates import (
+    alert_email,
+    digest_email,
+    digest_item,
+    digest_push_title,
+    monthly_report_email,
+)
 from app.services.households import has_consent, list_households
 from app.services.valuation import load_portfolio, personal_config, today_dhaka
 
@@ -158,6 +164,12 @@ def notify(
     )
     db.add(row)
     template = EMAIL_TEXT.get(message_key)
+    # FR7.3 (D32): "once a day" holds the email and push back for the daily digest. The
+    # notice is in the app at once either way.
+    if rule is not None and rule.frequency == "DAILY_DIGEST" and template is not None:
+        row.digest_channel = rule.channel
+        db.flush()
+        return row
     # D25: email only a confirmed address; the notice is in the app either way.
     if (
         rule is not None
@@ -346,6 +358,81 @@ def run_personal_alerts(db: Session, sender: EmailSender, today: dt.date | None 
         run_household_alerts(db, sender, household_id, today)
         for household_id in list(db.scalars(select(Household.id)))
     )
+
+
+# --- daily digest (FR7.3, D32) ----------------------------------------------------------
+
+
+def send_digests(db: Session, sender: EmailSender, now: dt.datetime | None = None) -> int:
+    """Deliver every notice held for the daily digest: one email per person listing them,
+    and one push summary. Returns how many people were sent a digest.
+
+    A notice leaves the queue when its digest is delivered. If the email cannot be sent,
+    the person's notices stay queued for the next run, so nothing is lost; the notices are
+    in the app all along. An address that is not confirmed gets no email (D25), and its
+    notices leave the queue since they cannot be delivered by email.
+    """
+    now = now or utcnow()
+    base = get_settings().web_base_url
+    pending = list(
+        db.scalars(
+            select(Notification)
+            .where(Notification.digest_channel.is_not(None), Notification.digested_at.is_(None))
+            .order_by(Notification.user_id, Notification.created_at)
+        )
+    )
+    by_user: dict[uuid.UUID, list[Notification]] = {}
+    for row in pending:
+        by_user.setdefault(row.user_id, []).append(row)
+
+    delivered = 0
+    push_sender = push.get_push_sender()
+    for user_id, rows in by_user.items():
+        user = db.get(User, user_id)
+        if user is None or not user.is_active:
+            for row in rows:
+                row.digested_at = now
+            continue
+        locale = user.locale if user.locale in ("bn", "en") else "en"
+        by_email = [r for r in rows if r.digest_channel in ("EMAIL", "BOTH")]
+        by_push = [r for r in rows if r.digest_channel in ("PUSH", "BOTH")]
+        if by_email and user.email_verified_at is not None:
+            items = [
+                item
+                for r in by_email
+                if (
+                    item := digest_item(
+                        locale, r.message_key, r.data, r.link or "/personal/alerts", base
+                    )
+                )
+                is not None
+            ]
+            if items and not send_safely(sender, digest_email(user.email, locale, items, base)):
+                # Try again at the next run; push waits too, so the two stay together.
+                continue
+            for row in by_email:
+                row.sent_at = now
+        if by_push:
+            first = digest_item(
+                locale, by_push[0].message_key, by_push[0].data, "/personal/alerts", base
+            )
+            push.push_to_user(
+                db,
+                push_sender,
+                user.id,
+                push.notice_message(
+                    digest_push_title(locale, len(by_push)),
+                    first.title if first else "",
+                    "/personal/alerts",
+                    base,
+                    locale,
+                ),
+            )
+        for row in rows:
+            row.digested_at = now
+        delivered += 1
+    db.flush()
+    return delivered
 
 
 # --- monthly report (FR20.2) ----------------------------------------------------------

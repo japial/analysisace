@@ -1144,7 +1144,7 @@
       "markRead": "Mark as read",
       "markAllRead": "Mark all as read",
       "settings": "Alert settings",
-      "settingsIntro": "Each alert also shows here in the app.",
+      "settingsIntro": "Each alert also shows here in the app. \"Once a day\" collects that alert into one email or notification each morning; \"Straight away\" sends each one as it happens.",
       "on": "On",
       "channel": "Send by",
       "frequency": "When",

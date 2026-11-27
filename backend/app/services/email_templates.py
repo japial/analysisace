@@ -9,7 +9,7 @@ from typing import Any
 
 from app.services.alert_texts import EMAIL_TEXT
 from app.services.email import Email
-from app.services.email_render import Button, Content, label, readable, render
+from app.services.email_render import Button, Content, Item, label, readable, render
 from app.services.text_format import digits, money, month_text, number
 
 _T: dict[str, dict[str, str]] = {
@@ -44,6 +44,17 @@ _T: dict[str, dict[str, str]] = {
         "report_fire": "Progress to your FIRE number",
         "report_button": "Open My money",
         "report_reason": "You get this email because the monthly report is set to email.",
+        "digest_subject": "{count} new notices from analysisACE",
+        "digest_subject_one": "1 new notice from analysisACE",
+        "digest_preheader": "Your notices since the last digest, in one email.",
+        "digest_heading": "Your notices",
+        "digest_body": "These came in since your last digest.",
+        "digest_more": "And {count} more in the app.",
+        "digest_open": "Open",
+        "digest_button": "See all notices",
+        "digest_reason": "You get one email a day because these alerts are set to arrive once a day.",
+        "digest_push_title": "{count} new notices",
+        "digest_push_title_one": "1 new notice",
     },
     "bn": {
         "reset_subject": "আপনার analysisACE পাসওয়ার্ড পরিবর্তন করুন",
@@ -76,6 +87,17 @@ _T: dict[str, dict[str, str]] = {
         "report_fire": "FIRE অঙ্কের দিকে অগ্রগতি",
         "report_button": "আমার অর্থ খুলুন",
         "report_reason": "মাসিক প্রতিবেদন ইমেইলে পাঠানোর জন্য চালু আছে বলে আপনি এই ইমেইল পাচ্ছেন।",
+        "digest_subject": "analysisACE থেকে {count}টি নতুন নোটিশ",
+        "digest_subject_one": "analysisACE থেকে ১টি নতুন নোটিশ",
+        "digest_preheader": "শেষ সারাংশের পর থেকে আপনার নোটিশ, এক ইমেইলে।",
+        "digest_heading": "আপনার নোটিশ",
+        "digest_body": "আপনার শেষ সারাংশের পর থেকে এগুলো এসেছে।",
+        "digest_more": "অ্যাপে আরও {count}টি আছে।",
+        "digest_open": "খুলুন",
+        "digest_button": "সব নোটিশ দেখুন",
+        "digest_reason": "এই সতর্কবার্তাগুলো দিনে একবার পাঠানোর জন্য ঠিক করা আছে বলে আপনি দিনে একটি ইমেইল পাচ্ছেন।",
+        "digest_push_title": "{count}টি নতুন নোটিশ",
+        "digest_push_title_one": "১টি নতুন নোটিশ",
     },
 }
 
@@ -201,6 +223,73 @@ def monthly_report_email(to: str, locale: str, figures: Mapping[str, Any], base:
             manage=manage,
             headers=headers,
         )
+    )
+
+
+DIGEST_LIMIT = 20
+
+
+def digest_item(
+    locale: str, message_key: str, data: Mapping[str, Any], link: str, base: str
+) -> Item | None:
+    """One notice as a digest entry: its subject, its sentence and its link."""
+    template = EMAIL_TEXT.get(message_key)
+    if template is None:
+        return None
+    lang = _lang(locale)
+    subject, body = template[lang]
+    values = readable(data, lang)
+    return Item(
+        title=subject.format(**values),
+        text=body.format(**values),
+        url=_url(base, lang, link),
+        link_label=_T[lang]["digest_open"],
+    )
+
+
+def digest_email(to: str, locale: str, items: list[Item], base: str) -> Email:
+    """The daily digest (FR7.3, D32): every notice waiting since the last one, newest last,
+    shown up to DIGEST_LIMIT with the rest counted."""
+    lang = _lang(locale)
+    t = _T[lang]
+    count = len(items)
+    shown = items[:DIGEST_LIMIT]
+    notes = (
+        [t["digest_more"].format(count=digits(str(count - len(shown)), lang))]
+        if count > len(shown)
+        else []
+    )
+    subject = (
+        t["digest_subject_one"]
+        if count == 1
+        else t["digest_subject"].format(count=digits(str(count), lang))
+    )
+    manage, headers = _manage(base, lang)
+    return render(
+        Content(
+            locale=lang,
+            to=to,
+            subject=subject,
+            preheader=t["digest_preheader"],
+            heading=t["digest_heading"],
+            paragraphs=[t["digest_body"]],
+            items=shown,
+            notes=notes,
+            button=Button(t["digest_button"], _url(base, lang, "/personal/alerts")),
+            reason=t["digest_reason"],
+            manage=manage,
+            headers=headers,
+        )
+    )
+
+
+def digest_push_title(locale: str, count: int) -> str:
+    lang = _lang(locale)
+    t = _T[lang]
+    return (
+        t["digest_push_title_one"]
+        if count == 1
+        else t["digest_push_title"].format(count=digits(str(count), lang))
     )
 
 

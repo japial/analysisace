@@ -156,6 +156,7 @@ def test_alert_stays_in_the_app_when_its_email_fails_fr20_d24(demo_session) -> N
         )
     )
     assert rule is not None
+    rule.frequency = "INSTANT"  # sent at once, not held for the digest (D32)
     row = alerts.notify(
         demo_session,
         Broken(),
@@ -191,6 +192,7 @@ def test_alert_email_waits_for_a_confirmed_address_d25(demo_session) -> None:  #
         )
     )
     user.email_verified_at = None
+    rule.frequency = "INSTANT"  # sent at once, not held for the digest (D32)
     row = alerts.notify(
         demo_session,
         Box(),

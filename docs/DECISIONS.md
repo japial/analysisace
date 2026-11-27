@@ -234,3 +234,12 @@ Every email (password reset, sign-up confirmation, alerts, the monthly report, t
 - **HTML that survives mail apps.** Tables for layout, inline styles only, 600 px wide and full width on a phone, no images or web fonts that must load (the wordmark is text), a button that is a coloured table cell with the address repeated as a text link, hidden preview text, `lang` set for Bangla shaping, and a light colour scheme so Gmail's dark mode does not invert the brand colours. Every value from data is HTML-escaped.
 - **Why you got it.** Alert and report emails say which setting sent them and link to the alert settings page, which is also given as a `List-Unsubscribe` header so mail apps can show their own control. One-click unsubscribe (RFC 8058) is not built: it needs a signed link, and Gmail only requires it from senders of about 5,000 emails a day.
 - **Previews.** `scripts/preview_emails.py` writes every email in both languages to `backend/.email-previews/` for review; nothing is sent.
+
+## D32. "Once a day" alerts wait for a morning digest (2026-11-27)
+
+FR7.3 asks for a frequency per alert: straight away or a daily digest. The setting was stored and offered on the alerts page (as the default), but every email and push went out at once. Now:
+
+- **Held back, not hidden.** When a rule is "once a day", the notice is in the app at once, and `notification.digest_channel` records how it waits to be delivered (migration 0008). "Straight away" rules are unchanged.
+- **One digest a day** (`alert_digest` job, 08:00 Asia/Dhaka, after the 07:00 personal alerts; the previous evening's market alerts wait for it). Each person gets one email listing every waiting notice with its own sentence and link (at most 20, the rest counted), and one push summary ("3 new notices") when push was chosen. `digested_at` marks a notice as delivered; a second run sends nothing.
+- **Nothing lost on failure.** If the digest email cannot be sent, that person's notices stay queued for the next run, and their push waits too so the two stay together. An unconfirmed address gets no email (D25); its notices leave the queue since email cannot reach it, and stay in the app.
+- **The monthly report is not part of the digest.** It is already a monthly summary and keeps its own schedule.

@@ -72,6 +72,10 @@ class Notification(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     dedupe_key: Mapped[str | None] = mapped_column(String(160), index=True)
     sent_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     read_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    # Daily digest (FR7.3, D32): the channel (EMAIL, PUSH, BOTH) this notice waits to be
+    # delivered on, and when the digest took it. Empty for notices sent straight away.
+    digest_channel: Mapped[str | None] = mapped_column(String(10), index=True)
+    digested_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class PushSubscription(UUIDPrimaryKeyMixin, TimestampMixin, Base):
