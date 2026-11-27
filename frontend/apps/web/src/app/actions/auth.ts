@@ -63,7 +63,10 @@ export async function signUpAction(_: FormState, form: FormData): Promise<FormSt
     return toFormError(error);
   }
   await setSessionCookie(result.token, result.expires_at);
-  return redirect({ href: safeReturnPath(form.get("next")), locale });
+  // D38: a new account starts in My money, where the household is set up, unless the
+  // person was on their way somewhere else.
+  const next = safeReturnPath(form.get("next"));
+  return redirect({ href: next === "/" ? "/personal" : next, locale });
 }
 
 export async function signOutAction(): Promise<void> {

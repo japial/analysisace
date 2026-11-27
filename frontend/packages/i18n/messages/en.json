@@ -747,7 +747,8 @@
         "rate": "Savings rate",
         "noIncome": "Savings show once income is recorded.",
         "addIncome": "Add income"
-      }
+      },
+      "freshNote": "Your net worth, ACE figures and trend appear here as soon as you record income, costs or something you own."
     },
     "costs": {
       "intro": "Record what the household spends. Totals and the inflation view are worked out for you.",
@@ -1229,7 +1230,8 @@
       "add": "Add member",
       "emailHint": "Only to share with an existing account.",
       "anotherTitle": "Another household",
-      "anotherIntro": "For example, your parents' money kept separately. Switch between households at the top of each page."
+      "anotherIntro": "For example, your parents' money kept separately. Switch between households at the top of each page.",
+      "suggestedName": "{name} family"
     },
     "enum": {
       "householdRole": {
@@ -1584,7 +1586,8 @@
         "certificates": "Savings certificates, FDR and DPS (৳)",
         "islamic": "Islamic deposits and sukuk (৳)"
       },
-      "savingsLater": "Shares are best imported from your broker statement on the Accounts page. Gold and land go on the Property page."
+      "savingsLater": "Shares are best imported from your broker statement on the Accounts page. Gold and land go on the Property page.",
+      "skip": "Skip for now: I'll add things one page at a time"
     },
     "holdingCompany": {
       "title": "About this company",

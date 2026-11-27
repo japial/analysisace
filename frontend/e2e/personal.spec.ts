@@ -39,7 +39,10 @@ async function signUpWithHousehold(page: Page): Promise<void> {
   await expect(page.getByText("Start your household")).toBeVisible();
   await page.getByLabel("Household name").fill("Tester family");
   await page.getByRole("button", { name: "Create household" }).click();
+  // D38: the next step is quick start; these tests go back to the overview themselves.
+  await expect(page).toHaveURL(/\/en\/personal\/setup$/);
   await expect(page.getByText("Tester family · Owner")).toBeVisible();
+  await page.goto("/en/personal");
 }
 
 async function pick(page: Page, label: string, option: string): Promise<void> {
@@ -68,9 +71,9 @@ test("record a cost, an account with a holding, an asset, a goal and a FIRE plan
   // The longest journey: many pages, each compiled on first visit by the dev server.
   test.setTimeout(60_000);
   await signUpWithHousehold(page);
-  // D21: a new household's overview starts with the first steps toward FIRE.
-  await expect(page.getByRole("heading", { name: "Your road to FIRE" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Record income" })).toBeVisible();
+  // D38: a household with nothing recorded sees what to do first, not empty figures.
+  await expect(page.getByRole("heading", { name: "Getting started" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Your ACE", exact: true })).toHaveCount(0);
 
   // F12: a cost appears in the entries.
   await page.goto("/en/personal/costs");
@@ -145,6 +148,29 @@ test("record a cost, an account with a holding, an asset, a goal and a FIRE plan
   // D21: with a plan, the overview leads with the projected FIRE age from it.
   await expect(page.getByText("Projected FIRE age")).toBeVisible();
   await expect(page.getByRole("progressbar", { name: "Progress to your FIRE number" })).toBeVisible();
+});
+
+test("a new account goes from sign-up to quick start, and can skip it (D38)", async ({ page }) => {
+  await page.goto("/en/signup");
+  await page.getByLabel("Full name").fill("Rina Akter");
+  await page.getByLabel("Email").fill(`e2e-first-${Date.now()}-${Math.floor(Math.random() * 1e6)}@example.com`);
+  await page.getByLabel("Password").fill(PASSWORD);
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Create account" }).click();
+
+  // Straight into My money, with a household name suggested from the account name.
+  await expect(page).toHaveURL(/\/en\/personal$/);
+  await expect(page.getByLabel("Household name")).toHaveValue("Akter family");
+  await page.getByRole("button", { name: "Create household" }).click();
+
+  // Then quick start, which can be skipped.
+  await expect(page).toHaveURL(/\/en\/personal\/setup$/);
+  await page.getByRole("link", { name: /Skip for now/ }).click();
+  await expect(page).toHaveURL(/\/en\/personal$/);
+  await expect(page.getByRole("heading", { name: "Getting started" })).toBeVisible();
+  await expect(page.getByText("appear here as soon as you record")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "All sections" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Your ACE", exact: true })).toHaveCount(0);
 });
 
 test("quick start records the basics and the overview shows the FIRE picture (D22)", async ({ page }) => {

@@ -40,7 +40,8 @@ async function signOut(page: Page): Promise<void> {
 test("sign up, sign out, sign in again", async ({ page }) => {
   const email = uniqueEmail("signup");
   await signUp(page, email);
-  await expect(page).toHaveURL(/\/en$/);
+  // D38: a new account starts in My money.
+  await expect(page).toHaveURL(/\/en\/personal$/);
 
   await page.goto("/en/account");
   await expect(page.getByRole("heading", { name: "My account" })).toBeVisible();

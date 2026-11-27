@@ -28,6 +28,9 @@ import { type PageProps, enumLabel, sectionMetadata, setup } from "@/lib/persona
 
 export const generateMetadata = sectionMetadata("overview");
 
+/** A decimal string from the API that is zero ("0", "0.00"); money is never parsed. */
+const isZero = (value: string) => /^-?0+(\.0+)?$/.test(value);
+
 /**
  * "My money" overview: progress toward FIRE first (F17, D21), then the ACE summary, net
  * worth, who owns what, goals and new notices (F14, F19, F20, F24).
@@ -50,6 +53,27 @@ export default async function PersonalOverviewPage({ params }: PageProps) {
     load(hh<Envelope<CostSummary>>(ctx, "/costs/summary?months=12")),
     load(get<Notifications>(ctx, "/notifications?unread_only=true&limit=5")),
   ]);
+
+  // D38: until anything is recorded (beyond a birth year), the figures below would all be
+  // zero and every list empty, so a new household sees only what to do first.
+  const fresh =
+    setupStatus.ok &&
+    setupStatus.data.steps.every((step) => step.key === "you" || !step.done) &&
+    summary.ok &&
+    isZero(summary.data.data.assets) &&
+    isZero(summary.data.data.liabilities) &&
+    goals.ok &&
+    goals.data.data.length === 0;
+
+  if (fresh && setupStatus.ok) {
+    return (
+      <PersonalShell ctx={ctx} root title={t("personal.sections.overview")} description={t("personal.overview.intro")}>
+        <GettingStarted status={setupStatus.data} locale={locale} canEdit={ctx.canEdit} />
+        <p className="text-sm text-muted-foreground">{t("personal.overview.freshNote")}</p>
+        <SectionShortcuts />
+      </PersonalShell>
+    );
+  }
 
   return (
     <PersonalShell

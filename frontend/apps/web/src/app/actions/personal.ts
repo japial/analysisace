@@ -64,7 +64,10 @@ async function csvFrom(form: FormData): Promise<string> {
 // --- F24 households and members --------------------------------------------------------
 
 export async function createHouseholdAction(_: FormState, form: FormData): Promise<FormState> {
-  return run(() => call("POST", "/households", { name: text(form, "name") }));
+  const result = await run(() => call("POST", "/households", { name: text(form, "name") }));
+  if (result.error) return result;
+  // D38: the next useful step is the basics, all in one form.
+  return go("/personal/setup");
 }
 
 export async function renameHouseholdAction(

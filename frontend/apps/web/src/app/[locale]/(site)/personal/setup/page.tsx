@@ -5,6 +5,7 @@ import { Field } from "@/components/form/form-parts";
 import { Empty, LoadError, Panel } from "@/components/personal/display";
 import { ActionForm, FieldGrid } from "@/components/personal/forms";
 import { PersonalShell } from "@/components/personal/shell";
+import { Link } from "@/i18n/navigation";
 import { hh, load } from "@/lib/personal";
 import { type PageProps, sectionMetadata, setup } from "@/lib/personal-page";
 
@@ -96,6 +97,10 @@ export default async function SetupPage({ params }: PageProps) {
           </div>
         </ActionForm>
       )}
+      {/* D38: everything here can also be added one page at a time. */}
+      <Link href="/personal" className="self-start text-sm font-medium text-primary hover:underline">
+        {t("personal.setup.skip")}
+      </Link>
     </PersonalShell>
   );
 }
