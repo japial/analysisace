@@ -298,3 +298,13 @@ Walking the first run as a new user, at 360 px and on a desktop, showed four rou
 - **The household name is suggested** from the account name ("Rina Akter" gives "Akter family", or "Akter পরিবার" on the Bangla pages) and can be changed before or after.
 - **Creating the household opens quick start** (D22), the one form that makes the FIRE figures work. It has a "Skip for now" link for people who prefer to add things page by page.
 - **An empty household sees what to do first.** Until anything is recorded beyond a birth year (no income, costs, savings, plan, owned or owed items, or goals), the overview shows only the Getting started checklist, one line saying where the figures will appear, and the section links. Before, it showed about a dozen cards of ৳0.00 and "nothing yet", about 5,000 px tall on a phone, and a second call to action ("Your road to FIRE") beside the checklist. The full overview appears with the first record.
+
+## D39. A new sign-in email is confirmed from the new address, and the old one is told (2026-11-28)
+
+The sign-in email could not be changed, so someone who lost an address, or whose emails bounced (D35), was stuck with it. Now the account page has a "Sign-in email" section:
+
+- **Asked with the password.** Whoever controls the email controls password resets, so the current password is asked again. The new address must differ from the current one and belong to no other account. Requests are limited per person like confirmation links (D28).
+- **Nothing changes until the link is opened.** A link goes to the new address (`/{locale}/confirm-email-change`, a page that asks before changing, since mail scanners open links). It works once, for the email-confirmation lifetime (48 hours by default), and a newer request or "Cancel the change" retires it. Until then the old address stays in use and the page shows the waiting change. Only a hash of the link is stored, with the new address (`email_change_token`, migration 0010).
+- **On confirmation.** The address switches and counts as confirmed, which also ends a bounce pause. Password-reset and confirmation links sent to the old address stop working. Sessions stay signed in: the password did not change.
+- **The old address is told**, with the new one partly hidden (r•••@example.com), and is pointed to password reset if the change was not theirs.
+- **Privacy.** A waiting change is in the data export and is deleted with the account. Audit entries hold ids only, never either address.

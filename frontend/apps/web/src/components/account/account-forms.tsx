@@ -5,7 +5,9 @@ import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 
 import {
+  cancelEmailChangeAction,
   changePasswordAction,
+  requestEmailChangeAction,
   deleteAccountAction,
   updateConsentsAction,
   updateProfileAction,
@@ -66,6 +68,46 @@ export function ProfileForm({ user }: { user: User }) {
         </Select>
       </div>
       <SubmitButton className="self-start">{t("common.save")}</SubmitButton>
+    </form>
+  );
+}
+
+/** D39: a new sign-in email, confirmed from a link sent to it. */
+export function EmailChangeForm({ current }: { current: string }) {
+  const t = useTranslations();
+  const [state, action] = useActionState(requestEmailChangeAction, INITIAL_FORM_STATE);
+
+  return (
+    <form action={action} key={state.ok ? "sent" : "form"} className="flex max-w-md flex-col gap-4">
+      <FormMessage state={state} success={t("account.emailSent")} />
+      <p className="text-sm">
+        <span className="text-muted-foreground">{t("account.emailCurrent")}: </span>
+        <span lang="en" className="font-medium text-mono">
+          {current}
+        </span>
+      </p>
+      <Field label={t("account.emailNew")} name="new_email" type="email" autoComplete="email" required />
+      <Field
+        label={t("account.currentPassword")}
+        name="password"
+        type="password"
+        autoComplete="current-password"
+        required
+      />
+      <SubmitButton className="self-start">{t("account.emailSubmit")}</SubmitButton>
+    </form>
+  );
+}
+
+export function CancelEmailChange() {
+  const t = useTranslations();
+  const [state, action] = useActionState(cancelEmailChangeAction, INITIAL_FORM_STATE);
+  return (
+    <form action={action}>
+      <FormMessage state={state} />
+      <SubmitButton variant="outline" size="sm">
+        {t("account.emailCancel")}
+      </SubmitButton>
     </form>
   );
 }

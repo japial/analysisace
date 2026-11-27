@@ -188,6 +188,31 @@ export function updateMe(
   return request("/me", { method: "PATCH", body, token });
 }
 
+/** A sign-in email change waiting for its link to be opened (D39). */
+export interface EmailChange {
+  new_email: string;
+  expires_at: string;
+}
+
+export function getEmailChange(token: string): Promise<EmailChange | null> {
+  return request("/auth/email-change", { token });
+}
+
+export function requestEmailChange(
+  token: string,
+  body: { new_email: string; password: string },
+): Promise<EmailChange> {
+  return request("/auth/email-change", { method: "POST", body, token });
+}
+
+export function cancelEmailChange(token: string): Promise<void> {
+  return request("/auth/email-change", { method: "DELETE", token });
+}
+
+export function confirmEmailChange(token: string): Promise<void> {
+  return request("/auth/email-change/confirm", { method: "POST", body: { token } });
+}
+
 export function changePassword(
   token: string,
   body: { current_password: string; new_password: string },

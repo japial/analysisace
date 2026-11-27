@@ -420,7 +420,11 @@
     "unsubscribeSubmit": "Stop these emails",
     "unsubscribeDone": "Done. These emails are stopped. The notices still show in analysisACE.",
     "unsubscribeSettings": "Open alert settings",
-    "bounceBanner": "Emails to {email} could not be delivered, so alert and report emails are paused. If the address is right, send a new link and open it to resume them."
+    "bounceBanner": "Emails to {email} could not be delivered, so alert and report emails are paused. If the address is right, send a new link and open it to resume them.",
+    "changeTitle": "Confirm your new email",
+    "changeIntro": "Press the button to make this address your sign-in email.",
+    "changeSubmit": "Use this email",
+    "changeDone": "Done. Sign in with your new email from now on; reminders and reports go there too."
   },
   "account": {
     "metaTitle": "My account",
@@ -458,7 +462,15 @@
     "deleteButton": "Delete my account",
     "deleteConfirmTitle": "Delete your account?",
     "deleteConfirmBody": "Enter your password to confirm. Your account and data will be removed permanently.",
-    "deleteConfirm": "Delete permanently"
+    "deleteConfirm": "Delete permanently",
+    "emailTitle": "Sign-in email",
+    "emailIntro": "You sign in with this address, and reminders and reports are sent to it. A new one is used only once you open the link we send to it.",
+    "emailCurrent": "Current email",
+    "emailNew": "New email",
+    "emailSubmit": "Send confirmation link",
+    "emailSent": "Check the new address and open the link we sent. Until then, your current email stays in use.",
+    "emailPending": "Waiting for you to open the link sent to {email}. It works until {date}.",
+    "emailCancel": "Cancel the change"
   },
   "admin": {
     "usersMetaTitle": "Users",
@@ -588,7 +600,9 @@
     "LOGO_TOO_LARGE": "The logo is too large. Use a PNG or JPEG under 300 KB.",
     "LOGO_INVALID": "Use a PNG or JPEG image for the logo.",
     "NOTE_NOT_PUBLISHED": "No weekly note is published for that week yet.",
-    "UNSUBSCRIBE_LINK_INVALID": "This unsubscribe link does not work. Sign in and change your alert settings instead."
+    "UNSUBSCRIBE_LINK_INVALID": "This unsubscribe link does not work. Sign in and change your alert settings instead.",
+    "EMAIL_UNCHANGED": "That is already your sign-in email.",
+    "EMAIL_CHANGE_TOKEN_INVALID": "This link no longer works: it was used, replaced by a newer one, cancelled or expired. You can ask for a new one on your account page."
   },
   "personal": {
     "metaTitle": "My money",

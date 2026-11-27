@@ -32,6 +32,7 @@ USER_EXPORT = {
     "firm_seat": "firm_seats",
     "subscription": "subscriptions",
     "push_subscription": "push_subscriptions",
+    "email_change_token": "pending_email_change",
     "watchlist": "watchlist",
     "user_session": "sessions",
     "household_member": "households",

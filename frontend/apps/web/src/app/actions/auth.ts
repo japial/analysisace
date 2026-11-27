@@ -1,6 +1,7 @@
 "use server";
 
 import type { AuthResult } from "@analysisace/core";
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { getLocale } from "next-intl/server";
 
@@ -113,6 +114,17 @@ export async function resendVerificationAction(): Promise<FormState> {
   } catch (error) {
     return toFormError(error);
   }
+  return { ok: true };
+}
+
+/** D39: the button on the page the link sent to a new address opens. */
+export async function confirmEmailChangeAction(_: FormState, form: FormData): Promise<FormState> {
+  try {
+    await api.confirmEmailChange(text(form, "token"));
+  } catch (error) {
+    return toFormError(error);
+  }
+  revalidatePath("/", "layout");
   return { ok: true };
 }
 

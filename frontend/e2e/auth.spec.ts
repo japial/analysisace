@@ -88,6 +88,36 @@ test("Bangla pages and the forgot-password answer", async ({ page }) => {
   await expect(page.getByRole("status")).toContainText("লিংক পাঠানো হয়েছে");
 });
 
+test("a new sign-in email waits for its link and can be cancelled (D39)", async ({ page }) => {
+  const email = uniqueEmail("change");
+  const next = uniqueEmail("changed");
+  await signUp(page, email);
+  await page.goto("/en/account");
+  const section = page.getByRole("heading", { name: "Sign-in email" });
+  await expect(section).toBeVisible();
+
+  // The password is asked again.
+  await page.getByLabel("New email").fill(next);
+  await page.getByLabel("Current password").first().fill("not my password");
+  await page.getByRole("button", { name: "Send confirmation link" }).click();
+  await expect(page.getByText("The current password is not correct", { exact: false })).toBeVisible();
+
+  await page.getByLabel("New email").fill(next);
+  await page.getByLabel("Current password").first().fill(PASSWORD);
+  await page.getByRole("button", { name: "Send confirmation link" }).click();
+  await expect(page.getByText("open the link we sent", { exact: false })).toBeVisible();
+  // Waiting for the link; the current email is still in use, and the change can be cancelled.
+  await expect(page.getByText(`Waiting for you to open the link sent to ${next}`)).toBeVisible();
+  await expect(page.getByText(email, { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Cancel the change" }).click();
+  await expect(page.getByText("Waiting for you to open the link")).toHaveCount(0);
+
+  // A link that does not work says so.
+  await page.goto("/en/confirm-email-change?token=not-a-real-token-123");
+  await page.getByRole("button", { name: "Use this email" }).click();
+  await expect(page.getByText("This link no longer works", { exact: false })).toBeVisible();
+});
+
 test("privacy choices are saved and can be withdrawn (FR23.1, FR23.2)", async ({ page }) => {
   await signUp(page, uniqueEmail("consent"));
   await page.goto("/en/account");

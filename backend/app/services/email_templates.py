@@ -22,6 +22,19 @@ from app.services.text_format import digits, money, month_text, number
 
 _T: dict[str, dict[str, str]] = {
     "en": {
+        "change_subject": "Confirm your new email for analysisACE",
+        "change_preheader": "One click to make this your sign-in email.",
+        "change_heading": "Confirm your new email",
+        "change_body": "Someone signed in to analysisACE asked to use {email} as their sign-in email.",
+        "change_button": "Use this email",
+        "change_valid": "The link works once, for {hours} hours. Until it is opened, the old email stays in use.",
+        "change_ignore": "If this was not you, ignore this email. Nothing changes.",
+        "changed_subject": "Your analysisACE sign-in email was changed",
+        "changed_preheader": "Your account now uses a different email.",
+        "changed_heading": "Your sign-in email was changed",
+        "changed_body": "The analysisACE account that used {old} now signs in with {new}. Emails will go there from now on.",
+        "changed_warning": "If you did not do this, reset your password from the sign-in page and write to us at once.",
+        "changed_button": "Go to sign-in",
         "reset_subject": "Reset your analysisACE password",
         "reset_preheader": "A link to choose a new password, valid for {minutes} minutes.",
         "reset_heading": "Reset your password",
@@ -66,6 +79,19 @@ _T: dict[str, dict[str, str]] = {
         "digest_push_title_one": "1 new notice",
     },
     "bn": {
+        "change_subject": "analysisACE-এর জন্য নতুন ইমেইল নিশ্চিত করুন",
+        "change_preheader": "এক ক্লিকে এটিকে আপনার প্রবেশের ইমেইল করুন।",
+        "change_heading": "নতুন ইমেইল নিশ্চিত করুন",
+        "change_body": "analysisACE-এ প্রবেশ করা একজন ব্যবহারকারী {email}-কে প্রবেশের ইমেইল হিসেবে ব্যবহার করতে চেয়েছেন।",
+        "change_button": "এই ইমেইল ব্যবহার করুন",
+        "change_valid": "লিংকটি একবার, {hours} ঘণ্টার মধ্যে কাজ করবে। খোলার আগ পর্যন্ত আগের ইমেইলই চালু থাকবে।",
+        "change_ignore": "আপনি অনুরোধ না করে থাকলে এই ইমেইল উপেক্ষা করুন। কিছুই বদলাবে না।",
+        "changed_subject": "আপনার analysisACE প্রবেশের ইমেইল বদলানো হয়েছে",
+        "changed_preheader": "আপনার অ্যাকাউন্ট এখন অন্য ইমেইল ব্যবহার করছে।",
+        "changed_heading": "প্রবেশের ইমেইল বদলানো হয়েছে",
+        "changed_body": "যে analysisACE অ্যাকাউন্ট {old} ব্যবহার করত, সেটি এখন {new} দিয়ে প্রবেশ করে। এখন থেকে ইমেইল সেখানে যাবে।",
+        "changed_warning": "এটি আপনি না করে থাকলে প্রবেশের পাতা থেকে পাসওয়ার্ড পরিবর্তন করুন এবং এখনই আমাদের জানান।",
+        "changed_button": "প্রবেশের পাতায় যান",
         "reset_subject": "আপনার analysisACE পাসওয়ার্ড পরিবর্তন করুন",
         "reset_preheader": "নতুন পাসওয়ার্ড দেওয়ার লিংক, {minutes} মিনিট কাজ করবে।",
         "reset_heading": "পাসওয়ার্ড পরিবর্তন করুন",
@@ -134,6 +160,51 @@ def password_reset_email(to: str, locale: str, link: str, minutes: int) -> Email
             paragraphs=[t["reset_body"].format(email=to)],
             button=Button(t["reset_button"], link),
             notes=[t["reset_valid"].format(minutes=shown), t["reset_ignore"]],
+        )
+    )
+
+
+def mask_email(address: str) -> str:
+    """ "rahim@example.com" -> "r•••@example.com": enough to recognise, not to read."""
+    local, _, domain = address.partition("@")
+    return f"{local[:1]}\u2022\u2022\u2022@{domain}" if domain else address
+
+
+def email_change_email(to: str, locale: str, link: str, hours: int) -> Email:
+    """D39: sent to the new address; the change happens only when the link is opened."""
+    lang = _lang(locale)
+    t = _T[lang]
+    return render(
+        Content(
+            locale=lang,
+            to=to,
+            subject=t["change_subject"],
+            preheader=t["change_preheader"],
+            heading=t["change_heading"],
+            paragraphs=[t["change_body"].format(email=to)],
+            button=Button(t["change_button"], link),
+            notes=[
+                t["change_valid"].format(hours=digits(str(hours), lang)),
+                t["change_ignore"],
+            ],
+        )
+    )
+
+
+def email_changed_notice(to: str, locale: str, new_email: str, base: str) -> Email:
+    """D39: sent to the old address once the change is made, so a takeover is noticed."""
+    lang = _lang(locale)
+    t = _T[lang]
+    return render(
+        Content(
+            locale=lang,
+            to=to,
+            subject=t["changed_subject"],
+            preheader=t["changed_preheader"],
+            heading=t["changed_heading"],
+            paragraphs=[t["changed_body"].format(old=to, new=mask_email(new_email))],
+            button=Button(t["changed_button"], _url(base, lang, "/signin")),
+            notes=[t["changed_warning"]],
         )
     )
 

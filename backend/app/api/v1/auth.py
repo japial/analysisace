@@ -9,10 +9,13 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, Request, Response, status
 
-from app.api.deps import AppSettings, CurrentIdentity, Db
+from app.api.deps import AppSettings, CurrentIdentity, CurrentUser, Db
 from app.core.config import Settings
 from app.schemas.auth import (
     AuthOut,
+    EmailChangeConfirmIn,
+    EmailChangeIn,
+    EmailChangeOut,
     LoginIn,
     PasswordResetConfirmIn,
     PasswordResetRequestIn,
@@ -170,5 +173,60 @@ def confirm_email_verification(body: VerifyEmailConfirmIn, db: Db) -> Response:
 @router.post("/password-reset/confirm", status_code=status.HTTP_204_NO_CONTENT)
 def confirm_password_reset(body: PasswordResetConfirmIn, db: Db) -> Response:
     auth_service.confirm_password_reset(db, body.token, body.new_password)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+# --- changing the sign-in email (D39) ---------------------------------------------------
+
+
+@router.get("/email-change")
+def read_email_change(user: CurrentUser, db: Db) -> EmailChangeOut | None:
+    """The change waiting for its link to be opened, or null."""
+    pending = auth_service.pending_email_change(db, user)
+    if pending is None:
+        return None
+    return EmailChangeOut(new_email=pending.new_email, expires_at=pending.expires_at)
+
+
+@router.post("/email-change", status_code=status.HTTP_202_ACCEPTED)
+def request_email_change(
+    body: EmailChangeIn,
+    identity: CurrentIdentity,
+    db: Db,
+    settings: AppSettings,
+    sender: Annotated[EmailSender, Depends(get_email_sender)],
+) -> EmailChangeOut:
+    """D39: email a link to the new address. Limited per person, like confirmation links."""
+    _limit(
+        db,
+        "email-change",
+        str(identity.user.id),
+        settings.rate_limit_verify_per_user_per_hour,
+        HOUR,
+    )
+    record = auth_service.request_email_change(
+        db, identity.user, body.new_email, body.password, sender, settings
+    )
+    db.commit()
+    return EmailChangeOut(new_email=record.new_email, expires_at=record.expires_at)
+
+
+@router.delete("/email-change", status_code=status.HTTP_204_NO_CONTENT)
+def cancel_email_change(user: CurrentUser, db: Db) -> Response:
+    auth_service.cancel_email_change(db, user)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/email-change/confirm", status_code=status.HTTP_204_NO_CONTENT)
+def confirm_email_change(
+    body: EmailChangeConfirmIn,
+    db: Db,
+    settings: AppSettings,
+    sender: Annotated[EmailSender, Depends(get_email_sender)],
+) -> Response:
+    """D39: the link from the new address. Works without being signed in."""
+    auth_service.confirm_email_change(db, body.token, sender, settings)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -87,3 +87,18 @@ class EmailVerificationToken(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     expires_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     used_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class EmailChangeToken(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    """A request to change the sign-in email (D39). The link goes to the new address; only
+    its hash is stored. The new address is kept until the link is used or expires."""
+
+    __tablename__ = "email_change_token"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("app_user.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    new_email: Mapped[str] = mapped_column(String(254), nullable=False)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    expires_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))

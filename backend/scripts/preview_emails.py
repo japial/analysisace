@@ -82,6 +82,13 @@ def samples(locale: str) -> dict[str, Email | None]:
             BASE,
             _stop(locale),
         ),
+        "email-change": templates.email_change_email(
+            "karim.new@example.com",
+            locale,
+            f"{BASE}/{locale}/confirm-email-change?token=sample-token",
+            48,
+        ),
+        "email-changed": templates.email_changed_notice(TO, locale, "karim.new@example.com", BASE),
         "monthly-report": templates.monthly_report_email(TO, locale, report, BASE, _stop(locale)),
         "daily-digest": templates.digest_email(
             TO,

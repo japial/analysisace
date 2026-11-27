@@ -67,6 +67,7 @@ from app.models.platform import (
     Watchlist,
 )
 from app.models.user import (
+    EmailChangeToken,
     EmailVerificationToken,
     PasswordResetToken,
     RateLimitHit,
@@ -92,6 +93,7 @@ __all__ = [
     "CorporateActionType",
     "DataIssue",
     "Document",
+    "EmailChangeToken",
     "EmailVerificationToken",
     "Event",
     "EventMetric",

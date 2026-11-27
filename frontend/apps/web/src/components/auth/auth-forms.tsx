@@ -5,6 +5,7 @@ import { useActionState } from "react";
 
 import {
   confirmEmailAction,
+  confirmEmailChangeAction,
   confirmPasswordResetAction,
   requestPasswordResetAction,
   signInAction,
@@ -226,6 +227,28 @@ export function UnsubscribeForm({
       )}
       <Link href="/personal/alerts" className="text-center text-sm font-medium text-primary hover:underline">
         {t("unsubscribeSettings")}
+      </Link>
+    </form>
+  );
+}
+
+/** D39: the page the link sent to a new sign-in email opens. It asks before changing. */
+export function ConfirmEmailChangeForm({ token }: { token: string }) {
+  const t = useTranslations("auth");
+  const [state, action] = useActionState(confirmEmailChangeAction, INITIAL_FORM_STATE);
+
+  return (
+    <form action={action} className="flex flex-col gap-4">
+      <Heading title={t("changeTitle")} intro={t("changeIntro")} />
+      <FormMessage state={token ? state : { error: "EMAIL_CHANGE_TOKEN_INVALID" }} success={t("changeDone")} />
+      {token && !state.ok && state.error !== "EMAIL_CHANGE_TOKEN_INVALID" && (
+        <>
+          <input type="hidden" name="token" value={token} />
+          <SubmitButton>{t("changeSubmit")}</SubmitButton>
+        </>
+      )}
+      <Link href="/account" className="text-center text-sm font-medium text-primary hover:underline">
+        {t("verifyAccount")}
       </Link>
     </form>
   );

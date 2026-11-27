@@ -125,3 +125,21 @@ class UnsubscribeIn(BaseModel):
     """A sealed unsubscribe token from an email link (D34)."""
 
     token: str = Field(min_length=20, max_length=1000)
+
+
+class EmailChangeIn(BaseModel):
+    """D39: the new sign-in email, with the current password."""
+
+    new_email: EmailStr
+    password: Annotated[str, Field(min_length=1, max_length=128)]
+
+
+class EmailChangeOut(BaseModel):
+    """A change waiting for its link to be opened (D39)."""
+
+    new_email: str
+    expires_at: datetime
+
+
+class EmailChangeConfirmIn(BaseModel):
+    token: str = Field(min_length=10, max_length=200)

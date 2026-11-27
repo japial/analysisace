@@ -26,6 +26,7 @@ from app.core.security import (
 from app.models import (
     AlertRule,
     AuditLog,
+    EmailChangeToken,
     EmailVerificationToken,
     Firm,
     FirmSeat,
@@ -40,7 +41,12 @@ from app.models import (
 )
 from app.services import household_data
 from app.services.email import EmailSender, send_safely
-from app.services.email_templates import password_reset_email, verification_email
+from app.services.email_templates import (
+    email_change_email,
+    email_changed_notice,
+    password_reset_email,
+    verification_email,
+)
 
 
 class AuthError(Exception):
@@ -322,6 +328,110 @@ def change_password(
     audit(db, str(user.id), "PASSWORD_CHANGED", "app_user", str(user.id))
 
 
+# --- changing the sign-in email (D39) ---------------------------------------------------
+
+
+def pending_email_change(db: Session, user: User) -> EmailChangeToken | None:
+    """The newest change still waiting for its link to be opened, if any."""
+    return db.scalar(
+        select(EmailChangeToken)
+        .where(
+            EmailChangeToken.user_id == user.id,
+            EmailChangeToken.used_at.is_(None),
+            EmailChangeToken.expires_at > utcnow(),
+        )
+        .order_by(EmailChangeToken.created_at.desc())
+        .limit(1)
+    )
+
+
+def _close_email_changes(db: Session, user_id: uuid.UUID) -> None:
+    db.execute(
+        update(EmailChangeToken)
+        .where(EmailChangeToken.user_id == user_id, EmailChangeToken.used_at.is_(None))
+        .values(used_at=utcnow())
+    )
+
+
+def request_email_change(
+    db: Session,
+    user: User,
+    new_email: str,
+    password: str,
+    sender: EmailSender,
+    settings: Settings,
+) -> EmailChangeToken:
+    """Send a link to the new address (D39). Nothing changes until it is opened, so a typo
+    or someone else's address cannot take over the account. The password is asked again
+    because whoever controls the email controls password resets."""
+    if not verify_password(password, user.password_hash):
+        raise AuthError("WRONG_PASSWORD")
+    new = normalise_email(new_email)
+    if new == user.email:
+        raise AuthError("EMAIL_UNCHANGED", 422)
+    if get_user_by_email(db, new) is not None:
+        raise AuthError("EMAIL_TAKEN", 409)
+    _close_email_changes(db, user.id)
+    token = new_token()
+    record = EmailChangeToken(
+        user_id=user.id,
+        new_email=new,
+        token_hash=hash_token(token),
+        expires_at=utcnow() + timedelta(hours=settings.email_verification_ttl_hours),
+    )
+    db.add(record)
+    db.flush()
+    audit(db, str(user.id), "EMAIL_CHANGE_REQUESTED", "app_user", str(user.id))
+    link = f"{settings.web_base_url}/{user.locale}/confirm-email-change?token={token}"
+    send_safely(
+        sender,
+        email_change_email(new, user.locale, link, settings.email_verification_ttl_hours),
+    )
+    return record
+
+
+def cancel_email_change(db: Session, user: User) -> None:
+    _close_email_changes(db, user.id)
+    db.flush()
+
+
+def confirm_email_change(db: Session, token: str, sender: EmailSender, settings: Settings) -> User:
+    """The link from the new address was opened (D39): switch the sign-in email. The new
+    address is confirmed by this, and a bounce pause (D35) ends. Reset and confirmation
+    links sent to the old address stop working, and the old address is told."""
+    record = db.scalar(
+        select(EmailChangeToken).where(EmailChangeToken.token_hash == hash_token(token))
+    )
+    if record is None or record.used_at is not None or as_utc(record.expires_at) <= utcnow():
+        raise AuthError("EMAIL_CHANGE_TOKEN_INVALID")
+    user = db.get(User, record.user_id)
+    if user is None or not user.is_active:
+        raise AuthError("EMAIL_CHANGE_TOKEN_INVALID")
+    taken = get_user_by_email(db, record.new_email)
+    if taken is not None and taken.id != user.id:
+        raise AuthError("EMAIL_TAKEN", 409)
+    now = utcnow()
+    old = user.email
+    user.email = record.new_email
+    user.email_verified_at = now
+    user.email_bounced_at = None
+    user.email_bounce_status = None
+    _close_email_changes(db, user.id)
+    for model in (PasswordResetToken, EmailVerificationToken):
+        db.execute(
+            update(model)
+            .where(model.user_id == user.id, model.used_at.is_(None))
+            .values(used_at=now)
+        )
+    audit(db, str(user.id), "EMAIL_CHANGED", "app_user", str(user.id))
+    db.flush()
+    send_safely(
+        sender,
+        email_changed_notice(old, user.locale, user.email, settings.web_base_url),
+    )
+    return user
+
+
 def update_consents(db: Session, user: User, changes: dict[ConsentPurpose, bool]) -> None:
     """Grant or withdraw optional consents (FR23.1). Each change is audited."""
     consents = dict(user.consents or {})
@@ -375,6 +485,15 @@ def export_user_data(db: Session, user: User) -> dict[str, Any]:
             {"user_agent": p.user_agent, "created_at": as_utc(p.created_at).isoformat()}
             for p in db.scalars(select(PushSubscription).where(PushSubscription.user_id == user.id))
         ],
+        "pending_email_change": (
+            {
+                "new_email": pending.new_email,
+                "requested_at": as_utc(pending.created_at).isoformat(),
+                "expires_at": as_utc(pending.expires_at).isoformat(),
+            }
+            if (pending := pending_email_change(db, user)) is not None
+            else None
+        ),
         "notifications": [
             {
                 "type": n.type,
@@ -521,6 +640,7 @@ def delete_account(db: Session, user: User, password: str) -> None:
     db.execute(delete(UserSession).where(UserSession.user_id == user_id))
     db.execute(delete(PasswordResetToken).where(PasswordResetToken.user_id == user_id))
     db.execute(delete(EmailVerificationToken).where(EmailVerificationToken.user_id == user_id))
+    db.execute(delete(EmailChangeToken).where(EmailChangeToken.user_id == user_id))
     db.delete(user)
     # The audit entry keeps the id only, never the email or name.
     audit(db, str(user_id), "USER_DELETED", "app_user", str(user_id))
