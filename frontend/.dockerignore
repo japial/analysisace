@@ -1,4 +1,8 @@
 **/node_modules
 **/.next
+**/.next-verify
 **/coverage
+**/test-results
+**/playwright-report
 **/.env*
+.env.example

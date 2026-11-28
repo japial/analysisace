@@ -85,7 +85,7 @@ The two packages contain no React or Next.js code so the Expo mobile app can imp
 
 ## Deployment
 
-`docker-compose.yml` at the repo root defines `db`, `migrate`, `api`, `worker` and `web`. CI (`.github/workflows/ci.yml`, D29) has four jobs on every push to `develop` or `main` and every pull request: `backend` (lint, types, unit tests, and migrations applied to PostgreSQL 16 and checked against the models), `frontend` (lint, types, unit tests, production build), `e2e` (Postgres, the API and the built web app with demo data and an administrator, then every Playwright test at desktop and 360 px) and `compose` (`docker compose up --build`, the API health check and a web page).
+`docker-compose.yml` at the repo root defines `db`, `migrate`, `api`, `worker` and `web` for local use and CI. Servers use `docker-compose.prod.yml`, which adds Caddy for HTTPS (the only published service) and a daily `backup` service, and keeps the API and database on the private network (D40, steps in [DEPLOY.md](DEPLOY.md)). CI (`.github/workflows/ci.yml`, D29) has four jobs on every push to `develop` or `main` and every pull request: `backend` (lint, types, unit tests, and migrations applied to PostgreSQL 16 and checked against the models), `frontend` (lint, types, unit tests, production build), `e2e` (Postgres, the API and the built web app with demo data and an administrator, then every Playwright test at desktop and 360 px) and `compose` (`docker compose up --build`, the API health check and a web page).
 
 The static coming-soon page in `coming-soon/` is published separately by Netlify (`netlify.toml`) until the web app replaces it.
 

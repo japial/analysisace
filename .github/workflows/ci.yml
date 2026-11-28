@@ -189,7 +189,13 @@ jobs:
       - name: Start the stack
         run: |
           cp .env.example .env
+          sed -i "s|^DATA_ENCRYPTION_KEY=.*|DATA_ENCRYPTION_KEY=$(openssl rand -base64 32 | tr '+/' '-_')|" .env
           docker compose up -d --build
+      - name: Production compose file is valid
+        run: |
+          cp .env.production.example .env.prod-check
+          sed -i -e "s|^POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=ci$(openssl rand -hex 8)|"                  -e "s|^DATA_ENCRYPTION_KEY=.*|DATA_ENCRYPTION_KEY=$(openssl rand -base64 32 | tr '+/' '-_')|" .env.prod-check
+          docker compose -f docker-compose.prod.yml --env-file .env.prod-check config --quiet
       - name: API health and a web page
         run: |
           for i in $(seq 1 90); do

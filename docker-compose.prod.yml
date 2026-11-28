@@ -1,0 +1,155 @@
+# Production stack for one server (docs/DEPLOY.md, D40).
+#   cp .env.production.example .env      (then fill in every value marked REQUIRED)
+#   docker compose -f docker-compose.prod.yml up -d --build
+#
+# Only Caddy is reachable from outside, on ports 80 and 443, with HTTPS certificates it
+# obtains and renews by itself. The web app, API and database stay on the internal network:
+# the browser talks only to the web app, which calls the API from the server.
+#
+# docker-compose.yml stays the local and CI stack.
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+x-backend: &backend
+  build:
+    context: .
+    dockerfile: backend/Dockerfile
+  image: analysisace-backend:${IMAGE_TAG:-latest}
+  # Every setting in .env reaches the API and worker (email, push, rate limits and so on).
+  env_file: .env
+  environment:
+    ENVIRONMENT: production
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-analysisace}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:-analysisace}
+    DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY:?Set DATA_ENCRYPTION_KEY in .env (see docs/DEPLOY.md)}
+    WEB_BASE_URL: https://${DOMAIN:?Set DOMAIN in .env}
+    CORS_ORIGINS: https://${DOMAIN}
+    DOCUMENT_STORAGE_DIR: /srv/data/documents
+  volumes:
+    - documents:/srv/data/documents
+  logging: *logging
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-analysisace}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-analysisace}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging: *logging
+
+  # Runs on every `up`, before the API and worker start; does nothing when up to date.
+  migrate:
+    <<: *backend
+    command: ["alembic", "upgrade", "head"]
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    <<: *backend
+    restart: unless-stopped
+    expose:
+      - "8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+
+  # Scheduled jobs (config/schedules.yaml). Run exactly one worker.
+  worker:
+    <<: *backend
+    command: ["python", "-m", "app.jobs.worker"]
+    restart: unless-stopped
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: frontend
+      dockerfile: apps/web/Dockerfile
+    image: analysisace-web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      API_INTERNAL_URL: http://api:8000
+    expose:
+      - "3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/en || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    logging: *logging
+
+  caddy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env}
+      ACME_EMAIL: ${ACME_EMAIL:?Set ACME_EMAIL in .env}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      web:
+        condition: service_healthy
+    logging: *logging
+
+  # A database dump and a copy of the encrypted documents once a day, kept for
+  # BACKUP_KEEP_DAYS days in BACKUP_DIR on the server. Copy them off the server too.
+  backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "/backup.sh"]
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER:-analysisace}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      PGDATABASE: ${POSTGRES_DB:-analysisace}
+      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+      BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-86400}
+    volumes:
+      - ./deploy/backup.sh:/backup.sh:ro
+      - documents:/documents:ro
+      - ${BACKUP_DIR:-./backups}:/backups
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *logging
+
+volumes:
+  pgdata:
+  documents:
+  caddy_data:
+  caddy_config:

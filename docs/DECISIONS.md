@@ -308,3 +308,15 @@ The sign-in email could not be changed, so someone who lost an address, or whose
 - **On confirmation.** The address switches and counts as confirmed, which also ends a bounce pause. Password-reset and confirmation links sent to the old address stop working. Sessions stay signed in: the password did not change.
 - **The old address is told**, with the new one partly hidden (r•••@example.com), and is pointed to password reset if the change was not theirs.
 - **Privacy.** A waiting change is in the data export and is deleted with the account. Audit entries hold ids only, never either address.
+
+## D40. Production runs on one server with Docker Compose behind Caddy (2026-11-28)
+
+`docker-compose.yml` was written for local use and CI: it published the database password defaults, the API port and the API docs, had no HTTPS or backups, and never passed `DATA_ENCRYPTION_KEY`, so a production start would have failed on the first encrypted value. Documents were written inside the container and lost on every rebuild. Production now has its own file, `docker-compose.prod.yml`, with the steps in [DEPLOY.md](DEPLOY.md).
+
+- **One server, Compose.** The expected load (households in Bangladesh, a daily job) fits one machine. Kubernetes or a managed container service can come later without changing the images.
+- **Caddy in front, and only Caddy published.** It gets and renews the Let's Encrypt certificate by itself and adds security headers. HTTPS is required anyway: the session cookie is `secure` in production. The browser never calls the API, so the API, its docs and the database stay on the private network. Caddy sets `X-Forwarded-For`, which the web app passes on for rate limits (D28).
+- **Secrets are checked at start.** `POSTGRES_PASSWORD`, `DATA_ENCRYPTION_KEY`, `DOMAIN` and `ACME_EMAIL` use `${VAR:?}`, so Compose stops with a message instead of starting a broken app. `DATABASE_URL`, `WEB_BASE_URL` and `CORS_ORIGINS` are built from them, so the password and the domain are written once. All other settings reach the API and worker through `env_file: .env`, so new settings need no compose change.
+- **Documents in a volume.** `DOCUMENT_STORAGE_DIR=/srv/data/documents`, a named volume owned by the app user, until object storage is chosen (FR25.4). The local stack now needs `DATA_ENCRYPTION_KEY` too, because the container cannot write the development key file.
+- **Daily backups on the server.** A `backup` service writes a `pg_dump` and a copy of the encrypted documents and keeps 14 days. Copying them off the server is the operator's job, and the encryption key is kept apart from them.
+- **Migrations on every start.** `migrate` runs before the API and the worker. Rollback is by image tag (`IMAGE_TAG`); migrations are not reversed automatically, so updates that change the database start with a backup.
+- **Checked in CI.** The `compose` job validates `docker-compose.prod.yml` with `docker compose config`.

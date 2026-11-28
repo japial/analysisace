@@ -5,6 +5,7 @@ Bangladesh-first personal finance web app that helps a household grow its ACE: *
 - Full spec: [docs/PRD.md](docs/PRD.md). Requirement IDs (`FR1.2`, `F13`, `Q4`) refer to it.
 - How the pieces fit: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Why choices were made: [docs/DECISIONS.md](docs/DECISIONS.md)
+- Deploying to a server: [docs/DEPLOY.md](docs/DEPLOY.md)
 - What is built and what is next: [docs/ROADMAP.md](docs/ROADMAP.md). Update it when a milestone item is finished.
 
 ## Layout
@@ -46,7 +47,9 @@ Frontend (run from `frontend/`):
 
 Everything together on the Windows dev machine: `.\dev` from the repo root starts the local database, then opens the API and the web app in their own windows. Add `-Worker` to also start the worker. `.\dev -Stop` stops everything (API, web app, worker and database).
 
-Everything together (where Docker exists): `docker compose up` from the repo root.
+Everything together (where Docker exists): `docker compose up` from the repo root (needs `.env` from `.env.example`, with `DATA_ENCRYPTION_KEY` set).
+
+Production server: `docker compose -f docker-compose.prod.yml up -d --build` with `.env` from `.env.production.example`. Steps, backups and updates: [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Hard rules (never break)
 

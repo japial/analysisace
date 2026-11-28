@@ -1,0 +1,27 @@
+# Caddy in front of the web app (docker-compose.prod.yml). It obtains and renews the HTTPS
+# certificate for DOMAIN by itself; the domain's DNS must point at this server first.
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options "DENY"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+
+	# Caddy passes the visitor's address in X-Forwarded-For, which the web app forwards to
+	# the API for rate limits (D28). The API trusts it from the private Docker network only.
+	reverse_proxy web:3000
+}
+
+# To send www to the main address, point www's DNS here too and remove the # signs:
+# www.{$DOMAIN} {
+# 	redir https://{$DOMAIN}{uri} permanent
+# }

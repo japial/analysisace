@@ -24,6 +24,7 @@ test-results/
 .env
 .env.*
 !.env.example
+!.env.production.example
 
 # Editors and OS
 .vscode/
@@ -34,6 +35,8 @@ Thumbs.db
 # Local data
 .pgdata/
 .documents/
+# Daily backups written by the production stack (deploy/backup.sh)
+/backups/
 # Email previews from backend/scripts/preview_emails.py
 .email-previews/
 .dev-encryption-key

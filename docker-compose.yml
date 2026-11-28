@@ -1,14 +1,20 @@
-# Full stack: database, migrations, API, worker and web app.
-#   cp .env.example .env    (then change the password)
+# Full stack for local use and CI: database, migrations, API, worker and web app.
+#   cp .env.example .env    (then change the password and set DATA_ENCRYPTION_KEY)
 #   docker compose up --build
+# For a server, use docker-compose.prod.yml instead (docs/DEPLOY.md).
 # Web: http://localhost:3000   API docs: http://localhost:8000/api/v1/docs
 
 x-backend: &backend
   build:
     context: .
     dockerfile: backend/Dockerfile
+  # Every setting in .env (rate limits, email and so on) reaches the API and worker.
+  env_file: .env
   environment:
     DATABASE_URL: ${DATABASE_URL}
+    # The container cannot write the development key file, so the key is always given.
+    DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY:?Set DATA_ENCRYPTION_KEY in .env (see .env.example)}
+    DOCUMENT_STORAGE_DIR: /srv/data/documents
     ENVIRONMENT: ${ENVIRONMENT:-development}
     CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
     WEB_BASE_URL: ${WEB_BASE_URL:-http://localhost:3000}
@@ -32,6 +38,8 @@ x-backend: &backend
     WEBPUSH_SUBJECT: ${WEBPUSH_SUBJECT:-mailto:support@analysisace.com}
     FIRM_FEATURES_ENABLED: ${FIRM_FEATURES_ENABLED:-false}
     TRUSTED_PROXIES: ${TRUSTED_PROXIES:-127.0.0.1/32,::1/128,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+  volumes:
+    - documents:/srv/data/documents
 
 services:
   db:
@@ -93,3 +101,4 @@ services:
 
 volumes:
   pgdata:
+  documents:

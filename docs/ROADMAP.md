@@ -15,6 +15,8 @@ Definition of done: `docker compose up` runs API, worker, DB and frontend; CI gr
 - [x] Frontend scaffold: Next.js app, shared `core` and `i18n` packages, Bangla and English
 - [x] Lint, type check and tests pass locally for backend and frontend
 - [x] Dockerfiles and `docker-compose.yml` written. The GitHub Actions workflow listed here was never committed; it was written on 2026-11-26 (D29)
+- [x] Production deployment with Docker (D40, 2026-11-28): `docker-compose.prod.yml` with Caddy for HTTPS, required secrets checked at start, documents in a volume, daily backups, and the steps in `docs/DEPLOY.md`. Not yet run on a server (no Docker on the dev machine)
+- [ ] Owner: choose a server and domain, then follow `docs/DEPLOY.md`
 - [ ] **Confirm CI passes on GitHub.** The `e2e` job was rehearsed locally on a fresh database with a production build (44 browser tests pass). The `compose` job could not be run here (no Docker). Push `develop` and check the first run.
 
 ## M1 Data foundation

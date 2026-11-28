@@ -4,6 +4,8 @@
 docs
 coming-soon
 frontend
+deploy
+backups
 **/.venv
 **/.pgdata
 **/__pycache__
@@ -11,4 +13,8 @@ frontend
 **/.mypy_cache
 **/.ruff_cache
 **/.env
+**/.env.*
 backend/tests
+backend/.documents
+backend/.dev-encryption-key
+backend/.email-previews
