@@ -301,10 +301,9 @@ def run_household_alerts(
                 f"drift:{household_id}:{row.asset_class}:{month}",
             )
         rule = rules.get("VOLATILITY")
-        limit = Decimal(
-            str((rule.params or {}).get("max_volatility_pct") if rule else "")
-            or config["default_max_volatility_pct"]
-        )
+        # A rule saved without a limit uses the default (FR20.1). str(None) would be "None".
+        custom = (rule.params or {}).get("max_volatility_pct") if rule else None
+        limit = Decimal(str(custom if custom is not None else config["default_max_volatility_pct"]))
         if volatility is not None and volatility > limit:
             send(
                 "VOLATILITY",

@@ -5,7 +5,7 @@ import { Inter, Noto_Sans_Bengali, Space_Grotesk } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from "@/components/layout/theme-provider";
 import type { ReactNode } from "react";
 
 import { routing } from "@/i18n/routing";

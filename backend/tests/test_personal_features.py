@@ -229,6 +229,20 @@ def test_alerts_and_monthly_report_fr20(demo_client: TestClient, demo_session: S
     assert demo_client.get(f"{API}/notifications", headers=owner).json()["unread"] == 0
 
 
+def test_volatility_rule_without_a_limit_uses_the_default_fr20_1(
+    demo_client: TestClient, demo_session: Session
+) -> None:
+    """Turning the alert on without typing a limit must not break the daily alert run."""
+    owner = login(demo_client)
+    saved = demo_client.put(
+        f"{API}/alerts/VOLATILITY",
+        headers=owner,
+        json={"is_active": True, "channel": "APP", "frequency": "INSTANT"},
+    )
+    assert saved.status_code == 200, saved.text
+    assert alerts.run_personal_alerts(demo_session, Outbox(), date(2026, 11, 15)) > 0
+
+
 def test_community_needs_consent_and_a_large_group_fr21(
     demo_client: TestClient, demo_session: Session
 ) -> None:

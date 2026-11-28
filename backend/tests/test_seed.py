@@ -174,3 +174,33 @@ def test_unit_tests_enforce_foreign_keys(session: Session, source: Source) -> No
     session.add(PriceDaily(ticker="NOPE", date=date(2026, 1, 4), close=1, source_id=source.id))
     with pytest.raises(IntegrityError):
         session.flush()
+
+
+def test_demo_extras_fill_every_personal_page_f13_f17_f18_f21(
+    session: Session, calendar: TradingCalendar
+) -> None:
+    """The demo user sees plans, what-ifs, Zakat, tax, notices and a peer group (D15)."""
+    from app.models import FirePlan, Notification, ScenarioResult, TaxSnapshot, ZakatSnapshot
+    from app.seed.demo_extras import ADMIN_EMAIL, PEER_COUNT, seed_demo_extras
+    from app.services.alerts import community_benchmarks
+    from app.services.email import LoggingEmailSender
+
+    seed_demo_market(session, calendar)
+    seed_demo_personal(session, "demo-pass-1234")
+    result = seed_demo_extras(session, LoggingEmailSender(), "demo-pass-1234")
+    assert result.created
+    assert seed_demo_extras(session, LoggingEmailSender(), "demo-pass-1234").created is False
+
+    user = session.scalar(select(User).where(User.email == DEMO_EMAIL))
+    assert user is not None
+    assert count(session, FirePlan) == 2 + PEER_COUNT
+    assert count(session, ScenarioResult) >= 4
+    assert count(session, ZakatSnapshot) == 2
+    assert count(session, TaxSnapshot) == 1
+    assert session.scalar(
+        select(func.count()).select_from(Notification).where(Notification.user_id == user.id)
+    )
+    admin = session.scalar(select(User).where(User.email == ADMIN_EMAIL))
+    assert admin is not None and admin.role == "ADMIN"
+    # FR21.1: the peer group is big enough to show.
+    assert community_benchmarks(session, user)["group_size_met"] is True
